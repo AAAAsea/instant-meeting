@@ -1,6 +1,8 @@
 import { createContext, useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import Peer from 'simple-peer';
+import { useContext } from "react";
+import { MessageContext } from '@/contexts/MessageContext'
 
 const SocketContext = createContext();
 
@@ -24,6 +26,8 @@ const SocketContextProvider = ({ children }) => {
   const [roomJoinned, setRoomJoinned] = useState(false);
   const [roomCreated, setRoomCreated] = useState(false);
 
+  const { message } = useContext(MessageContext)
+
   const me = useRef('');
   const eventBucket = useRef([]); // 收集每个peer的监听事件
   const stream = useRef(null); // useEffect里面只能拿到初始值，故出此下策
@@ -36,6 +40,7 @@ const SocketContextProvider = ({ children }) => {
       setRoom(room)
       setRoomCreating(false);
       setRoomCreated(true);
+      message.success('创建成功')
     })
 
     socket.on('joined', ({ users, newId, stream, room }) => {
@@ -62,6 +67,14 @@ const SocketContextProvider = ({ children }) => {
 
     socket.on('removeStream', ({ userId }) => {
       // userStreamRef.current.splice(userStreamRef.current.findIndex(e => e.userId === userId), 1)
+      // setUserStreams([...userStreamRef.current])
+    })
+
+    socket.on('joinError', ({ msg }) => {
+      message.error(msg);
+      setRoomJoinning(false);
+
+      // userStreamRef.current.push({ userName, stream, userId })
       // setUserStreams([...userStreamRef.current])
     })
 
@@ -233,6 +246,10 @@ const SocketContextProvider = ({ children }) => {
   }
 
   const joinRoom = (room) => {
+    if (!/\d{9}/.test(room)) {
+      message.error('请输入正确的房间号')
+      return
+    }
     setRoomJoinning(true);
     socket.emit('joinRoom', { room, name, stream })
   }
