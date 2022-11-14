@@ -1,0 +1,7 @@
+#bottom{
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  z-index: 999;
+  transform: translateX(-50%);
+}

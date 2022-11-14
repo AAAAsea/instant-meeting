@@ -1,0 +1,16 @@
+.my-video{
+  border: 1px solid white;
+}
+.video-container{
+  width: 100%;
+  background: #222;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+video{
+  width: 40%;
+  margin: 10px;
+  border-radius: 10px;
+}

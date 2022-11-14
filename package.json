@@ -8,16 +8,25 @@
     "build": "vite build",
     "preview": "vite preview"
   },
-  "husky": {   
-    "hooks": {     
-        "pre-commit": "npm test"   
-    } 
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm test"
+    }
   },
   "dependencies": {
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@mui/material": "^5.10.13",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-copy-to-clipboard": "^5.1.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.4.3",
+    "simple-peer": "^9.11.1",
+    "socket.io-client": "^4.5.3",
+    "use-socket.io-client": "^1.1.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.20.2",
     "@types/react": "^18.0.24",
     "@types/react-dom": "^18.0.8",
     "@vitejs/plugin-react": "^2.2.0",

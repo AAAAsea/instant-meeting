@@ -1,0 +1,16 @@
+.container{
+  padding: 60px;
+  box-sizing: border-box;
+}
+.form{
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  margin: 0 auto;
+  width: 60%;
+  box-sizing: border-box;
+}
+.item{
+  display: flex;
+  flex-direction: column;
+}
