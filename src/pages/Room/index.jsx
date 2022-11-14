@@ -11,16 +11,17 @@ import './index.css'
 import Peer from 'simple-peer'
 
 const Room = () => {
+
   const { myVideo, userStreams } = useContext(SocketContext)
   const [search] = useSearchParams()
   const myVideoRef = useRef();
   const userVideoRef = useRef();
+
   useEffect(() => {
     myVideoRef.current.srcObject = myVideo;
     userVideoRef.current.childNodes.forEach((e, index) => {
       e.srcObject = userStreams[index].stream;
     })
-    console.log("video 更新", userStreams)
   }, [myVideo, userStreams])
 
 
@@ -32,7 +33,7 @@ const Room = () => {
         <div className="other-video" ref={userVideoRef}>
           {
             userStreams.map((e) =>
-              <video playsInline muted autoPlay key={e.userId}></video>
+              <video playsInline autoPlay key={e.userId}></video>
             )
           }
         </div>

@@ -16,7 +16,13 @@ const SocketContextProvider = ({ children }) => {
   const [myVideo, setMyVideo] = useState(null);
   const [room, setRoom] = useState();
   const [userStreams, setUserStreams] = useState([]);
-
+  const [voiceOpen, setVoiceOpen] = useState(false);
+  const [videoOpen, setVideoOpen] = useState(false);
+  const [videoType, setVideoType] = useState(1); // 1 camera,  0 screen
+  const [roomCreating, setRoomCreating] = useState(false);
+  const [roomJoinning, setRoomJoinning] = useState(false);
+  const [roomJoinned, setRoomJoinned] = useState(false);
+  const [roomCreated, setRoomCreated] = useState(false);
 
   const me = useRef('');
   const eventBucket = useRef([]); // 收集每个peer的监听事件
@@ -26,15 +32,15 @@ const SocketContextProvider = ({ children }) => {
   useEffect(() => {
     socket.once('me', (id) => me.current = id);
 
-    socket.once('createRoomSuccess', ({ room }) => {
+    socket.on('createRoomSuccess', ({ room }) => {
       setRoom(room)
-      console.log(room)
+      setRoomCreating(false);
+      setRoomCreated(true);
     })
 
-    socket.on('joined', ({ users, newId, stream }) => {
+    socket.on('joined', ({ users, newId, stream, room }) => {
       console.log('joined', users)
-      console.log('peers', peers)
-
+      setRoom(room);
       // 与未连接的用户建立连接
       users.forEach(user => {
         // console.log(user.id, peers[user.id])
@@ -55,8 +61,8 @@ const SocketContextProvider = ({ children }) => {
     })
 
     socket.on('removeStream', ({ userId }) => {
-      userStreamRef.current.splice(userStreamRef.current.findIndex(e => e.userId === userId), 1)
-      setUserStreams([...userStreamRef.current])
+      // userStreamRef.current.splice(userStreamRef.current.findIndex(e => e.userId === userId), 1)
+      // setUserStreams([...userStreamRef.current])
     })
 
     socket.once('disconnect', () => {
@@ -83,9 +89,17 @@ const SocketContextProvider = ({ children }) => {
       setUserStreams([...userStreamRef.current])
     })
 
+    peer.on('track', (track) => {
+      console.log('onTrack', track)
+      // userStreamRef.current.push({ userName, stream, userId })
+      // setUserStreams([...userStreamRef.current])
+    })
+
     peer.on('connect', () => {
       console.log(userId + ' connected')
       peers[userId] = peer;
+      setRoomJoinning(false);
+      setRoomJoinned(true);
     })
 
     peer.once('close', () => {
@@ -113,78 +127,117 @@ const SocketContextProvider = ({ children }) => {
     eventBucket.current[userId] = (signal) => peer.signal(signal)
   }
 
-  const initMyVideo = ({ type, quality }) => {
-    const qualities = {
-      'h': {
-        width: {
-          max: 1920
-        },
-        height: {
-          max: 1080
+  const initMyVoice = (open) => {
+    // console.log(open)
+    setVoiceOpen(open);
+    // 关闭音频
+    const oldVoiceTrack = stream.current.getAudioTracks()[0];
+    if (!open) {
+      if (!stream.current) return;
+      oldVoiceTrack && oldVoiceTrack.stop()
+      return;
+    }
+
+    // 打开音频
+    const originStream = stream.current;
+    navigator.mediaDevices.getUserMedia({
+      audio: true,
+    }).then((currentStream) => {
+      if (!stream.current) {
+        stream.current = currentStream;
+        setMyVideo(currentStream)
+      }
+      const newvoiceTrack = currentStream.getTracks()[0];
+
+      oldVoiceTrack && stream.current.removeTrack(oldVoiceTrack);
+      stream.current.addTrack(newvoiceTrack);
+
+      // 之前没有stream的话需要通知添加stream，否则更新track
+      if (!originStream) {
+        setMyVideo(stream.current);
+        for (let peer in peers) {
+          console.log(peers[peer])
+          peers[peer].addStream(stream.current)
         }
-      },
-      'm': {
-        width: {
-          max: 1280
-        },
-        height: {
-          max: 720
+      } else {
+        for (let peer in peers) {
+          // 之前没有音频轨道的话需要添加，否则替换
+          oldVoiceTrack
+            ? peers[peer].replaceTrack(oldVoiceTrack, newvoiceTrack, myVideo)
+            : peers[peer].addTrack(newvoiceTrack, myVideo)
+          console.log(peer)
         }
-      },
-      'l': {
-        width: {
-          max: 854
-        },
-        height: {
-          max: 480
+      }
+
+
+    })
+  }
+
+  const initMyVideo = ({ type, quality, open }) => {
+    setVideoOpen(open)
+
+    // 关闭视频
+    if (!open) {
+      if (!stream.current) return;
+      const oldVideoTrack = stream.current.getVideoTracks()[0];
+      oldVideoTrack && oldVideoTrack.stop();
+      return;
+    }
+
+    // 打开视频
+    setVideoType(type)
+    const originStream = stream.current;
+
+    const handlePromise = (currentStream) => {
+      console.log(currentStream)
+      if (!stream.current) {
+        stream.current = currentStream;
+        setMyVideo(currentStream)
+      }
+
+      const oldVideoTrack = stream.current.getVideoTracks()[0];
+      const newVideoTrack = currentStream.getVideoTracks()[0];
+      oldVideoTrack && stream.current.removeTrack(oldVideoTrack);
+      stream.current.addTrack(newVideoTrack);
+
+      // 之前没有stream的话需要通知添加stream
+      if (!originStream) {
+        setMyVideo(stream.current);
+        for (let peer in peers) {
+          console.log(peers[peer])
+          peers[peer].addStream(stream.current)
+        }
+      } else {
+        for (let peer in peers) {
+          peers[peer].replaceTrack(oldVideoTrack, newVideoTrack, myVideo)
+          console.log(peer)
         }
       }
     }
-    type ?
+    // camera or screen
+    if (type) {
       navigator.mediaDevices.getUserMedia({
-        video: { width: 1280, height: 720 },
-        audio: true,
-      }).then((currentStream) => {
-        stream.current = currentStream;
-        setMyVideo(currentStream);
-        // console.log(peers)
-        for (let peer in peers) {
-          console.log(peers[peer])
-          peers[peer].addStream(currentStream)
-        }
-      }) : navigator.mediaDevices.getDisplayMedia({
-        video: { width: 1280, height: 720 },
-        audio: true,
-      }).then((currentStream) => {
-        setStream(currentStream)
-        setMyVideo(currentStream);
-        for (let peer in peers) {
-          peers[peer].addStream(currentStream)
-        }
-      })
-  }
-
-  const shutOffMyVideo = () => {
-    myVideo.getTracks().forEach(e => e.stop());
-    for (let k in peers) {
-      peers[k].removeStream(myVideo)
+        video: true,
+      }).then(handlePromise)
+    } else {
+      navigator.mediaDevices.getDisplayMedia({
+        video: true,
+      }).then(handlePromise)
     }
-    socket.emit('removeStream', { userId: me, room })
-    setMyVideo(null);
   }
 
   const createRoom = () => {
+    setRoomCreating(true);
     socket.emit('createRoom', { name })
   }
 
   const joinRoom = (room) => {
-    console.log('joinRoom')
-    setRoom(room);
+    setRoomJoinning(true);
     socket.emit('joinRoom', { room, name, stream })
   }
 
   return (
-    <SocketContext.Provider value={{ me, call, callAccepted, callEnded, myVideo, setMyVideo, name, setName, initMyVideo, createRoom, joinRoom, userStreams, peers, shutOffMyVideo }}>
+    <SocketContext.Provider value={{ me, call, callAccepted, callEnded, myVideo, setMyVideo, name, setName, initMyVideo, createRoom, joinRoom, userStreams, peers, voiceOpen, initMyVoice, videoOpen, videoType, room, roomCreating, roomJoinning, roomCreated, roomJoinned }}>
       {children}
     </SocketContext.Provider>
   )

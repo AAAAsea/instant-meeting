@@ -9,11 +9,18 @@ import { MessageContext } from '@/contexts/MessageContext'
 import './index.css'
 import { SocketContext } from '../../contexts/SocketContext'
 import { useNavigate } from 'react-router-dom'
+import { LoadingButton } from '@mui/lab'
+import { useEffect } from 'react'
+
 const Personal = () => {
   const { message } = useContext(MessageContext)
-  const { createRoom, name, setName } = useContext(SocketContext)
+  const { createRoom, name, setName, roomCreating, roomCreated, room } = useContext(SocketContext)
 
   const navigate = useNavigate()
+  useEffect(() => {
+    console.log(roomCreated)
+    roomCreated && navigate('/room/' + room)
+  }, [roomCreated])
   return (
     <>
       <TopNavBar />
@@ -27,7 +34,9 @@ const Personal = () => {
             <label>房间密码</label>
             <TextField label="密码" placeholder='密码' variant='standard' ></TextField>
           </div>
-          <Button className='submit-btn' variant='contained' onClick={() => { createRoom(); navigate('/room') }}>创建</Button>
+          <LoadingButton loading={roomCreating} loadingIndicator="创建中..." className='submit-btn' variant='contained' onClick={createRoom}>
+            创建
+          </LoadingButton>
         </form>
       </Paper>
     </>
