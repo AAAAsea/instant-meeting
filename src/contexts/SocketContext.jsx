@@ -131,9 +131,9 @@ const SocketContextProvider = ({ children }) => {
     // console.log(open)
     setVoiceOpen(open);
     // 关闭音频
-    const oldVoiceTrack = stream.current.getAudioTracks()[0];
     if (!open) {
       if (!stream.current) return;
+      const oldVoiceTrack = stream.current.getAudioTracks()[0];
       oldVoiceTrack && oldVoiceTrack.stop()
       return;
     }
@@ -147,6 +147,7 @@ const SocketContextProvider = ({ children }) => {
         stream.current = currentStream;
         setMyVideo(currentStream)
       }
+      const oldVoiceTrack = stream.current.getAudioTracks()[0];
       const newvoiceTrack = currentStream.getTracks()[0];
 
       oldVoiceTrack && stream.current.removeTrack(oldVoiceTrack);
