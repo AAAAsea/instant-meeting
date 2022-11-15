@@ -25,6 +25,7 @@ const SocketContextProvider = ({ children }) => {
   const [roomJoinning, setRoomJoinning] = useState(false);
   const [roomJoinned, setRoomJoinned] = useState(false);
   const [roomCreated, setRoomCreated] = useState(false);
+  const [roomErrorMsg, setRoomErrorMsg] = useState('');
 
   const { message } = useContext(MessageContext)
 
@@ -46,6 +47,12 @@ const SocketContextProvider = ({ children }) => {
     socket.on('joined', ({ users, newId, stream, room }) => {
       console.log('joined', users)
       setRoom(room);
+
+      if (users.length === 1) {
+        setRoomJoinning(false)
+        setRoomJoinned(true);
+        return;
+      }
       // 与未连接的用户建立连接
       users.forEach(user => {
         // console.log(user.id, peers[user.id])
@@ -72,6 +79,7 @@ const SocketContextProvider = ({ children }) => {
 
     socket.on('joinError', ({ msg }) => {
       message.error(msg);
+      setRoomErrorMsg(msg);
       setRoomJoinning(false);
 
       // userStreamRef.current.push({ userName, stream, userId })
@@ -255,7 +263,7 @@ const SocketContextProvider = ({ children }) => {
   }
 
   return (
-    <SocketContext.Provider value={{ me, call, callAccepted, callEnded, myVideo, setMyVideo, name, setName, initMyVideo, createRoom, joinRoom, userStreams, peers, voiceOpen, initMyVoice, videoOpen, videoType, room, roomCreating, roomJoinning, roomCreated, roomJoinned }}>
+    <SocketContext.Provider value={{ me, call, callAccepted, callEnded, myVideo, setMyVideo, name, setName, initMyVideo, createRoom, joinRoom, userStreams, peers, voiceOpen, initMyVoice, videoOpen, videoType, room, setRoom, roomCreating, roomJoinning, roomCreated, roomJoinned, setRoomCreated, roomErrorMsg }}>
       {children}
     </SocketContext.Provider>
   )

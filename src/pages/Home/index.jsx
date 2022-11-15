@@ -21,9 +21,9 @@ const Home = () => {
   const navigate = useNavigate();
   const [id, setId] = useState('');
 
-  useEffect(() => {
-    roomJoinned && navigate('/room/' + room)
-  }, [roomJoinned])
+  // useEffect(() => {
+  //   roomJoinned && navigate('/room/' + room)
+  // }, [roomJoinned])
   return (
     <>
       <TopNavBar />
@@ -37,7 +37,7 @@ const Home = () => {
             <label>参会姓名</label>
             <TextField label="姓名" placeholder='姓名' variant='standard' value={name} onChange={e => setName(e.target.value)}></TextField>
           </div>
-          <LoadingButton loading={roomJoinning} endIcon={<Group />} loadingPosition="end" className='submit-btn' variant='contained' onClick={() => { joinRoom(id); }}>
+          <LoadingButton loading={roomJoinning} endIcon={<Group />} loadingPosition="end" className='submit-btn' variant='contained' onClick={() => { navigate('/room/' + id); }}>
             {roomJoinning ? '正在加入...' : '加入'}
           </LoadingButton>
         </form>

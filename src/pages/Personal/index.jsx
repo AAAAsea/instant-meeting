@@ -14,11 +14,10 @@ import { useEffect } from 'react'
 
 const Personal = () => {
   const { message } = useContext(MessageContext)
-  const { createRoom, name, setName, roomCreating, roomCreated, room } = useContext(SocketContext)
+  const { createRoom, name, setName, roomCreated, room, roomCreating } = useContext(SocketContext)
 
   const navigate = useNavigate()
   useEffect(() => {
-    console.log(roomCreated)
     roomCreated && navigate('/room/' + room)
   }, [roomCreated])
   return (
