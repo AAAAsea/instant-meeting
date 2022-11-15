@@ -4,7 +4,6 @@ a{
 
 :root{
   --text-color: #222;
-
 }
 
 :root[theme="dark"]{
@@ -13,4 +12,13 @@ a{
 
 body{
   background: #222;
+}
+
+#root{
+  height: 100vh;
+}
+
+body{
+  margin: 0;
+  padding: 0;
 }

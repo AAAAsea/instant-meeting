@@ -12,11 +12,15 @@ import { VideocamOff } from '@mui/icons-material'
 import { ScreenShare } from '@mui/icons-material'
 import { StopScreenShare } from '@mui/icons-material'
 import { Share } from '@mui/icons-material'
+import { IconButton } from '@mui/material'
+import { Fullscreen } from '@mui/icons-material'
 
 
-const BottomNavBar = () => {
+const BottomNavBar = (props) => {
   const { initMyVideo, me, myVideo, shutOffMyVideo, initMyVoice, voiceOpen, videoOpen, videoType, room } = useContext(SocketContext);
   const { message } = useContext(MessageContext);
+
+  const { mainVideoRef } = props;
 
   const share = () => {
     console.log(room)
@@ -25,26 +29,32 @@ const BottomNavBar = () => {
 
   return (
     <div id="bottom">
-      <ButtonGroup variant="contained" aria-label="outlined primary button group">
-        <Button onClick={() => { initMyVoice(!voiceOpen) }} startIcon={voiceOpen ? <Mic /> : <MicOff />}>{
-          voiceOpen ? '关闭话筒' : '打开话筒'
-        }</Button>
-        <Button
+      <ButtonGroup className='menu-btns' variant="contained" aria-label="outlined primary button group">
+        <IconButton
+          color={(voiceOpen) ? "error" : "primary"}
+          onClick={() => { initMyVoice(!voiceOpen) }}>{
+            voiceOpen ? <Mic /> : <MicOff />
+          }</IconButton>
+        <IconButton
           color={(videoOpen && videoType) ? "error" : "primary"}
           onClick={() => { initMyVideo({ type: 1, quality: 'h', open: !videoOpen || !videoType }) }}
-          startIcon={videoOpen && videoType ? <Videocam /> : <VideocamOff />}
         >{
-            videoOpen && videoType ? '关闭摄像头' : '打开摄像头'
-          }</Button>
-        <Button
+            videoOpen && videoType ? <Videocam /> : <VideocamOff />
+          }</IconButton>
+        <IconButton
           color={(videoOpen && !videoType) ? "error" : "primary"}
           onClick={() => { initMyVideo({ type: 0, quality: 'h', open: !videoOpen || videoType }) }}
-          startIcon={videoOpen && !videoType ? <StopScreenShare /> : <ScreenShare />}
         >{
-            videoOpen && !videoType ? '关闭共享' : '共享屏幕'
-          }</Button>
+            videoOpen && !videoType ? <ScreenShare /> : <StopScreenShare />
+          }</IconButton>
+        <IconButton
+          color="primary"
+          onClick={() => { mainVideoRef.current.requestFullscreen() }}
+        >
+          <Fullscreen />
+        </IconButton>
         <CopyToClipboard text={room}>
-          <Button onClick={share} startIcon={<Share />}>分享</Button>
+          <IconButton color='primary' onClick={share}><Share /></IconButton>
         </CopyToClipboard>
       </ButtonGroup>
     </div >

@@ -26,6 +26,7 @@ const SocketContextProvider = ({ children }) => {
   const [roomJoinned, setRoomJoinned] = useState(false);
   const [roomCreated, setRoomCreated] = useState(false);
   const [roomErrorMsg, setRoomErrorMsg] = useState('');
+  const [users, setUsers] = useState([]);
 
   const { message } = useContext(MessageContext)
 
@@ -33,6 +34,7 @@ const SocketContextProvider = ({ children }) => {
   const eventBucket = useRef([]); // 收集每个peer的监听事件
   const stream = useRef(null); // useEffect里面只能拿到初始值，故出此下策
   const userStreamRef = useRef([]); // 同上
+  const usersRef = useRef([]); // 同上
 
   useEffect(() => {
     socket.once('me', (id) => me.current = id);
@@ -47,12 +49,14 @@ const SocketContextProvider = ({ children }) => {
     socket.on('joined', ({ users, newId, stream, room }) => {
       console.log('joined', users)
       setRoom(room);
-
+      usersRef.current = users;
+      setUsers(usersRef.current);
       if (users.length === 1) {
         setRoomJoinning(false)
         setRoomJoinned(true);
         return;
       }
+
       // 与未连接的用户建立连接
       users.forEach(user => {
         // console.log(user.id, peers[user.id])
@@ -60,11 +64,6 @@ const SocketContextProvider = ({ children }) => {
           getPeerConnection(user.id, user.name, newId !== socket.id);
         }
       })
-      // for (let i = users.length - 1; i >= 0; i--) {
-      //   if (users[i].id !== socket.id && !peers[users[i].id]) {
-      //     getPeerConnection(users[i].id, users[i].name, newId === socket.id);
-      //   }
-      // }
     })
 
     // 每次收到peerConn，取出对应的signal事件执行
@@ -72,23 +71,18 @@ const SocketContextProvider = ({ children }) => {
       eventBucket.current[from] && eventBucket.current[from](signal);
     })
 
-    socket.on('removeStream', ({ userId }) => {
-      // userStreamRef.current.splice(userStreamRef.current.findIndex(e => e.userId === userId), 1)
-      // setUserStreams([...userStreamRef.current])
+    socket.on('removeUser', ({ userId }) => {
+      peers[userId].destroy()
+      userStreamRef.current.splice(userStreamRef.current.findIndex(e => e.userId === userId), 1)
+      setUserStreams([...userStreamRef.current])
     })
 
     socket.on('joinError', ({ msg }) => {
       message.error(msg);
       setRoomErrorMsg(msg);
       setRoomJoinning(false);
-
-      // userStreamRef.current.push({ userName, stream, userId })
-      // setUserStreams([...userStreamRef.current])
     })
 
-    socket.once('disconnect', () => {
-      // setPeers({ ...peers, [me]: null })
-    })
   }, [])
 
   const getPeerConnection = (userId, userName, isInitiator) => {
@@ -97,10 +91,8 @@ const SocketContextProvider = ({ children }) => {
       trickle: false,
       stream: stream.current
     })
-    // if (stream) peer.addStream(stream);
 
     peer.on('signal', (signal) => {
-      // console.log(signal)
       socket.emit('peerConn', { signal, to: userId, from: me.current, name, isInitiator })
     })
 
@@ -112,8 +104,6 @@ const SocketContextProvider = ({ children }) => {
 
     peer.on('track', (track) => {
       console.log('onTrack', track)
-      // userStreamRef.current.push({ userName, stream, userId })
-      // setUserStreams([...userStreamRef.current])
     })
 
     peer.on('connect', () => {
@@ -124,27 +114,10 @@ const SocketContextProvider = ({ children }) => {
     })
 
     peer.once('close', () => {
-      peers[userId] = null;
+      delete peers[userId];
     })
 
-    // peer.once('error', () => {
-    //   peers[userId] = null;
-    // })
-
-    /**
-     * 
-     * @description: 触发signal 错误示例 
-     */
-    // socket.once('peerConn', ({ signal, from, to }) => {
-    //   console.log('收到2： from ' + from, signal)
-    //   peer.signal(signal);
-    //   // }
-    // })
-
-    /**
-     * 
-     * @description: 触发signal 正确示例 
-     */
+    // 收集signal事件，待socket响应时触发
     eventBucket.current[userId] = (signal) => peer.signal(signal)
   }
 
@@ -263,7 +236,7 @@ const SocketContextProvider = ({ children }) => {
   }
 
   return (
-    <SocketContext.Provider value={{ me, call, callAccepted, callEnded, myVideo, setMyVideo, name, setName, initMyVideo, createRoom, joinRoom, userStreams, peers, voiceOpen, initMyVoice, videoOpen, videoType, room, setRoom, roomCreating, roomJoinning, roomCreated, roomJoinned, setRoomCreated, roomErrorMsg }}>
+    <SocketContext.Provider value={{ me, call, callAccepted, callEnded, myVideo, setMyVideo, name, setName, initMyVideo, createRoom, joinRoom, userStreams, peers, voiceOpen, initMyVoice, videoOpen, videoType, room, setRoom, roomCreating, roomJoinning, roomCreated, roomJoinned, setRoomCreated, roomErrorMsg, users }}>
       {children}
     </SocketContext.Provider>
   )

@@ -58,13 +58,17 @@ io.on("connection", (socket) => {
     console.log('peerConn', socket.id, to, name, isInitiator)
   })
 
-  socket.on('removeStream', ({ userId, room }) => {
-    console.log('removeStream')
-    io.to(room).emit('removeStream', { userId })
-  })
+  socket.on("disconnecting", () => {
+    console.log(socket.rooms)
+    for (let room of socket.rooms) {
+      if (room !== socket.id) {
+        console.log('removeUser')
+        io.to(room).emit('removeUser', { userId: socket.id })
+      }
+    }
+  });
 
-  socket.on("disconnect", (reason) => {
-    console.log(rooms)
+  socket.on("disconnect", () => {
     for (let room in rooms) {
       rooms[room] = rooms[room].filter(user => user.id != socket.id)
       if (rooms[room].length === 0)
