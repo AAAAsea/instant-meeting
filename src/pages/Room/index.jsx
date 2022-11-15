@@ -36,7 +36,7 @@ const Room = () => {
 
   useEffect(() => {
     myVideoRef.current.srcObject = myVideo;
-    if (!mainVideoRef.current) {
+    if (!mainVideoRef.current.srcObject) {
       mainVideoRef.current.srcObject = myVideo;
     }
     userVideoRef.current.childNodes.forEach((e, index) => {
