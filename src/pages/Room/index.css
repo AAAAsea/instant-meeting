@@ -106,3 +106,7 @@
 video::-webkit-media-controls-enclosure{ 
     display: none;
 }
+
+footer{
+  display: none;
+}
