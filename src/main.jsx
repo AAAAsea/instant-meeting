@@ -14,12 +14,13 @@ const theme = createTheme({
     primary: {
       main: '#715ee2',
       darker: '#715ee2',
+      contrastText: '#fff'
     },
     neutral: {
-      main: '#64748B',
-      light: '#64748B',
-      dark: '#7f8da2',
-      contrastText: '#fff',
+      main: '#2F2F2F',
+      light: '#2F2F2F',
+      dark: '#1e1e1e',
+      contrastText: '#AAB8E4',
     },
   },
 });

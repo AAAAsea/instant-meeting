@@ -7,21 +7,32 @@
   flex-direction: column;
 }
 h1{
-  background: linear-gradient(to right, #43CBFF, #9708CC);
+  background: linear-gradient(to right, #715ee2, #9708CC);
   -webkit-background-clip: text;
   color: transparent;
   font-size: 90px;
-  font-weight: bold;
+  font-weight: bolder;
   margin-top: -80px;
+}
+.desc{
+  color: var(--secondary-text-color);
+  height: 50px;
 }
 .start-btn{
   display: flex;
   gap: 40px;
+  
+}
+.start-btn button{
+  line-height: 20px;
+  border-radius: 8px;
 }
 #logo{
   position: absolute;
   left: 20px;
   top: 10px;
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  transition: .3s;
 }

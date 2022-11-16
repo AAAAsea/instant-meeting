@@ -24,7 +24,7 @@ const BottomNavBar = (props) => {
 
   const share = () => {
     console.log(room)
-    message.success('房间ID已复制，快去分享吧~')
+    message.success('房间号已复制，快去分享吧~')
   }
 
   return (

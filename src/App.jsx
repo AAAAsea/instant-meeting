@@ -8,7 +8,6 @@ import { router } from './routes';
 import { NavLink } from 'react-router-dom';
 import { ButtonGroup } from '@mui/material';
 import './App.css'
-import Footer from './components/Footer';
 
 const App = () => {
   const { message } = useContext(MessageContext);
@@ -16,7 +15,6 @@ const App = () => {
     <>
       <RouterProvider router={router} />
       <Message></Message>
-      <Footer></Footer>
     </>
   )
 }
