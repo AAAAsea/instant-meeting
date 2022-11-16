@@ -5,9 +5,10 @@ pnpm i
 pnpm dev
 ```
 
-### 后端 node express socket.io
+### 后端 node + express + socket.io
 ```bash
-node ./server.js   # (暂时还未上传)
+cd ./backend
+node ./server.js
 ```
 ### 进度
 - [x] 创建和加入房间
