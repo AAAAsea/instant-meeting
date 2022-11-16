@@ -23,7 +23,7 @@ io.on("connection", (socket) => {
   socket.emit('me', socket.id);
 
   socket.on('createRoom', ({ name }) => {
-    const room = Math.floor((Math.random() + 1) * 10e8).toString(); // 随机9位数房间号
+    const room = Math.floor((Math.random() + 1) * 1e8).toString(); // 随机9位数房间号
     rooms[room] = []
     socket.emit('createRoomSuccess', { room })
     console.log('createRoom', room, name)
@@ -47,7 +47,7 @@ io.on("connection", (socket) => {
         id: socket.id
       })
       io.to(room).emit('joined', { users: rooms[room], newId: socket.id, room })
-      console.log('joinRoom', room, name)
+      // console.log('joinRoom', room, name)
     } else {
       socket.emit('joined', { users: rooms[room], newId: socket.id, room })
     }
@@ -55,14 +55,14 @@ io.on("connection", (socket) => {
 
   socket.on("peerConn", ({ signal, to, name, isInitiator }) => {
     io.to(to).emit("peerConn", { signal, from: socket.id, to, name, isInitiator })
-    console.log('peerConn', socket.id, to, name, isInitiator)
+    // console.log('peerConn', socket.id, to, name, isInitiator)
   })
 
   socket.on("disconnecting", () => {
-    console.log(socket.rooms)
+    // console.log(socket.rooms)
     for (let room of socket.rooms) {
       if (room !== socket.id) {
-        console.log('removeUser')
+        // console.log('removeUser')
         io.to(room).emit('removeUser', { userId: socket.id })
       }
     }

@@ -76,10 +76,11 @@ const Room = () => {
             <ChevronRight color='primary' />
           </IconButton>
         </div>
-        <div className="video-wrapper">
-          <span className='mask'>{name}</span>
+        <div className="video-wrapper my-video-wrapper">
+          <span className='mask'>{name}（我）</span>
           <video onClick={(e) => { mainVideoRef.current.srcObject = e.target.srcObject }} className='video-item' playsInline muted autoPlay ref={myVideoRef}></video>
         </div>
+
         <div className="other-video" ref={userVideoRef}>
           {
             userStreams.map((e) =>
