@@ -1,6 +1,6 @@
 import { Button } from '@mui/material';
 import React from 'react'
-import Message from './components/Message';
+import Message from './components/Message/Message';
 import { useContext } from 'react';
 import { MessageContext } from '@/contexts/MessageContext';
 import { RouterProvider } from 'react-router-dom';

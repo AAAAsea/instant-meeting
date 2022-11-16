@@ -3,12 +3,13 @@ import { io } from "socket.io-client";
 import Peer from 'simple-peer';
 import { useContext } from "react";
 import { MessageContext } from '@/contexts/MessageContext'
-
+import React from 'react'
 const SocketContext = createContext();
 
 const socket = io('http://localhost:5000/');
 const peers = {};
 
+// eslint-disable-next-line react/prop-types
 const SocketContextProvider = ({ children }) => {
   const [call, setCall] = useState(null);
   const [callAccepted, setCallAccepted] = useState(false)
@@ -135,7 +136,7 @@ const SocketContextProvider = ({ children }) => {
     // 打开音频
     const originStream = stream.current;
     navigator.mediaDevices.getUserMedia({
-      audio: true,
+      audio: true
     }).then((currentStream) => {
       if (!stream.current) {
         stream.current = currentStream;
@@ -163,14 +164,12 @@ const SocketContextProvider = ({ children }) => {
           console.log(peer)
         }
       }
-
-
     })
   }
 
-  const initMyVideo = ({ type, quality, open }) => {
+  const initMyVideo = ({ type, open }) => {
     setVideoOpen(open)
-
+        
     // 关闭视频
     if (!open) {
       if (!stream.current) return;
@@ -212,11 +211,11 @@ const SocketContextProvider = ({ children }) => {
     // camera or screen
     if (type) {
       navigator.mediaDevices.getUserMedia({
-        video: true,
+        video: true
       }).then(handlePromise)
     } else {
       navigator.mediaDevices.getDisplayMedia({
-        video: true,
+        video: true
       }).then(handlePromise)
     }
   }

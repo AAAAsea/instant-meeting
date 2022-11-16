@@ -9,6 +9,7 @@ import { VideoCameraFrontRounded } from '@mui/icons-material'
 
 const Home = () => {
   const navigate = useNavigate();
+  const a = 1;
 
   return (
     <>

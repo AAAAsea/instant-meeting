@@ -15,7 +15,7 @@ const Message = () => {
       open={messageOpen}
       anchorOrigin={{
         vertical: 'top',
-        horizontal: 'center',
+        horizontal: 'center'
       }}
       autoHideDuration={2000}
       onClose={handleClose}

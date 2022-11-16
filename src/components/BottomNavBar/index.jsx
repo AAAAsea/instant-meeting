@@ -15,12 +15,9 @@ import { Share } from '@mui/icons-material'
 import { IconButton } from '@mui/material'
 import { Fullscreen } from '@mui/icons-material'
 
-
 const BottomNavBar = (props) => {
   const { initMyVideo, me, myVideo, shutOffMyVideo, initMyVoice, voiceOpen, videoOpen, videoType, room } = useContext(SocketContext);
   const { message } = useContext(MessageContext);
-
-  const { mainVideoRef } = props;
 
   const share = () => {
     console.log(room)

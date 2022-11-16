@@ -8,7 +8,7 @@ import { ThemeProvider } from '@emotion/react'
 
 const theme = createTheme({
   status: {
-    danger: '#e53e3e',
+    danger: '#e53e3e'
   },
   palette: {
     primary: {
@@ -20,9 +20,9 @@ const theme = createTheme({
       main: '#2F2F2F',
       light: '#2F2F2F',
       dark: '#1e1e1e',
-      contrastText: '#AAB8E4',
-    },
-  },
+      contrastText: '#AAB8E4'
+    }
+  }
 });
 
 ReactDOM.createRoot(document.getElementById('root')).render(

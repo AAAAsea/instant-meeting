@@ -46,11 +46,10 @@ const Room = () => {
       mainVideoRef.current.srcObject = myVideo;
     }
     userVideoRef.current.childNodes.forEach((e, index) => {
-      e.childNodes[0].textContent = userStreams[index]?.userName;
+      e.childNodes[0].textContent = userStreams[index].userName;
       e.childNodes[1].srcObject = userStreams[index].stream;
     })
   }, [myVideo, userStreams])
-
 
   return (
     <div id="room">
