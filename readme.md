@@ -7,8 +7,7 @@ pnpm dev
 
 ### 后端 node + express + socket.io
 ```bash
-cd ./backend
-node ./server.js
+pnpm serve
 ```
 ### 进度
 - [x] 创建和加入房间

@@ -13,10 +13,10 @@ const SocketContextProvider = ({ children }) => {
   const [call, setCall] = useState(null);
   const [callAccepted, setCallAccepted] = useState(false)
   const [callEnded, setCallEnded] = useState(false)
-  const [name, setName] = useState('Me')
+  const [name, setName] = useState('')
   const [userVideo, setUserVideo] = useState([]);
   const [myVideo, setMyVideo] = useState(null);
-  const [room, setRoom] = useState();
+  const [room, setRoom] = useState(""); // make the room controlled cause of the input
   const [userStreams, setUserStreams] = useState([]);
   const [voiceOpen, setVoiceOpen] = useState(false);
   const [videoOpen, setVideoOpen] = useState(false);
@@ -227,7 +227,7 @@ const SocketContextProvider = ({ children }) => {
   }
 
   const joinRoom = (room) => {
-    if (!/\d{9}/.test(room)) {
+    if (!/^\d{9}$/.test(room)) {
       message.error('请输入正确的房间号')
       return
     }

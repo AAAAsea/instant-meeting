@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import { useRef } from 'react'
 import { useContext } from 'react'
 import { SocketContext } from '../../contexts/SocketContext'
-import Home from '../Home'
+import Home from '../Join'
 import BottomNavBar from '@/components/BottomNavBar'
 import './index.css'
 import Peer from 'simple-peer'
@@ -16,6 +16,7 @@ import { IconButton } from '@mui/material'
 import { ChevronRight } from '@mui/icons-material'
 import { useState } from 'react'
 import { ChevronLeft } from '@mui/icons-material'
+import { useNavigate } from 'react-router-dom'
 
 const Room = () => {
 
@@ -26,11 +27,16 @@ const Room = () => {
   const myVideoRef = useRef();
   const userVideoRef = useRef();
   const mainVideoRef = useRef();
-
+  const navigate = useNavigate();
 
   useEffect(() => {
-    setRoomCreated(false);
     setRoom(id);
+
+    if (name === '') {
+      navigate('/join?id=' + id);
+      return;
+    }
+    setRoomCreated(false); // 为了下次再次创建房间
     joinRoom(id);
   }, [])
 

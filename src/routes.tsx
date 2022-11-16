@@ -1,17 +1,17 @@
 /* eslint-disable react/react-in-jsx-scope */
 import React, { Suspense } from 'react'
 import { createBrowserRouter } from 'react-router-dom'
-import Home from './pages/Home'
-import Personal from './pages/Personal'
+import Join from './pages/Join'
+import Create from './pages/Create'
 import Room from './pages/Room'
 export const router = createBrowserRouter([
     {
-        path: '/',
-        element: <Home />,
+        path: '/join',
+        element: <Join />,
     },
     {
-        path: '/user',
-        element: <Personal />,
+        path: '/create',
+        element: <Create />,
     },
     {
         path: '/room/:id',

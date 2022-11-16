@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom'
 import { LoadingButton } from '@mui/lab'
 import { useEffect } from 'react'
 
-const Personal = () => {
+const Create = () => {
   const { message } = useContext(MessageContext)
   const { createRoom, name, setName, roomCreated, room, roomCreating } = useContext(SocketContext)
 
@@ -42,4 +42,4 @@ const Personal = () => {
   )
 }
 
-export default Personal
+export default Create

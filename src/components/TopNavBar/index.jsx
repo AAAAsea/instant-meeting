@@ -8,10 +8,10 @@ const TopNavBar = () => {
     <nav>
       <ButtonGroup variant="text" aria-label="text button group">
         <Button>
-          <NavLink to='/' activeclassname="active" >加入</NavLink>
+          <NavLink to='/join' activeclassname="active" >加入</NavLink>
         </Button>
         <Button>
-          <NavLink to='/user' activeclassname="active">创建</NavLink>
+          <NavLink to='/create' activeclassname="active">创建</NavLink>
         </Button>
       </ButtonGroup>
     </nav>
