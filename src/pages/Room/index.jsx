@@ -17,7 +17,8 @@ import { ChevronRight } from '@mui/icons-material'
 import { useState } from 'react'
 import { ChevronLeft } from '@mui/icons-material'
 import { useNavigate } from 'react-router-dom'
-
+import { Avatar } from '@mui/material'
+import { stringToColor } from '@/utils'
 const Room = () => {
 
   const [slideOpen, setSlideOpen] = useState(false);
@@ -42,7 +43,7 @@ const Room = () => {
 
   useEffect(() => {
     myVideoRef.current.srcObject = myVideo;
-    if (!mainVideoRef.current.srcObject) {
+    if (mainVideoRef.current && !mainVideoRef.current.srcObject) {
       mainVideoRef.current.srcObject = myVideo;
     }
     userVideoRef.current.childNodes.forEach((e, index) => {
@@ -55,26 +56,45 @@ const Room = () => {
     <div id="room">
       <div className="loading-btn-wrapper">
         <LoadingButton
+          style={{ display: roomJoinning ? 'inline' : 'none' }}
           endIcon={roomJoinning ? <CircularProgress size={14} color="warning" /> : <></>} loadingPosition="end" className='loading-btn' variant='contained'>
-          {roomJoinning ? '正在加入...' : (roomJoinned ? '已加入' : roomErrorMsg)}
+          视频链接中
         </LoadingButton>
       </div>
-      <div className="main-video-wrapper">
+
+      <div style={{
+        visibility: (mainVideoRef.current && mainVideoRef.current.srcObject) ? 'visible' : 'hidden'
+      }} className="main-video-wrapper">
         <video controls={false} className='main-video' playsInline muted autoPlay ref={mainVideoRef}></video>
       </div>
-      <div className="open-slide-btn" onClick={() => { setSlideOpen(true) }}>
-        {/* <IconButton onClick={() => { setSlideOpen(true) }}> */}
-        <ChevronLeft color='primary' />
-        {/* </IconButton> */}
+      <div
+        style={{
+          visibility: (mainVideoRef.current && mainVideoRef.current.srcObject) ? 'hidden' : 'visible'
+        }}
+        className="avatar-wrapper">
+        {
+          users.map(user => (
+            <Avatar alt="Remy Sharp" sx={{ bgcolor: stringToColor(user.name) }} key={user.id}>
+              {user.name}
+            </Avatar>
+          ))
+        }
       </div>
+
+      <div className="open-slide-btn" onClick={() => { setSlideOpen(true) }}>
+        <ChevronLeft color='primary' />
+      </div>
+
       <div
         style={{ transform: slideOpen ? 'translateX(0)' : 'translateX(100%)' }}
         className="slide-video-wrapper">
+
         <div className="slide-header">
           <IconButton onClick={() => { setSlideOpen(false) }}>
             <ChevronRight color='primary' />
           </IconButton>
         </div>
+
         <div className="video-wrapper my-video-wrapper">
           <span className='mask'>{name}（我）</span>
           <video onClick={(e) => { mainVideoRef.current.srcObject = e.target.srcObject }} className='video-item' playsInline muted autoPlay ref={myVideoRef}></video>

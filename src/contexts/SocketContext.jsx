@@ -76,6 +76,8 @@ const SocketContextProvider = ({ children }) => {
       peers[userId].destroy()
       userStreamRef.current.splice(userStreamRef.current.findIndex(e => e.userId === userId), 1)
       setUserStreams([...userStreamRef.current])
+      usersRef.current.splice(usersRef.current.findIndex(e => e.userId === userId), 1)
+      setUser([...usersRef.current])
     })
 
     socket.on('joinError', ({ msg }) => {
@@ -169,7 +171,7 @@ const SocketContextProvider = ({ children }) => {
 
   const initMyVideo = ({ type, open }) => {
     setVideoOpen(open)
-        
+
     // 关闭视频
     if (!open) {
       if (!stream.current) return;

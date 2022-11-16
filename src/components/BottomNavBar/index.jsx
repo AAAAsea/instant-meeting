@@ -18,6 +18,8 @@ import { Fullscreen } from '@mui/icons-material'
 const BottomNavBar = (props) => {
   const { initMyVideo, me, myVideo, shutOffMyVideo, initMyVoice, voiceOpen, videoOpen, videoType, room } = useContext(SocketContext);
   const { message } = useContext(MessageContext);
+  // eslint-disable-next-line react/prop-types
+  const { mainVideoRef } = props ;
 
   const share = () => {
     console.log(room)
@@ -46,6 +48,7 @@ const BottomNavBar = (props) => {
           }</IconButton>
         <IconButton
           color="primary"
+          // eslint-disable-next-line react/prop-types
           onClick={() => { mainVideoRef.current.requestFullscreen() }}
         >
           <Fullscreen />
