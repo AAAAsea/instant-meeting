@@ -58,6 +58,26 @@ io.on("connection", (socket) => {
     // console.log('peerConn', socket.id, to, name, isInitiator)
   })
 
+  socket.on("setVoice", ({ id, open, room }) => {
+    const user = rooms[room].find(user => user.id === id);
+    console.log("setVoice", id)
+    // console.log(rooms, room)
+    if (user) {
+      user.voice = open;
+      io.to(room).emit('setVoice', { userId: id, open })
+      console.log("setVoice")
+    }
+  })
+
+  socket.on("setVideo", ({ id, open, room }) => {
+    const user = rooms[room].find(user => user.id === id);
+    if (user) {
+      user.video = open;
+      io.to(room).emit('setVideo', { userId: id, open })
+      console.log("setVideo", id)
+    }
+  })
+
   socket.on("disconnecting", () => {
     // console.log(socket.rooms)
     for (let room of socket.rooms) {

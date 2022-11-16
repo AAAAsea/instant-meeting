@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "serve": "node ./backend/server.js",
+    "serve": "nodemon ./backend/server.js",
     "lint": "eslint **/*.jsx"
   },
   "husky": {

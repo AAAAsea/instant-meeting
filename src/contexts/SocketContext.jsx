@@ -18,7 +18,7 @@ const SocketContextProvider = ({ children }) => {
   const [userVideo, setUserVideo] = useState([]);
   const [myVideo, setMyVideo] = useState(null);
   const [room, setRoom] = useState(""); // make the room controlled cause of the input
-  const [userStreams, setUserStreams] = useState([]);
+  // const [userStreams, setUserStreams] = useState([]);
   const [voiceOpen, setVoiceOpen] = useState(false);
   const [videoOpen, setVideoOpen] = useState(false);
   const [videoType, setVideoType] = useState(1); // 1 camera,  0 screen
@@ -34,7 +34,7 @@ const SocketContextProvider = ({ children }) => {
   const me = useRef('');
   const eventBucket = useRef([]); // 收集每个peer的监听事件
   const stream = useRef(null); // useEffect里面只能拿到初始值，故出此下策
-  const userStreamRef = useRef([]); // 同上
+  // const userStreamRef = useRef([]); // 同上
   const usersRef = useRef([]); // 同上
 
   useEffect(() => {
@@ -60,7 +60,6 @@ const SocketContextProvider = ({ children }) => {
 
       // 与未连接的用户建立连接
       users.forEach(user => {
-        // console.log(user.id, peers[user.id])
         if (user.id !== socket.id && !peers[user.id]) {
           getPeerConnection(user.id, user.name, newId !== socket.id);
         }
@@ -72,12 +71,28 @@ const SocketContextProvider = ({ children }) => {
       eventBucket.current[from] && eventBucket.current[from](signal);
     })
 
+    socket.on('setVoice', ({ userId, open }) => {
+      const user = usersRef.current.find(user => user.id === userId);
+      if (user) {
+        user.voice = open;
+        setUsers([...usersRef.current])
+      }
+    })
+
+    socket.on('setVideo', ({ userId, open }) => {
+      const user = usersRef.current.find(user => user.id === userId);
+      if (user) {
+        user.video = open;
+        setUsers([...usersRef.current])
+      }
+    })
+
     socket.on('removeUser', ({ userId }) => {
       peers[userId].destroy()
-      userStreamRef.current.splice(userStreamRef.current.findIndex(e => e.userId === userId), 1)
-      setUserStreams([...userStreamRef.current])
-      usersRef.current.splice(usersRef.current.findIndex(e => e.userId === userId), 1)
-      setUser([...usersRef.current])
+      // userStreamRef.current.splice(userStreamRef.current.findIndex(e => e.userId === userId), 1)
+      // setUserStreams([...userStreamRef.current])
+      usersRef.current.splice(usersRef.current.findIndex(e => e.id === userId), 1)
+      setUsers([...usersRef.current])
     })
 
     socket.on('joinError', ({ msg }) => {
@@ -101,8 +116,9 @@ const SocketContextProvider = ({ children }) => {
 
     peer.on('stream', (stream) => {
       console.log('onStream', stream)
-      userStreamRef.current.push({ userName, stream, userId })
-      setUserStreams([...userStreamRef.current])
+      const user = usersRef.current.find(user => user.id === userId)
+      user.stream = stream;
+      setUsers([...usersRef.current])
     })
 
     peer.on('track', (track) => {
@@ -125,7 +141,7 @@ const SocketContextProvider = ({ children }) => {
   }
 
   const initMyVoice = (open) => {
-    // console.log(open)
+    socket.emit('setVoice', { id: me.current, open, room })
     setVoiceOpen(open);
     // 关闭音频
     if (!open) {
@@ -140,6 +156,7 @@ const SocketContextProvider = ({ children }) => {
     navigator.mediaDevices.getUserMedia({
       audio: true
     }).then((currentStream) => {
+
       if (!stream.current) {
         stream.current = currentStream;
         setMyVideo(currentStream)
@@ -170,6 +187,8 @@ const SocketContextProvider = ({ children }) => {
   }
 
   const initMyVideo = ({ type, open }) => {
+    socket.emit('setVideo', { id: me.current, open, room })
+
     setVideoOpen(open)
 
     // 关闭视频
@@ -185,7 +204,12 @@ const SocketContextProvider = ({ children }) => {
     const originStream = stream.current;
 
     const handlePromise = (currentStream) => {
-      console.log(currentStream)
+      // 需要监听用户停止屏幕共享的事件
+      if (!type) {
+        currentStream.getVideoTracks()[0].onended = () => {
+          initMyVideo({ type, open: false })
+        }
+      }
       if (!stream.current) {
         stream.current = currentStream;
         setMyVideo(currentStream)
@@ -210,7 +234,7 @@ const SocketContextProvider = ({ children }) => {
         }
       }
     }
-    // camera or screen
+    // camera 1  or screen 0
     if (type) {
       navigator.mediaDevices.getUserMedia({
         video: true
@@ -218,7 +242,7 @@ const SocketContextProvider = ({ children }) => {
     } else {
       navigator.mediaDevices.getDisplayMedia({
         video: true
-      }).then(handlePromise)
+      }).then(handlePromise).catch(err => { initMyVideo(type, false) })
     }
   }
 
@@ -237,7 +261,7 @@ const SocketContextProvider = ({ children }) => {
   }
 
   return (
-    <SocketContext.Provider value={{ me, call, callAccepted, callEnded, myVideo, setMyVideo, name, setName, initMyVideo, createRoom, joinRoom, userStreams, peers, voiceOpen, initMyVoice, videoOpen, videoType, room, setRoom, roomCreating, roomJoinning, roomCreated, roomJoinned, setRoomCreated, roomErrorMsg, users }}>
+    <SocketContext.Provider value={{ me, call, callAccepted, callEnded, myVideo, setMyVideo, name, setName, initMyVideo, createRoom, joinRoom, peers, voiceOpen, initMyVoice, videoOpen, videoType, room, setRoom, roomCreating, roomJoinning, roomCreated, roomJoinned, setRoomCreated, roomErrorMsg, users }}>
       {children}
     </SocketContext.Provider>
   )
