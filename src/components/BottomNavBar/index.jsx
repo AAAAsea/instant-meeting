@@ -16,6 +16,7 @@ import { ScreenShareRounded } from '@mui/icons-material'
 import { StopScreenShareRounded } from '@mui/icons-material'
 import { ShareRounded } from '@mui/icons-material'
 import { FullscreenRounded } from '@mui/icons-material'
+import { Tooltip } from '@mui/material'
 
 const BottomNavBar = (props) => {
   const { initMyVideo, initMyVoice, voiceOpen, videoOpen, videoType, room } = useContext(SocketContext);
@@ -32,32 +33,52 @@ const BottomNavBar = (props) => {
   return (
     <div id="bottom">
       <ButtonGroup className='menu-btns animate__animated animate__slideInUp' variant="contained" aria-label="outlined primary button group">
-        <IconButton
-          color={(voiceOpen) ? "error" : "primary"}
-          onClick={() => { initMyVoice(!voiceOpen) }}>{
-            voiceOpen ? <MicRounded /> : <MicOffRounded />
-          }</IconButton>
-        <IconButton
-          color={(videoOpen && videoType) ? "error" : "primary"}
-          onClick={() => { initMyVideo({ type: 1, quality: 'h', open: !videoOpen || !videoType }) }}
-        >{
-            videoOpen && videoType ? <VideocamRounded /> : <VideocamOffRounded />
-          }</IconButton>
-        <IconButton
-          color={(videoOpen && !videoType) ? "error" : "primary"}
-          onClick={() => { initMyVideo({ type: 0, quality: 'h', open: !videoOpen || videoType }) }}
-        >{
-            videoOpen && !videoType ? <ScreenShareRounded /> : <StopScreenShareRounded />
-          }</IconButton>
-        <IconButton
-          color="primary"
-          // eslint-disable-next-line react/prop-types
-          onClick={() => { mainVideoRef.current.requestFullscreen() }}
-        >
-          <FullscreenRounded />
-        </IconButton>
+
+        <Tooltip title={voiceOpen ? '麦克风已打开' : '麦克风已关闭'}>
+          <IconButton
+            color={(voiceOpen) ? "error" : "primary"}
+            onClick={() => { initMyVoice(!voiceOpen) }}
+          >{
+              voiceOpen ? <MicRounded /> : <MicOffRounded />
+            }</IconButton>
+        </Tooltip>
+
+        <Tooltip title={(videoOpen && videoType) ? "摄像头打开" : "摄像头已关闭"}>
+          <IconButton
+            color={(videoOpen && videoType) ? "error" : "primary"}
+            onClick={() => { initMyVideo({ type: 1, quality: 'h', open: !videoOpen || !videoType }) }}
+          >{
+              videoOpen && videoType ? <VideocamRounded /> : <VideocamOffRounded />
+            }</IconButton>
+        </Tooltip>
+        <Tooltip title={(videoOpen && !videoType) ? "屏幕分享开启" : "屏幕分享已关闭"}>
+          <IconButton
+            color={(videoOpen && !videoType) ? "error" : "primary"}
+            onClick={() => { initMyVideo({ type: 0, quality: 'h', open: !videoOpen || videoType }) }}
+          >{
+              videoOpen && !videoType ? <ScreenShareRounded /> : <StopScreenShareRounded />
+            }</IconButton>
+        </Tooltip>
+        <Tooltip title="全屏">
+          <IconButton
+            color="primary"
+            onClick={() => {
+              // eslint-disable-next-line react/prop-types
+              if (!mainVideoRef.current.srcObject) {
+                message.warning('还没有视频可以全屏播放')
+                return;
+              }
+              // eslint-disable-next-line react/prop-types
+              mainVideoRef.current.requestFullscreen()
+            }}
+          >
+            <FullscreenRounded />
+          </IconButton>
+        </Tooltip>
         <CopyToClipboard text={shareLink}>
-          <IconButton color='primary' onClick={share}><ShareRounded /></IconButton>
+          <Tooltip title="分享">
+            <IconButton color='primary' onClick={share}><ShareRounded /></IconButton>
+          </Tooltip>
         </CopyToClipboard>
       </ButtonGroup>
     </div >

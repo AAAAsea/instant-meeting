@@ -79,13 +79,14 @@
   width: 100%;
   max-height: 150px;
   margin: 0 auto;
+  border-radius: 5px;
+  border: 2px solid #eeeeee11;
 }
 
 .video-item {
   width: 100%;
   height: 100%;
   border-radius: 5px;
-  border: 1px solid #eeeeee11;
   cursor: pointer;
 }
 
@@ -95,7 +96,6 @@
 
 .my-video-wrapper {
   border-bottom: 1px solid #555;
-  padding-bottom: 5px;
 }
 
 .video-wrapper {
