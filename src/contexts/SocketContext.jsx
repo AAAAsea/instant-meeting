@@ -4,6 +4,7 @@ import Peer from 'simple-peer';
 import { useContext } from "react";
 import { MessageContext } from '@/contexts/MessageContext'
 import React from 'react'
+import { qualities } from "../utils";
 const SocketContext = createContext();
 
 const socket = io('http://localhost:5000/');
@@ -23,6 +24,7 @@ const SocketContextProvider = ({ children }) => {
   const [speakerOpen, setSpeakerOpen] = useState(false); // spaker
   const [videoOpen, setVideoOpen] = useState(false);
   const [videoType, setVideoType] = useState(1); // 1 camera,  0 screen
+  const [videoQuality, setVideoQuality] = useState('h'); // h m l
   const [roomCreating, setRoomCreating] = useState(false);
   const [roomJoinning, setRoomJoinning] = useState(false);
   const [roomJoinned, setRoomJoinned] = useState(false);
@@ -199,11 +201,11 @@ const SocketContextProvider = ({ children }) => {
     }).then(handlePromise)
   }
 
-  const initMyVideo = ({ type, open }) => {
-    setVideoOpen(open)
+  const initMyVideo = ({ type, quality = videoQuality, open }) => {
 
     // 关闭视频
     if (!open) {
+      setVideoOpen(open)
       if (!stream.current) return;
       const oldVideoTrack = stream.current.getVideoTracks()[0];
       // 同时关掉屏幕共享的音频（已取消音频共享的功能）
@@ -216,13 +218,13 @@ const SocketContextProvider = ({ children }) => {
       return;
     }
 
-    // 打开视频
-    setVideoType(type)
     // 保存之前的stream用于判断之前是否addStream
     const originStream = stream.current;
 
     const handlePromise = (currentStream) => {
       socket.emit('setVideo', { id: me.current, open, room })
+      setVideoOpen(open)
+      setVideoType(type)
 
       // 需要监听用户停止屏幕共享的事件
       if (!type) {
@@ -240,7 +242,7 @@ const SocketContextProvider = ({ children }) => {
       const newVideoTrack = currentStream.getVideoTracks()[0];
       oldVideoTrack && stream.current.removeTrack(oldVideoTrack);
       stream.current.addTrack(newVideoTrack);
-
+      console.log(oldVideoTrack, newVideoTrack)
       // 之前没有stream的话需要通知添加stream
       if (!originStream) {
         setMyVideo(stream.current);
@@ -263,11 +265,11 @@ const SocketContextProvider = ({ children }) => {
     // camera 1  or screen 0
     if (type) {
       navigator.mediaDevices.getUserMedia({
-        video: true
+        video: qualities[quality]
       }).then(handlePromise)
     } else {
       navigator.mediaDevices.getDisplayMedia({
-        video: true
+        video: qualities[quality]
       }).then(handlePromise).catch(err => {
         console.log(err)
         initMyVideo({ type, open: false })
@@ -290,7 +292,7 @@ const SocketContextProvider = ({ children }) => {
   }
 
   return (
-    <SocketContext.Provider value={{ me, call, callAccepted, callEnded, myVideo, setMyVideo, name, setName, initMyVideo, createRoom, joinRoom, peers, voiceOpen, initMyVoice, videoOpen, videoType, room, setRoom, roomCreating, roomJoinning, roomCreated, roomJoinned, setRoomCreated, roomErrorMsg, users, speakerOpen }}>
+    <SocketContext.Provider value={{ me, call, callAccepted, callEnded, myVideo, setMyVideo, name, setName, initMyVideo, createRoom, joinRoom, peers, voiceOpen, initMyVoice, videoOpen, videoType, room, setRoom, roomCreating, roomJoinning, roomCreated, roomJoinned, setRoomCreated, roomErrorMsg, users, speakerOpen, videoQuality, setVideoQuality }}>
       {children}
     </SocketContext.Provider>
   )

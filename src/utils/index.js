@@ -1,5 +1,5 @@
 
-const qualities = {
+export const qualities = {
   'h': {
     width: {
       max: 1920
@@ -8,7 +8,7 @@ const qualities = {
       max: 1080
     }
   },
-  'm': {
+  's': {
     width: {
       max: 1280
     },
@@ -16,13 +16,27 @@ const qualities = {
       max: 720
     }
   },
-  'l': {
+  'm': {
     width: {
-      max: 854
+      max: 720
     },
     height: {
       max: 480
     }
+  },
+  'l': {
+    width: {
+      max: 480
+    },
+    height: {
+      max: 360
+    }
+  },
+  desc: {
+    h: '原画',
+    m: '高清',
+    s: '标清',
+    l: '流畅'
   }
 }
 

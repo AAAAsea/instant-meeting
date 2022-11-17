@@ -5,6 +5,9 @@
   z-index: 999;
   transform: translateX(-50%);
 }
+.menu-btns{
+  height: 40px;
+}
 .menu-btns button{
   background: #333333;
   margin: 0 5px;
