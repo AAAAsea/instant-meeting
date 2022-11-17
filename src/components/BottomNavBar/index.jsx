@@ -28,6 +28,7 @@ import { ListItemText } from '@mui/material'
 import { MenuList } from '@mui/material'
 import { qualities } from '../../utils'
 import { TurnedInNotOutlined } from '@mui/icons-material'
+import { Box } from '@mui/material'
 
 const BottomNavBar = (props) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -109,11 +110,13 @@ const BottomNavBar = (props) => {
             <FullscreenRounded />
           </IconButton>
         </Tooltip>
-        <CopyToClipboard text={shareLink}>
-          <Tooltip title="分享">
-            <IconButton color='primary' onClick={share}><ShareRounded /></IconButton>
-          </Tooltip>
-        </CopyToClipboard>
+        <Tooltip title="分享">
+          <Box>
+            <CopyToClipboard text={shareLink}>
+              <IconButton color='primary' onClick={share}><ShareRounded /></IconButton>
+            </CopyToClipboard>
+          </Box>
+        </Tooltip>
       </ButtonGroup>
 
       <Menu

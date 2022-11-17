@@ -19,7 +19,6 @@ import { StyledBadge } from '@/components/MUI'
 import { Mic } from '@mui/icons-material'
 import { MicOff } from '@mui/icons-material'
 import { Icon } from '@mui/material'
-import { VideocamRounded } from '@mui/icons-material'
 import { VideocamOffRounded } from '@mui/icons-material'
 
 const Room = () => {
@@ -44,6 +43,12 @@ const Room = () => {
 
     window.onbeforeunload = function (e) {
       e.returnValue = ("确定离开当前页面吗？");
+    }
+
+    return () => {
+      window.onbeforeunload = function (e) {
+        e.returnValue = ("确定离开当前页面吗？");
+      }
     }
   }, [])
 
