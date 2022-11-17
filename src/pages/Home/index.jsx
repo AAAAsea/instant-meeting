@@ -15,7 +15,10 @@ const Home = () => {
     <>
       <div id="home">
         <img id="logo" src={logo} onClick={() => { navigate('/') }} />
-        <h1 className='animate__animated animate__zoomIn'>Instant Meeting</h1>
+        <div className="h1-container">
+          <div className="h1-bg"></div>
+          <h1 className='animate__animated animate__zoomIn'>Instant Meeting</h1>
+        </div>
         {/* <span className="desc">Start your own meeting room!</span> */}
         <div className="start-btn ">
           <Button

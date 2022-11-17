@@ -7,12 +7,11 @@
   flex-direction: column;
 }
 h1{
-  background: linear-gradient(to right, #715ee2, #9708CC);
+  background: linear-gradient(to right, #6e6ce9, #9708CC);
   -webkit-background-clip: text;
   color: transparent;
   font-size: 90px;
   font-weight: bolder;
-  margin-top: -80px;
   transition: .1s;
   text-align: center;
 }
@@ -23,7 +22,21 @@ h1{
     margin-bottom: 100px;
   }
 }
-
+.h1-container{
+  position: relative;
+  margin-top: -100px;
+}
+.h1-bg{
+  width: 800px;
+  height: 80px;
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  border-radius: 50%;
+  background-image: linear-gradient( -45deg, #9708CC 50%, #6e6ce9 50% );;
+  filter: blur(70px);
+  transform: translate(-50%,-50%);
+}
 .desc{
   color: var(--secondary-text-color);
   height: 50px;
