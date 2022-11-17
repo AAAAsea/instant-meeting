@@ -16,6 +16,11 @@ import { useNavigate } from 'react-router-dom'
 import { Avatar } from '@mui/material'
 import { stringToColor } from '@/utils'
 import { StyledBadge } from '@/components/MUI'
+import { Mic } from '@mui/icons-material'
+import { MicOff } from '@mui/icons-material'
+import { Icon } from '@mui/material'
+import { VideocamRounded } from '@mui/icons-material'
+import { VideocamOffRounded } from '@mui/icons-material'
 
 const Room = () => {
   const [slideOpen, setSlideOpen] = useState(false);
@@ -42,28 +47,27 @@ const Room = () => {
 
     // 自己关闭摄像头
     if (!videoOpen && myVideo === mainVideoRef.current.srcObject) {
-      mainVideoRef.current.srcObject = null;
       setShowMainVideo(false);
     } else {
       // 当前用户关闭摄像头
       const currentUser = users.find(user => user.stream === mainVideoRef.current.srcObject);
       if (currentUser && !currentUser.video) {
-        mainVideoRef.current.srcObject = null;
         setShowMainVideo(false);
       }
     }
 
     // 更新侧边栏自己摄像头
-    myVideoRef.current.srcObject = videoOpen ? myVideo : null;
+    if (myVideoRef.current.srcObject !== myVideo)
+      myVideoRef.current.srcObject = myVideo
 
     // 更新侧边栏其他用户
-    const usersWithoutMe = users.filter(user => user.id !== me.current)
-    userVideoRef.current.childNodes.forEach((e, index) => {
-      e.childNodes[0].textContent = usersWithoutMe[index].name;
-      e.childNodes[1].srcObject =
-        usersWithoutMe[index].video
-          ? usersWithoutMe[index].stream
-          : null;
+    userVideoRef.current.childNodes.forEach(e => {
+      const user = users.find(user => user.id === e.getAttribute('data'));
+      const video = e.querySelector('video');
+      console.log(user)
+      if (user && video.srcObject !== user.stream) {
+        video.srcObject = user.stream
+      }
     })
   }, [myVideo, users])
 
@@ -71,16 +75,28 @@ const Room = () => {
     <div id="room" className='animate__animated animate__fadeIn'>
       <div className="loading-btn-wrapper">
         <LoadingButton
-          style={{ display: roomJoinning ? 'inline' : 'none' }}
-          endIcon={roomJoinning ? <CircularProgress size={14} color="warning" /> : <></>} loadingPosition="end" className='loading-btn' variant='contained'>
+          style={{ visibility: roomJoinning ? 'visible' : 'hidden' }}
+          endIcon={<CircularProgress size={14} color="error" />}
+          loadingPosition="end"
+          className='loading-btn animate__animated animate__zooIn'
+          variant='contained'>
           视频连接中
         </LoadingButton>
       </div>
 
-      <div style={{
-        visibility: showMainVideo ? 'visible' : 'hidden'
-      }} className="main-video-wrapper">
-        <video controls={false} className='main-video' playsInline muted autoPlay ref={mainVideoRef}></video>
+      <div
+        style={{
+          visibility: showMainVideo ? 'visible' : 'hidden'
+        }}
+        className="main-video-wrapper"
+      >
+        <video
+          className='main-video'
+          playsInline
+          muted
+          autoPlay
+          ref={mainVideoRef}
+        />
       </div>
 
       <div
@@ -90,7 +106,7 @@ const Room = () => {
         className="avatar-wrapper">
         {
           users.map(user => (
-            <div className="avatar-item" key={user.id}>
+            <div className="avatar-item animate__animated animate__zoomIn" key={user.id}>
               <StyledBadge
                 overlap="circular"
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -98,11 +114,24 @@ const Room = () => {
                 color='error'
                 invisible={!user.video}
               >
-                <Avatar className='avatar-main' sizes='large' alt="Remy Sharp" sx={{ bgcolor: stringToColor(user.name), width: 60, height: 60 }} >
+                <Avatar
+                  className='avatar-main '
+                  sizes='large'
+                  sx={{
+                    bgcolor: stringToColor(user.name),
+                    width: 60,
+                    height: 60
+                  }}
+                >
                   {user.name[0]}
                 </Avatar>
               </StyledBadge>
-              <span className='avatar-desc'>{user.name}</span>
+              <div className="avatar-footer">
+                <span className='avatar-desc'>{user.name}</span>
+                <Icon color='primary'>
+                  {user.voice ? <Mic /> : <MicOff />}
+                </Icon>
+              </div>
             </div>
           ))
         }
@@ -123,21 +152,48 @@ const Room = () => {
         </div>
 
         <div className="video-wrapper my-video-wrapper">
-          <span className='mask'>{name}📌</span>
-          <video onClick={(e) => {
-            setShowMainVideo(e.target.srcObject !== null)
-            mainVideoRef.current.srcObject = e.target.srcObject
-          }} className='video-item' playsInline muted autoPlay ref={myVideoRef}></video>
+          <span className='mask'>{name}📍</span>
+          <Icon
+            color='primary'
+            className='video-mask'
+            style={{ visibility: videoOpen ? 'hidden' : 'visible' }}
+          >
+            <VideocamOffRounded />
+          </Icon>
+          <video
+            style={{ visibility: videoOpen ? 'visible' : 'hidden' }}
+            onClick={(e) => {
+              setShowMainVideo(e.target.srcObject !== null)
+              mainVideoRef.current.srcObject = e.target.srcObject
+            }}
+            className='video-item'
+            playsInline
+            autoPlay
+            muted
+            ref={myVideoRef}></video>
         </div>
         <div className="other-video" ref={userVideoRef}>
           {
             users.filter(user => user.id !== me.current).map(user =>
-              <div className="video-wrapper" key={user.id}>
-                <span className="mask"></span>
-                <video onClick={(e) => {
-                  setShowMainVideo(e.target.srcObject !== null);
-                  mainVideoRef.current.srcObject = e.target.srcObject;
-                }} className="video-item" playsInline autoPlay ></video>
+              <div className="video-wrapper" key={user.id} data={user.id}>
+                <span className="mask">{user.name}</span>
+                <Icon
+                  color='primary'
+                  className='video-mask'
+                  style={{ visibility: user.video ? 'hidden' : 'visible' }}
+                >
+                  <VideocamOffRounded />
+                </Icon>
+                <video
+                  style={{ visibility: user.video ? 'visible' : 'hidden' }}
+                  onClick={(e) => {
+                    setShowMainVideo(e.target.srcObject !== null);
+                    mainVideoRef.current.srcObject = e.target.srcObject;
+                  }}
+                  className="video-item"
+                  playsInline
+                  autoPlay
+                ></video>
               </div>
             )
           }

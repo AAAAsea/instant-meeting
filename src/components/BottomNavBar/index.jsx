@@ -1,29 +1,32 @@
-import { Button } from '@mui/material'
-import { ButtonGroup } from '@mui/material'
 import React from 'react'
 import { useContext } from 'react'
-import { SocketContext } from '@/contexts/SocketContext'
-import { MessageContext } from '@/contexts/MessageContext'
 import './index.css'
 import CopyToClipboard from 'react-copy-to-clipboard'
-import { Mic, MicOff } from '@mui/icons-material';
-import { Videocam } from '@mui/icons-material'
-import { VideocamOff } from '@mui/icons-material'
-import { ScreenShare } from '@mui/icons-material'
-import { StopScreenShare } from '@mui/icons-material'
-import { Share } from '@mui/icons-material'
+
+import { ButtonGroup } from '@mui/material'
+import { SocketContext } from '@/contexts/SocketContext'
+import { MessageContext } from '@/contexts/MessageContext'
 import { IconButton } from '@mui/material'
-import { Fullscreen } from '@mui/icons-material'
+import { useMemo } from 'react'
+import { MicRounded } from '@mui/icons-material'
+import { MicOffRounded } from '@mui/icons-material'
+import { VideocamRounded } from '@mui/icons-material'
+import { VideocamOffRounded } from '@mui/icons-material'
+import { ScreenShareRounded } from '@mui/icons-material'
+import { StopScreenShareRounded } from '@mui/icons-material'
+import { ShareRounded } from '@mui/icons-material'
+import { FullscreenRounded } from '@mui/icons-material'
 
 const BottomNavBar = (props) => {
-  const { initMyVideo, me, myVideo, shutOffMyVideo, initMyVoice, voiceOpen, videoOpen, videoType, room } = useContext(SocketContext);
+  const { initMyVideo, initMyVoice, voiceOpen, videoOpen, videoType, room } = useContext(SocketContext);
   const { message } = useContext(MessageContext);
   // eslint-disable-next-line react/prop-types
   const { mainVideoRef } = props;
 
+  const shareLink = useMemo(() => `房间号：${room}\n房间链接：${location.href}\n快来加入我的房间吧！`, [room])
   const share = () => {
     console.log(room)
-    message.success('房间号已复制，快去分享吧~')
+    message.success('房间已复制，快去分享吧~')
   }
 
   return (
@@ -32,29 +35,29 @@ const BottomNavBar = (props) => {
         <IconButton
           color={(voiceOpen) ? "error" : "primary"}
           onClick={() => { initMyVoice(!voiceOpen) }}>{
-            voiceOpen ? <Mic /> : <MicOff />
+            voiceOpen ? <MicRounded /> : <MicOffRounded />
           }</IconButton>
         <IconButton
           color={(videoOpen && videoType) ? "error" : "primary"}
           onClick={() => { initMyVideo({ type: 1, quality: 'h', open: !videoOpen || !videoType }) }}
         >{
-            videoOpen && videoType ? <Videocam /> : <VideocamOff />
+            videoOpen && videoType ? <VideocamRounded /> : <VideocamOffRounded />
           }</IconButton>
         <IconButton
           color={(videoOpen && !videoType) ? "error" : "primary"}
           onClick={() => { initMyVideo({ type: 0, quality: 'h', open: !videoOpen || videoType }) }}
         >{
-            videoOpen && !videoType ? <ScreenShare /> : <StopScreenShare />
+            videoOpen && !videoType ? <ScreenShareRounded /> : <StopScreenShareRounded />
           }</IconButton>
         <IconButton
           color="primary"
           // eslint-disable-next-line react/prop-types
           onClick={() => { mainVideoRef.current.requestFullscreen() }}
         >
-          <Fullscreen />
+          <FullscreenRounded />
         </IconButton>
-        <CopyToClipboard text={room}>
-          <IconButton color='primary' onClick={share}><Share /></IconButton>
+        <CopyToClipboard text={shareLink}>
+          <IconButton color='primary' onClick={share}><ShareRounded /></IconButton>
         </CopyToClipboard>
       </ButtonGroup>
     </div >

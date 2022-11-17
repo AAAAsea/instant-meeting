@@ -61,7 +61,7 @@ io.on("connection", (socket) => {
   })
 
   socket.on("setVoice", ({ id, open, room }) => {
-    const user = rooms[room].find(user => user.id === id);
+    const user = rooms[room] ? rooms[room].find(user => user.id === id) : undefined;
     console.log("setVoice", id)
     // console.log(rooms, room)
     if (user) {

@@ -20,6 +20,7 @@ const SocketContextProvider = ({ children }) => {
   const [room, setRoom] = useState(""); // make the room controlled cause of the input
   // const [userStreams, setUserStreams] = useState([]);
   const [voiceOpen, setVoiceOpen] = useState(false);
+  const [speakerOpen, setSpeakerOpen] = useState(false); // spaker
   const [videoOpen, setVideoOpen] = useState(false);
   const [videoType, setVideoType] = useState(1); // 1 camera,  0 screen
   const [roomCreating, setRoomCreating] = useState(false);
@@ -34,7 +35,6 @@ const SocketContextProvider = ({ children }) => {
   const me = useRef('');
   const eventBucket = useRef([]); // 收集每个peer的监听事件
   const stream = useRef(null); // useEffect里面只能拿到初始值，故出此下策
-  // const userStreamRef = useRef([]); // 同上
   const usersRef = useRef([]); // 同上
 
   useEffect(() => {
@@ -91,8 +91,6 @@ const SocketContextProvider = ({ children }) => {
     socket.on('removeUser', ({ userId, name }) => {
       peers[userId].destroy()
       message.info(`${name}离开了房间`)
-      // userStreamRef.current.splice(userStreamRef.current.findIndex(e => e.userId === userId), 1)
-      // setUserStreams([...userStreamRef.current])
       usersRef.current.splice(usersRef.current.findIndex(e => e.id === userId), 1)
       setUsers([...usersRef.current])
     })
@@ -108,8 +106,7 @@ const SocketContextProvider = ({ children }) => {
   const getPeerConnection = (userId, userName, isInitiator) => {
     const peer = new Peer({
       initiator: isInitiator,
-      trickle: false,
-      stream: stream.current
+      trickle: false
     })
 
     peer.on('signal', (signal) => {
@@ -124,11 +121,18 @@ const SocketContextProvider = ({ children }) => {
     })
 
     peer.on('track', (track) => {
+      const user = usersRef.current.find(user => user.id === userId)
       console.log('onTrack', track)
+      if (user && user.stream) {
+        console.log(user.stream.getTracks())
+      }
+
     })
 
     peer.on('connect', () => {
-      console.log(userId + ' connected')
+      if (stream.current)
+        peer.addStream(stream.current);
+      console.log('connected')
       peers[userId] = peer;
       setRoomJoinning(false);
       setRoomJoinned(true);
@@ -143,31 +147,33 @@ const SocketContextProvider = ({ children }) => {
   }
 
   const initMyVoice = (open) => {
+
     socket.emit('setVoice', { id: me.current, open, room })
-    setVoiceOpen(open);
-    // 关闭音频
+    setVoiceOpen(open)
+
+    // 关闭麦克风
     if (!open) {
       if (!stream.current) return;
-      const oldVoiceTrack = stream.current.getAudioTracks()[0];
-      oldVoiceTrack && oldVoiceTrack.stop()
+      const oldMicroPhoneTrack = stream.current.getAudioTracks().find(track => track.label !== 'System Audio')
+      oldMicroPhoneTrack && oldMicroPhoneTrack.stop()
       return;
     }
 
     // 打开音频
     const originStream = stream.current;
-    navigator.mediaDevices.getUserMedia({
-      audio: true
-    }).then((currentStream) => {
+    const handlePromise = (currentStream) => {
+      console.log(currentStream)
 
       if (!stream.current) {
         stream.current = currentStream;
         setMyVideo(currentStream)
       }
-      const oldVoiceTrack = stream.current.getAudioTracks()[0];
-      const newvoiceTrack = currentStream.getTracks()[0];
+      const oldMicroPhoneTrack = stream.current.getAudioTracks().find(track => track.label !== 'System Audio')
+      const newMicroPhoneTrack = currentStream.getAudioTracks()[0];
 
-      oldVoiceTrack && stream.current.removeTrack(oldVoiceTrack);
-      stream.current.addTrack(newvoiceTrack);
+      oldMicroPhoneTrack && stream.current.removeTrack(oldMicroPhoneTrack);
+      stream.current.addTrack(newMicroPhoneTrack);
+      console.log(stream.current.getTracks())
 
       // 之前没有stream的话需要通知添加stream，否则更新track
       if (!originStream) {
@@ -179,25 +185,35 @@ const SocketContextProvider = ({ children }) => {
       } else {
         for (let peer in peers) {
           // 之前没有音频轨道的话需要添加，否则替换
-          oldVoiceTrack
-            ? peers[peer].replaceTrack(oldVoiceTrack, newvoiceTrack, myVideo)
-            : peers[peer].addTrack(newvoiceTrack, myVideo)
-          console.log(peer)
+          if (oldMicroPhoneTrack) {
+            console.log('tihuan voice')
+            peers[peer].replaceTrack(oldMicroPhoneTrack, newMicroPhoneTrack, myVideo)
+          } else {
+            peers[peer].addTrack(newMicroPhoneTrack, myVideo)
+          }
         }
       }
-    })
+    }
+    navigator.mediaDevices.getUserMedia({
+      audio: true
+    }).then(handlePromise)
   }
 
   const initMyVideo = ({ type, open }) => {
     socket.emit('setVideo', { id: me.current, open, room })
-
+    console.log(open)
     setVideoOpen(open)
 
     // 关闭视频
     if (!open) {
       if (!stream.current) return;
       const oldVideoTrack = stream.current.getVideoTracks()[0];
-      oldVideoTrack && oldVideoTrack.stop();
+      // 同时关掉屏幕共享的音频
+      if (!type) {
+        const oldSpeakerTrack = stream.current.getAudioTracks().find(track => track.lavel === 'System Audio');
+        oldSpeakerTrack && oldSpeakerTrack.stop();
+        oldVideoTrack && oldVideoTrack.stop();
+      }
       return;
     }
 
@@ -206,9 +222,11 @@ const SocketContextProvider = ({ children }) => {
     const originStream = stream.current;
 
     const handlePromise = (currentStream) => {
+      // console.log(currentStream?.getTracks())
       // 需要监听用户停止屏幕共享的事件
       if (!type) {
         currentStream.getVideoTracks()[0].onended = () => {
+          console.log('ended')
           initMyVideo({ type, open: false })
         }
       }
@@ -218,9 +236,16 @@ const SocketContextProvider = ({ children }) => {
       }
 
       const oldVideoTrack = stream.current.getVideoTracks()[0];
+      const oldSpeakerTrack = stream.current.getAudioTracks().find(track => track.label === 'System Audio');
+      console.log('oldSpeakerTrack', oldSpeakerTrack)
       const newVideoTrack = currentStream.getVideoTracks()[0];
+      const newAudioTrack = currentStream.getAudioTracks()[0];
+      oldSpeakerTrack && stream.current.removeTrack(oldSpeakerTrack);
+      newAudioTrack && stream.current.addTrack(newAudioTrack);
       oldVideoTrack && stream.current.removeTrack(oldVideoTrack);
       stream.current.addTrack(newVideoTrack);
+
+      // console.log('stream.current.getTracks', stream.current.getTracks());
 
       // 之前没有stream的话需要通知添加stream
       if (!originStream) {
@@ -231,8 +256,25 @@ const SocketContextProvider = ({ children }) => {
         }
       } else {
         for (let peer in peers) {
-          peers[peer].replaceTrack(oldVideoTrack, newVideoTrack, myVideo)
-          console.log(peer)
+          // 音频轨道（共享屏幕）的替换和新增
+          if (newAudioTrack) {
+            if (oldSpeakerTrack) {
+              // oldSpeakerTrack.stop();
+              console.log('tihuan')
+              peers[peer].replaceTrack(oldSpeakerTrack, newAudioTrack, myVideo);
+            } else {
+              peers[peer].addTrack(newAudioTrack, myVideo);
+            }
+          } else {
+            // if (oldSpeakerTrack) oldSpeakerTrack.stop();
+          }
+          // 视频轨道的替换或新增
+          if (oldVideoTrack) {
+            // oldVideoTrack.stop();
+            peers[peer].replaceTrack(oldVideoTrack, newVideoTrack, myVideo)
+          } else {
+            peers[peer].addTrack(newVideoTrack, myVideo)
+          }
         }
       }
     }
@@ -243,8 +285,12 @@ const SocketContextProvider = ({ children }) => {
       }).then(handlePromise)
     } else {
       navigator.mediaDevices.getDisplayMedia({
-        video: true
-      }).then(handlePromise).catch(err => { initMyVideo(type, false) })
+        video: true,
+        audio: true
+      }).then(handlePromise).catch(err => {
+        console.log(err)
+        initMyVideo({ type, open: false })
+      })
     }
   }
 
@@ -263,7 +309,7 @@ const SocketContextProvider = ({ children }) => {
   }
 
   return (
-    <SocketContext.Provider value={{ me, call, callAccepted, callEnded, myVideo, setMyVideo, name, setName, initMyVideo, createRoom, joinRoom, peers, voiceOpen, initMyVoice, videoOpen, videoType, room, setRoom, roomCreating, roomJoinning, roomCreated, roomJoinned, setRoomCreated, roomErrorMsg, users }}>
+    <SocketContext.Provider value={{ me, call, callAccepted, callEnded, myVideo, setMyVideo, name, setName, initMyVideo, createRoom, joinRoom, peers, voiceOpen, initMyVoice, videoOpen, videoType, room, setRoom, roomCreating, roomJoinning, roomCreated, roomJoinned, setRoomCreated, roomErrorMsg, users, speakerOpen }}>
       {children}
     </SocketContext.Provider>
   )
