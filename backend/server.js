@@ -26,7 +26,7 @@ io.on("connection", (socket) => {
     const room = Math.floor((Math.random() + 1) * 1e8).toString(); // 随机9位数房间号
     rooms[room] = []
     socket.emit('createRoomSuccess', { room })
-    console.log('createRoom', room, name)
+    // console.log('createRoom', room, name)
   });
 
   socket.on('joinRoom', ({ room, name }) => {
@@ -62,12 +62,12 @@ io.on("connection", (socket) => {
 
   socket.on("setVoice", ({ id, open, room }) => {
     const user = rooms[room] ? rooms[room].find(user => user.id === id) : undefined;
-    console.log("setVoice", id)
+    // console.log("setVoice", id)
     // console.log(rooms, room)
     if (user) {
       user.voice = open;
       io.to(room).emit('setVoice', { userId: id, open })
-      console.log("setVoice")
+      // console.log("setVoice")
     }
   })
 

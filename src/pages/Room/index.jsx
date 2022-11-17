@@ -41,6 +41,10 @@ const Room = () => {
     }
     setRoomCreated(false); // 为了下次再次创建房间
     joinRoom(id);
+
+    window.onbeforeunload = function (e) {
+      e.returnValue = ("确定离开当前页面吗？");
+    }
   }, [])
 
   useEffect(() => {
@@ -64,7 +68,7 @@ const Room = () => {
     userVideoRef.current.childNodes.forEach(e => {
       const user = users.find(user => user.id === e.getAttribute('data'));
       const video = e.querySelector('video');
-      console.log(user)
+      // console.log(user)
       if (user && video.srcObject !== user.stream) {
         video.srcObject = user.stream
       }

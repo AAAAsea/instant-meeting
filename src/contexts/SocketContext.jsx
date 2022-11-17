@@ -7,7 +7,8 @@ import React from 'react'
 import { qualities } from "../utils";
 const SocketContext = createContext();
 
-const socket = io('http://localhost:5000/');
+// const socket = io('ws://localhost:5000/');
+const socket = io('https://meet.asea.fun/');
 const peers = {};
 
 // eslint-disable-next-line react/prop-types
@@ -50,7 +51,7 @@ const SocketContextProvider = ({ children }) => {
     })
 
     socket.on('joined', ({ users, newUser, room }) => {
-      console.log('joined', users)
+      // console.log('joined', users)
       message.info(`${newUser.name}进入了房间`)
       setRoom(room);
       usersRef.current = users;
@@ -116,7 +117,7 @@ const SocketContextProvider = ({ children }) => {
     })
 
     peer.on('stream', (stream) => {
-      console.log('onStream', stream)
+      // console.log('onStream', stream)
       const user = usersRef.current.find(user => user.id === userId)
       user.stream = stream;
       setUsers([...usersRef.current])
@@ -124,9 +125,9 @@ const SocketContextProvider = ({ children }) => {
 
     peer.on('track', (track) => {
       const user = usersRef.current.find(user => user.id === userId)
-      console.log('onTrack', track)
+      // console.log('onTrack', track)
       if (user && user.stream) {
-        console.log(user.stream.getTracks())
+        // console.log(user.stream.getTracks())
       }
 
     })
@@ -176,13 +177,13 @@ const SocketContextProvider = ({ children }) => {
 
       oldMicroPhoneTrack && stream.current.removeTrack(oldMicroPhoneTrack);
       stream.current.addTrack(newMicroPhoneTrack);
-      console.log(stream.current.getTracks())
+      // console.log(stream.current.getTracks())
 
       // 之前没有stream的话需要通知添加stream，否则更新track
       if (!originStream) {
         setMyVideo(stream.current);
         for (let peer in peers) {
-          console.log(peers[peer])
+          // console.log(peers[peer])
           peers[peer].addStream(stream.current)
         }
       } else {
@@ -229,7 +230,7 @@ const SocketContextProvider = ({ children }) => {
       // 需要监听用户停止屏幕共享的事件
       if (!type) {
         currentStream.getVideoTracks()[0].onended = () => {
-          console.log('ended')
+          // console.log('ended')
           initMyVideo({ type, open: false })
         }
       }
@@ -242,12 +243,12 @@ const SocketContextProvider = ({ children }) => {
       const newVideoTrack = currentStream.getVideoTracks()[0];
       oldVideoTrack && stream.current.removeTrack(oldVideoTrack);
       stream.current.addTrack(newVideoTrack);
-      console.log(oldVideoTrack, newVideoTrack)
+      // console.log(oldVideoTrack, newVideoTrack)
       // 之前没有stream的话需要通知添加stream
       if (!originStream) {
         setMyVideo(stream.current);
         for (let peer in peers) {
-          console.log(peers[peer])
+          // console.log(peers[peer])
           peers[peer].addStream(stream.current)
         }
       } else {

@@ -1,0 +1,1 @@
+scp -r ./dist/* root@124.221.154.52:/usr/local/vue/meeting

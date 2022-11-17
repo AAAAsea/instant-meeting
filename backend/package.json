@@ -11,9 +11,8 @@
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
-    "create-react-app": "^5.0.1",
     "express": "^4.18.2",
-    "nodemon": "^2.0.20",
+    "pnpm": "^7.16.1",
     "socket.io": "^4.5.3"
   }
 }

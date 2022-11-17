@@ -52,7 +52,7 @@ const BottomNavBar = (props) => {
   };
 
   const share = () => {
-    console.log(room)
+    // console.log(room)
     message.success('房间已复制，快去分享吧~')
   }
 
