@@ -8,8 +8,21 @@
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 10px;
+  gap: 20px;
   justify-content: center;
+}
+.avatar-main{
+  box-shadow: 0 0 6px 1px #66666666;
+}
+.avatar-item{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+.avatar-desc{
+  color: #eee;
+  text-align: center;
 }
 
 .slide-video-wrapper {
@@ -53,8 +66,9 @@
 }
 
 .main-video {
-  width: 100%;
-  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 10px;
 }
 
 .video-wrapper {

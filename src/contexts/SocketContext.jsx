@@ -47,8 +47,9 @@ const SocketContextProvider = ({ children }) => {
       message.success('创建成功')
     })
 
-    socket.on('joined', ({ users, newId, stream, room }) => {
+    socket.on('joined', ({ users, newUser, room }) => {
       console.log('joined', users)
+      message.info(`${newUser.name}进入了房间`)
       setRoom(room);
       usersRef.current = users;
       setUsers(usersRef.current);
@@ -61,7 +62,7 @@ const SocketContextProvider = ({ children }) => {
       // 与未连接的用户建立连接
       users.forEach(user => {
         if (user.id !== socket.id && !peers[user.id]) {
-          getPeerConnection(user.id, user.name, newId !== socket.id);
+          getPeerConnection(user.id, user.name, newUser.id !== socket.id);
         }
       })
     })
@@ -87,8 +88,9 @@ const SocketContextProvider = ({ children }) => {
       }
     })
 
-    socket.on('removeUser', ({ userId }) => {
+    socket.on('removeUser', ({ userId, name }) => {
       peers[userId].destroy()
+      message.info(`${name}离开了房间`)
       // userStreamRef.current.splice(userStreamRef.current.findIndex(e => e.userId === userId), 1)
       // setUserStreams([...userStreamRef.current])
       usersRef.current.splice(usersRef.current.findIndex(e => e.id === userId), 1)

@@ -40,16 +40,18 @@ io.on("connection", (socket) => {
     }
 
     // 未加入过
+    const newUser = {
+      name,
+      id: socket.id
+    }
     if (rooms[room].findIndex(e => e.id === socket.id) === -1) {
       socket.join(room)
-      rooms[room].push({
-        name,
-        id: socket.id
-      })
-      io.to(room).emit('joined', { users: rooms[room], newId: socket.id, room })
+      socket.name = name;
+      rooms[room].push(newUser)
+      io.to(room).emit('joined', { users: rooms[room], newUser, room })
       // console.log('joinRoom', room, name)
     } else {
-      socket.emit('joined', { users: rooms[room], newId: socket.id, room })
+      socket.emit('joined', { users: rooms[room], newUser, room })
     }
   })
 
@@ -81,9 +83,10 @@ io.on("connection", (socket) => {
   socket.on("disconnecting", () => {
     // console.log(socket.rooms)
     for (let room of socket.rooms) {
+      // 除了自己的私有房间
       if (room !== socket.id) {
         // console.log('removeUser')
-        io.to(room).emit('removeUser', { userId: socket.id })
+        io.to(room).emit('removeUser', { userId: socket.id, name: socket.name })
       }
     }
   });

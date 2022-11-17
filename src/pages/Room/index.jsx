@@ -1,16 +1,12 @@
-import { Paper } from '@mui/material'
 import React from 'react'
 import { useEffect } from 'react'
 import { useRef } from 'react'
 import { useContext } from 'react'
 import { SocketContext } from '../../contexts/SocketContext'
-import Home from '../Join'
 import BottomNavBar from '@/components/BottomNavBar'
 import './index.css'
-import Peer from 'simple-peer'
 import { useParams } from 'react-router-dom'
 import { LoadingButton } from '@mui/lab'
-import { Group } from '@mui/icons-material'
 import { CircularProgress } from '@mui/material'
 import { IconButton } from '@mui/material'
 import { ChevronRight } from '@mui/icons-material'
@@ -19,11 +15,11 @@ import { ChevronLeft } from '@mui/icons-material'
 import { useNavigate } from 'react-router-dom'
 import { Avatar } from '@mui/material'
 import { stringToColor } from '@/utils'
+import { StyledBadge } from '@/components/MUI'
+
 const Room = () => {
-
   const [slideOpen, setSlideOpen] = useState(false);
-
-  const { myVideo, users, joinRoom, setRoom, roomJoinning, roomJoinned, room, name, setRoomCreated, me, videoOpen } = useContext(SocketContext)
+  const { myVideo, users, joinRoom, setRoom, roomJoinning, name, setRoomCreated, me, videoOpen } = useContext(SocketContext)
   const { id } = useParams()
   const myVideoRef = useRef();
   const userVideoRef = useRef();
@@ -86,6 +82,7 @@ const Room = () => {
       }} className="main-video-wrapper">
         <video controls={false} className='main-video' playsInline muted autoPlay ref={mainVideoRef}></video>
       </div>
+
       <div
         style={{
           visibility: showMainVideo ? 'hidden' : 'visible'
@@ -93,9 +90,20 @@ const Room = () => {
         className="avatar-wrapper">
         {
           users.map(user => (
-            <Avatar alt="Remy Sharp" sx={{ bgcolor: stringToColor(user.name) }} key={user.id}>
-              {user.name}
-            </Avatar>
+            <div className="avatar-item" key={user.id}>
+              <StyledBadge
+                overlap="circular"
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                variant="dot"
+                color='error'
+                invisible={!user.video}
+              >
+                <Avatar className='avatar-main' sizes='large' alt="Remy Sharp" sx={{ bgcolor: stringToColor(user.name), width: 60, height: 60 }} >
+                  {user.name[0]}
+                </Avatar>
+              </StyledBadge>
+              <span className='avatar-desc'>{user.name}</span>
+            </div>
           ))
         }
       </div>
