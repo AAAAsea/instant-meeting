@@ -5,7 +5,7 @@ a{
 :root{
   --text-color: #222;
   --secondary-text-color: #888;
-  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; 
 }
 
 :root[theme="dark"]{

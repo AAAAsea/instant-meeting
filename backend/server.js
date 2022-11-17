@@ -74,7 +74,7 @@ io.on("connection", (socket) => {
     if (user) {
       user.video = open;
       io.to(room).emit('setVideo', { userId: id, open })
-      console.log("setVideo", id)
+      // console.log("setVideo", id)
     }
   })
 

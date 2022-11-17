@@ -10,6 +10,7 @@ specifiers:
   '@types/react': ^18.0.24
   '@types/react-dom': ^18.0.8
   '@vitejs/plugin-react': ^2.2.0
+  animate.css: ^4.1.1
   eslint: ^8.0.1
   eslint-plugin-import: ^2.25.2
   eslint-plugin-jsx-a11y: ^6.5.1
@@ -33,6 +34,7 @@ dependencies:
   '@mui/icons-material': 5.10.14_edp4dc7hnxdrqofuyrrjp2id7y
   '@mui/lab': 5.0.0-alpha.107_c3g3xpd4hedslz33l4as5mn3jm
   '@mui/material': 5.10.14_thp4wrxo45nyllusrnt46mid4u
+  animate.css: 4.1.1
   react: 18.2.0
   react-copy-to-clipboard: 5.1.0_react@18.2.0
   react-dom: 18.2.0_react@18.2.0
@@ -899,6 +901,10 @@ packages:
       json-schema-traverse: 0.4.1
       uri-js: 4.4.1
     dev: true
+
+  /animate.css/4.1.1:
+    resolution: {integrity: sha512-+mRmCTv6SbCmtYJCN4faJMNFVNN5EuCTTprDTAo7YzIGji2KADmakjVA3+8mVDkZ2Bf09vayB35lSQIex2+QaQ==}
+    dev: false
 
   /ansi-regex/5.0.1:
     resolution: {integrity: sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==}

@@ -19,7 +19,7 @@ const BottomNavBar = (props) => {
   const { initMyVideo, me, myVideo, shutOffMyVideo, initMyVoice, voiceOpen, videoOpen, videoType, room } = useContext(SocketContext);
   const { message } = useContext(MessageContext);
   // eslint-disable-next-line react/prop-types
-  const { mainVideoRef } = props ;
+  const { mainVideoRef } = props;
 
   const share = () => {
     console.log(room)
@@ -28,7 +28,7 @@ const BottomNavBar = (props) => {
 
   return (
     <div id="bottom">
-      <ButtonGroup className='menu-btns' variant="contained" aria-label="outlined primary button group">
+      <ButtonGroup className='menu-btns animate__animated animate__slideInUp' variant="contained" aria-label="outlined primary button group">
         <IconButton
           color={(voiceOpen) ? "error" : "primary"}
           onClick={() => { initMyVoice(!voiceOpen) }}>{

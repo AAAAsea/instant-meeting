@@ -13,6 +13,7 @@ h1{
   font-size: 90px;
   font-weight: bolder;
   margin-top: -80px;
+  transition: .1s;
 }
 .desc{
   color: var(--secondary-text-color);

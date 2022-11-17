@@ -72,7 +72,7 @@ const Room = () => {
   }, [myVideo, users])
 
   return (
-    <div id="room">
+    <div id="room" className='animate__animated animate__fadeIn'>
       <div className="loading-btn-wrapper">
         <LoadingButton
           style={{ display: roomJoinning ? 'inline' : 'none' }}

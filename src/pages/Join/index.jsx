@@ -30,7 +30,7 @@ const Join = () => {
   return (
     <>
       <TopNavBar />
-      <Paper className='container'>
+      <Paper className='container animate__animated animate__fadeIn'>
         <form className='form'>
           <div className='item'>
             <TextField

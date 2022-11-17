@@ -5,6 +5,7 @@ import { ContextProvider } from '@/contexts/MessageContext'
 import { SocketContextProvider } from './contexts/SocketContext'
 import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@emotion/react'
+import 'animate.css'
 
 const theme = createTheme({
   status: {

@@ -15,11 +15,29 @@ const Home = () => {
     <>
       <div id="home">
         <img id="logo" src={logo} onClick={() => { navigate('/') }} />
-        <h1>Instant Meeting</h1>
+        <h1 className='animate__animated animate__zoomIn'>Instant Meeting</h1>
         {/* <span className="desc">Start your own meeting room!</span> */}
-        <div className="start-btn">
-          <Button size='large' color='primary' variant='contained' startIcon={<VideoCameraFrontRounded />} onClick={() => { navigate('/create') }}>Create</Button>
-          <Button size='large' color='neutral' variant='contained' endIcon={<GroupRounded />} onClick={() => { navigate('/join') }}>Join</Button>
+        <div className="start-btn ">
+          <Button
+            size='large'
+            color='primary'
+            variant='contained'
+            startIcon={<VideoCameraFrontRounded />}
+            onClick={() => { navigate('/create') }}
+            className='animate__animated animate__zoomIn'
+          >
+            Create
+          </Button>
+          <Button
+            size='large'
+            color='neutral'
+            variant='contained'
+            endIcon={<GroupRounded />}
+            onClick={() => { navigate('/join') }}
+            className='animate__animated animate__zoomIn'
+          >
+            Join
+          </Button>
         </div>
       </div>
       <Footer></Footer>
