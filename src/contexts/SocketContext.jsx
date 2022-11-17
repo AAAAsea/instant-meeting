@@ -148,7 +148,6 @@ const SocketContextProvider = ({ children }) => {
 
   const initMyVoice = (open) => {
 
-    socket.emit('setVoice', { id: me.current, open, room })
     setVoiceOpen(open)
 
     // 关闭麦克风
@@ -156,13 +155,15 @@ const SocketContextProvider = ({ children }) => {
       if (!stream.current) return;
       const oldMicroPhoneTrack = stream.current.getAudioTracks().find(track => track.label !== 'System Audio')
       oldMicroPhoneTrack && oldMicroPhoneTrack.stop()
+      socket.emit('setVoice', { id: me.current, open, room })
+
       return;
     }
 
     // 打开音频
     const originStream = stream.current;
     const handlePromise = (currentStream) => {
-      console.log(currentStream)
+      socket.emit('setVoice', { id: me.current, open, room })
 
       if (!stream.current) {
         stream.current = currentStream;
@@ -186,7 +187,6 @@ const SocketContextProvider = ({ children }) => {
         for (let peer in peers) {
           // 之前没有音频轨道的话需要添加，否则替换
           if (oldMicroPhoneTrack) {
-            console.log('tihuan voice')
             peers[peer].replaceTrack(oldMicroPhoneTrack, newMicroPhoneTrack, myVideo)
           } else {
             peers[peer].addTrack(newMicroPhoneTrack, myVideo)
@@ -200,29 +200,30 @@ const SocketContextProvider = ({ children }) => {
   }
 
   const initMyVideo = ({ type, open }) => {
-    socket.emit('setVideo', { id: me.current, open, room })
-    console.log(open)
     setVideoOpen(open)
 
     // 关闭视频
     if (!open) {
       if (!stream.current) return;
       const oldVideoTrack = stream.current.getVideoTracks()[0];
-      // 同时关掉屏幕共享的音频
+      // 同时关掉屏幕共享的音频（已取消音频共享的功能）
       if (!type) {
-        const oldSpeakerTrack = stream.current.getAudioTracks().find(track => track.lavel === 'System Audio');
-        oldSpeakerTrack && oldSpeakerTrack.stop();
+        // const oldSpeakerTrack = stream.current.getAudioTracks().find(track => track.lavel === 'System Audio');
+        // oldSpeakerTrack && oldSpeakerTrack.stop();
         oldVideoTrack && oldVideoTrack.stop();
       }
+      socket.emit('setVideo', { id: me.current, open, room })
       return;
     }
 
     // 打开视频
     setVideoType(type)
+    // 保存之前的stream用于判断之前是否addStream
     const originStream = stream.current;
 
     const handlePromise = (currentStream) => {
-      // console.log(currentStream?.getTracks())
+      socket.emit('setVideo', { id: me.current, open, room })
+
       // 需要监听用户停止屏幕共享的事件
       if (!type) {
         currentStream.getVideoTracks()[0].onended = () => {
@@ -236,16 +237,9 @@ const SocketContextProvider = ({ children }) => {
       }
 
       const oldVideoTrack = stream.current.getVideoTracks()[0];
-      const oldSpeakerTrack = stream.current.getAudioTracks().find(track => track.label === 'System Audio');
-      console.log('oldSpeakerTrack', oldSpeakerTrack)
       const newVideoTrack = currentStream.getVideoTracks()[0];
-      const newAudioTrack = currentStream.getAudioTracks()[0];
-      oldSpeakerTrack && stream.current.removeTrack(oldSpeakerTrack);
-      newAudioTrack && stream.current.addTrack(newAudioTrack);
       oldVideoTrack && stream.current.removeTrack(oldVideoTrack);
       stream.current.addTrack(newVideoTrack);
-
-      // console.log('stream.current.getTracks', stream.current.getTracks());
 
       // 之前没有stream的话需要通知添加stream
       if (!originStream) {
@@ -256,21 +250,9 @@ const SocketContextProvider = ({ children }) => {
         }
       } else {
         for (let peer in peers) {
-          // 音频轨道（共享屏幕）的替换和新增
-          if (newAudioTrack) {
-            if (oldSpeakerTrack) {
-              // oldSpeakerTrack.stop();
-              console.log('tihuan')
-              peers[peer].replaceTrack(oldSpeakerTrack, newAudioTrack, myVideo);
-            } else {
-              peers[peer].addTrack(newAudioTrack, myVideo);
-            }
-          } else {
-            // if (oldSpeakerTrack) oldSpeakerTrack.stop();
-          }
           // 视频轨道的替换或新增
           if (oldVideoTrack) {
-            // oldVideoTrack.stop();
+            oldVideoTrack.stop();
             peers[peer].replaceTrack(oldVideoTrack, newVideoTrack, myVideo)
           } else {
             peers[peer].addTrack(newVideoTrack, myVideo)
@@ -285,8 +267,7 @@ const SocketContextProvider = ({ children }) => {
       }).then(handlePromise)
     } else {
       navigator.mediaDevices.getDisplayMedia({
-        video: true,
-        audio: true
+        video: true
       }).then(handlePromise).catch(err => {
         console.log(err)
         initMyVideo({ type, open: false })
