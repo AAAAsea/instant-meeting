@@ -215,7 +215,7 @@ const Room = () => {
           }
         </div>
       </div>
-      <BottomNavBar mainVideoRef={mainVideoRef}></BottomNavBar>
+      <BottomNavBar mainVideoRef={mainVideoRef} showMainVideo={showMainVideo}></BottomNavBar>
     </div >
   )
 }

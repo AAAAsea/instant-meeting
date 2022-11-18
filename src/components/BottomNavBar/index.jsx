@@ -29,14 +29,16 @@ import { MenuList } from '@mui/material'
 import { qualities } from '../../utils'
 import { TurnedInNotOutlined } from '@mui/icons-material'
 import { Box } from '@mui/material'
+import { FullscreenExitRounded } from '@mui/icons-material'
 
 const BottomNavBar = (props) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [isFullScreen, setIsFullScreen] = useState(false);
   const open = Boolean(anchorEl);
   const { initMyVideo, initMyVoice, voiceOpen, videoOpen, videoType, room, videoQuality, setVideoQuality } = useContext(SocketContext);
   const { message } = useContext(MessageContext);
   // eslint-disable-next-line react/prop-types
-  const { mainVideoRef } = props;
+  const { mainVideoRef, showMainVideo } = props;
 
   const shareLink = useMemo(() => `房间号：${room}\n房间链接：${location.href}\n快来加入我的房间吧！`, [room])
 
@@ -94,20 +96,27 @@ const BottomNavBar = (props) => {
             <HdRounded />
           </IconButton>
         </Tooltip>
-        <Tooltip title="全屏">
+        <Tooltip title={isFullScreen ? '取消全屏' : '全屏'}>
           <IconButton
             color="primary"
             onClick={() => {
-              // eslint-disable-next-line react/prop-types
-              if (!mainVideoRef.current.srcObject) {
-                message.warning('还没有视频可以全屏播放')
-                return;
+              const currentFullScreenElement = document.fullscreenElement
+              if (currentFullScreenElement) {
+                document.exitFullscreen();
+                setIsFullScreen(false);
+              } else {
+                setIsFullScreen(true);
+                if (showMainVideo)
+                  // eslint-disable-next-line react/prop-types
+                  mainVideoRef.current.requestFullscreen()
+                else
+                  document.querySelector('#room').requestFullscreen()
               }
-              // eslint-disable-next-line react/prop-types
-              mainVideoRef.current.requestFullscreen()
             }}
           >
-            <FullscreenRounded />
+            {
+              isFullScreen ? <FullscreenExitRounded /> : <FullscreenRounded />
+            }
           </IconButton>
         </Tooltip>
         <Tooltip title="分享">
