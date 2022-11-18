@@ -22,17 +22,44 @@ import { Icon } from '@mui/material'
 import { VideocamOffRounded } from '@mui/icons-material'
 import { JoinFullRounded } from '@mui/icons-material'
 import { LinkRounded } from '@mui/icons-material'
+import { Tabs } from '@mui/material'
+import { Tab } from '@mui/material'
+import { VideoCameraBackRounded } from '@mui/icons-material'
+import { ChatRounded } from '@mui/icons-material'
+import { TextField } from '@mui/material'
+import { Button } from '@mui/material'
+import { formatDate } from '@/utils/tools.js'
+import { MessageContext } from '../../contexts/MessageContext'
+import { VideocamRounded } from '@mui/icons-material'
 
 const Room = () => {
   const [slideOpen, setSlideOpen] = useState(false);
-  const { myVideo, users, joinRoom, setRoom, roomJoinning, name, setRoomCreated, me, videoOpen, roomErrorMsg, roomJoinned } = useContext(SocketContext)
+  const [tabValue, setTabValue] = useState(0);
+  const [showMainVideo, setShowMainVideo] = useState(false);
+  const [msg, setMsg] = useState('');
+
+  const { myVideo, users, joinRoom, setRoom, roomJoinning, name, setRoomCreated, me, videoOpen, roomErrorMsg, roomJoinned, messages, sendMessage } = useContext(SocketContext)
+  const { message } = useContext(MessageContext)
+
   const { id } = useParams()
   const myVideoRef = useRef();
   const userVideoRef = useRef();
   const mainVideoRef = useRef();
+  const chatContainerRef = useRef();
+
   const navigate = useNavigate();
 
-  const [showMainVideo, setShowMainVideo] = useState(false);
+  const handleChangeTab = (e, value) => {
+    setTabValue(value);
+  }
+
+  const handleSendMessage = () => {
+    if (msg.trim() === '' || msg.trim().length > 100) {
+      return;
+    }
+    sendMessage(msg.trim());
+    setMsg('');
+  }
 
   useEffect(() => {
     setRoom(id);
@@ -46,11 +73,8 @@ const Room = () => {
     window.onbeforeunload = function (e) {
       e.returnValue = ("确定离开当前页面吗？");
     }
-
     return () => {
-      window.onbeforeunload = function (e) {
-        e.returnValue = ("确定离开当前页面吗？");
-      }
+      window.onbeforeunload = null
     }
   }, [])
 
@@ -60,7 +84,6 @@ const Room = () => {
     if (!videoOpen && myVideo === mainVideoRef.current.srcObject) {
       setShowMainVideo(false);
     } else {
-      console.log('hh')
       // 当前用户关闭摄像头
       const currentUser = users.find(user => user.stream === mainVideoRef.current.srcObject);
       if (!currentUser || !currentUser.video) {
@@ -83,6 +106,10 @@ const Room = () => {
     })
   }, [myVideo, users])
 
+  useEffect(() => {
+    chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+  }, [messages])
+
   return (
     <div id="room" className='animate__animated animate__fadeIn'>
       <div className="loading-btn-wrapper">
@@ -95,11 +122,6 @@ const Room = () => {
             'animate__animated',
             'animate__zooIn'
           ].join(' ')}
-          // className={{
-          //   'loading-btn': true,
-          //   animate__animated: true,
-          //   animate__zooIn: true
-          // }}
           variant='contained'
           color='primary'
         >
@@ -165,65 +187,123 @@ const Room = () => {
       <div className="open-slide-btn" onClick={() => { setSlideOpen(true) }}>
         <ChevronLeft color='primary' />
       </div>
-
+      {/* 侧边栏 */}
       <div
         style={{ transform: slideOpen ? 'translateX(0)' : 'translateX(100%)' }}
-        className="slide-video-wrapper">
+        className="slide-wrapper">
 
         <div className="slide-header">
           <IconButton onClick={() => { setSlideOpen(false) }}>
             <ChevronRight color='primary' />
           </IconButton>
+          <Tabs value={tabValue} onChange={handleChangeTab} aria-label="icon tabs example">
+            <Tab icon={<VideocamRounded />} />
+            <Tab icon={<ChatRounded />} />
+          </Tabs>
         </div>
 
-        <div className="video-wrapper my-video-wrapper">
-          <span className='mask'>{name}📍</span>
-          <Icon
-            color='primary'
-            className='video-mask'
-            style={{ visibility: videoOpen ? 'hidden' : 'visible' }}
-          >
-            <VideocamOffRounded />
-          </Icon>
-          <video
-            style={{ visibility: videoOpen ? 'visible' : 'hidden' }}
-            onClick={(e) => {
-              setShowMainVideo(e.target.srcObject !== null)
-              mainVideoRef.current.srcObject = e.target.srcObject
-            }}
-            className='video-item'
-            playsInline
-            autoPlay
-            muted
-            ref={myVideoRef}></video>
-        </div>
-        <div className="other-video" ref={userVideoRef}>
-          {
-            users.filter(user => user.id !== me.current).map(user =>
-              <div className="video-wrapper" key={user.id} data={user.id}>
-                <span className="mask">{user.name}</span>
-                <Icon
-                  color='primary'
-                  className='video-mask'
-                  style={{ visibility: user.video ? 'hidden' : 'visible' }}
-                >
-                  <VideocamOffRounded />
-                </Icon>
-                <video
-                  style={{ visibility: user.video ? 'visible' : 'hidden' }}
-                  onClick={(e) => {
-                    setShowMainVideo(e.target.srcObject !== null);
-                    mainVideoRef.current.srcObject = e.target.srcObject;
-                  }}
-                  className="video-item"
-                  playsInline
-                  autoPlay
-                ></video>
-              </div>
-            )
-          }
+        <div className="slide-body" style={{ transform: !tabValue ? 'translateX(0)' : 'translateX(-50%)' }}>
+          <div className="all-video-wrapper">
+            <div className="video-wrapper my-video-wrapper">
+              <span className='mask'>{name}📍</span>
+              <Icon
+                color='primary'
+                className='video-mask'
+                style={{ visibility: videoOpen ? 'hidden' : 'visible' }}
+              >
+                <VideocamOffRounded />
+              </Icon>
+              <video
+                style={{ visibility: videoOpen ? 'visible' : 'hidden' }}
+                onClick={(e) => {
+                  setShowMainVideo(e.target.srcObject !== null)
+                  mainVideoRef.current.srcObject = e.target.srcObject
+                }}
+                className='video-item'
+                playsInline
+                autoPlay
+                muted
+                ref={myVideoRef}></video>
+            </div>
+            <div className="other-video" ref={userVideoRef}>
+              {
+                users.filter(user => user.id !== me.current).map(user =>
+                  <div className="video-wrapper" key={user.id} data={user.id}>
+                    <span className="mask">{user.name}</span>
+                    <Icon
+                      color='primary'
+                      className='video-mask'
+                      style={{ visibility: user.video ? 'hidden' : 'visible' }}
+                    >
+                      <VideocamOffRounded />
+                    </Icon>
+                    <video
+                      style={{ visibility: user.video ? 'visible' : 'hidden' }}
+                      onClick={(e) => {
+                        setShowMainVideo(e.target.srcObject !== null);
+                        mainVideoRef.current.srcObject = e.target.srcObject;
+                      }}
+                      className="video-item"
+                      playsInline
+                      autoPlay
+                    ></video>
+                  </div>
+                )
+              }
+            </div>
+          </div>
+          <div className="all-chat-wrapper">
+            <ul className="message-wrapper" ref={chatContainerRef}>
+              {
+                messages.map((e, index) => (
+                  <li className="message-item" key={index}>
+                    <div
+                      className="message-header"
+                      style={{
+                        color: me.current === e.id ? '#5d77e' : '#6e6ce9'
+                      }}
+                    >
+                      <span>{e.name}</span>
+                      <span>{formatDate(e.time, 'hh:mm:ss')}</span>
+                    </div>
+                    <div className="message-content">
+                      {e.msg}
+                    </div>
+                  </li>
+                ))
+              }
+            </ul>
+            <div className="input-wrapper">
+              <TextField
+                value={msg}
+                className='input-text-field'
+                id="filled-multiline-static"
+                multiline
+                rows={5}
+                placeholder="按下回车发送..."
+                variant='filled'
+                color='primary'
+                label={msg.trim().length > 100 ? '超出限制' : ''}
+                error={msg.trim().length > 100}
+                onChange={(e) => setMsg(e.target.value)}
+                onKeyUp={e => {
+                  if (e.code === 'Enter') {
+                    handleSendMessage()
+                  }
+                }}
+              />
+              <Button
+                variant='contained'
+                className='send-btn'
+                size='small'
+                onClick={handleSendMessage}
+              >
+                发送</Button>
+            </div>
+          </div>
         </div>
       </div>
+
       <BottomNavBar mainVideoRef={mainVideoRef} showMainVideo={showMainVideo}></BottomNavBar>
     </div >
   )

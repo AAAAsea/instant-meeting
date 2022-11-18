@@ -8,7 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "serve": "nodemon ./backend/server.js",
-    "lint": "eslint **/*.jsx"
+    "lint": "eslint **/*.jsx",
+    "electron:serve": "electron ."
   },
   "husky": {
     "hooks": {
@@ -42,7 +43,6 @@
     "eslint-plugin-react": "^7.31.10",
     "eslint-plugin-react-hooks": "^4.6.0",
     "husky": "^8.0.2",
-    "vite": "^3.2.4",
-    "vite-plugin-eslint": "^1.8.1"
+    "vite": "^3.2.4"
   }
 }

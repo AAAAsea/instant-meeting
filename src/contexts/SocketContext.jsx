@@ -7,8 +7,8 @@ import React from 'react'
 import { qualities } from "../utils";
 const SocketContext = createContext();
 
-// const socket = io('ws://localhost:5000/');
-const socket = io('https://meet.asea.fun/');
+const socket = io('http://localhost:5000/');
+// const socket = io('https://meet.asea.fun/');
 const peers = {};
 
 // eslint-disable-next-line react/prop-types
@@ -32,6 +32,7 @@ const SocketContextProvider = ({ children }) => {
   const [roomCreated, setRoomCreated] = useState(false);
   const [roomErrorMsg, setRoomErrorMsg] = useState('');
   const [users, setUsers] = useState([]);
+  const [messages, setMessages] = useState([]);
 
   const { message } = useContext(MessageContext)
 
@@ -39,6 +40,7 @@ const SocketContextProvider = ({ children }) => {
   const eventBucket = useRef([]); // 收集每个peer的监听事件
   const stream = useRef(null); // useEffect里面只能拿到初始值，故出此下策
   const usersRef = useRef([]); // 同上
+  const messagesRef = useRef([]); // 同上
 
   useEffect(() => {
     socket.once('me', (id) => me.current = id);
@@ -104,12 +106,23 @@ const SocketContextProvider = ({ children }) => {
       setRoomJoinning(false);
     })
 
+    socket.on('sendMessage', (data) => {
+      messagesRef.current.push(data);
+      setMessages([...messagesRef.current]);
+    })
+
   }, [])
 
   const getPeerConnection = (userId, userName, isInitiator) => {
     const peer = new Peer({
       initiator: isInitiator,
       trickle: false
+      // config: {
+      //   iceServers: [
+      //     { urls: 'stun:stun.l.google.com:19302' },
+      //     { urls: 'stun:global.stun.twilio.com:3478?transport=udp' }
+      //   ]
+      // }
     })
 
     peer.on('signal', (signal) => {
@@ -300,8 +313,12 @@ const SocketContextProvider = ({ children }) => {
     socket.emit('joinRoom', { room, name, stream })
   }
 
+  const sendMessage = (msg) => {
+    socket.emit('sendMessage', { name, msg, room, time: new Date() })
+  }
+
   return (
-    <SocketContext.Provider value={{ me, call, callAccepted, callEnded, myVideo, setMyVideo, name, setName, initMyVideo, createRoom, joinRoom, peers, voiceOpen, initMyVoice, videoOpen, videoType, room, setRoom, roomCreating, roomJoinning, roomCreated, roomJoinned, setRoomCreated, roomErrorMsg, users, speakerOpen, videoQuality, setVideoQuality }}>
+    <SocketContext.Provider value={{ me, call, callAccepted, callEnded, myVideo, setMyVideo, name, setName, initMyVideo, createRoom, joinRoom, peers, voiceOpen, initMyVoice, videoOpen, videoType, room, setRoom, roomCreating, roomJoinning, roomCreated, roomJoinned, setRoomCreated, roomErrorMsg, users, speakerOpen, videoQuality, setVideoQuality, messages, sendMessage }}>
       {children}
     </SocketContext.Provider>
   )

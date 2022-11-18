@@ -80,6 +80,10 @@ io.on("connection", (socket) => {
     }
   })
 
+  socket.on("sendMessage", ({ msg, room, name, time }) => {
+    io.to(room).emit("sendMessage", { msg, room, name, time, id: socket.id })
+  })
+
   socket.on("disconnecting", () => {
     // console.log(socket.rooms)
     for (let room of socket.rooms) {
@@ -99,14 +103,4 @@ io.on("connection", (socket) => {
     }
   });
 })
-
-// io.on("disconnect", (socket) => {
-//   console.log(rooms)
-//   for (let room in rooms) {
-//     rooms[room] = rooms[room].filter(user => user.id != socket.id)
-//     if (rooms[room].length === 0)
-//       delete rooms[room]
-//   }
-// })
-
 server.listen(PORT, () => { console.log(`Server listening on port ${PORT}`) })

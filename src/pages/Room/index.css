@@ -2,7 +2,10 @@
   height: 100%;
   display: flex;
   align-items: center;
+  min-height: 500px;
 }
+
+/* 头像 */
 .avatar-wrapper{
   position: absolute;
   left: 50%;
@@ -29,20 +32,52 @@
   text-align: center;
 }
 
-.slide-video-wrapper {
+/* 主视频 */
+.main-video-wrapper {
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9;
+}
+
+.main-video {
+  max-width: 80%;
+  height: 80%;
+  border-radius: 10px;
+  pointer-events: none;
+}
+
+/* 侧边栏 */
+.slide-header{
+  display: flex;
+  height: 50px;
+}
+.slide-body{
+  width: 200%;
+  display: flex;
+  transition: .3s;
+  flex: 1;
+  /* height如果不设置会撑开，设置以后就会固定撑满剩下区域 */
+  height: 0; 
+}
+
+.slide-wrapper {
   position: fixed;
   top: 0;
   bottom: 0;
   right: 0;
   width: 200px;
   transition: .3s;
-  overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding: 10px;
   background: #333;
   z-index: 10;
+  overflow: hidden;
 }
 
 .slide-video-wrapper::-webkit-scrollbar {
@@ -61,29 +96,14 @@
   background: rgba(0, 0, 0, 0.1);
 }
 
-.main-video-wrapper {
-  width: 100%;
-  height: 100%;
-  margin: 0 auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9;
-}
-
-.main-video {
-  max-width: 80%;
-  height: 80%;
-  border-radius: 10px;
-  pointer-events: none;
-}
-
 .video-wrapper {
+  position: relative;
   width: 100%;
   max-height: 150px;
   margin: 0 auto;
   border-radius: 5px;
   border: 2px solid #eeeeee11;
+  box-sizing: border-box;
 }
 
 .video-item {
@@ -97,12 +117,100 @@
   box-shadow: 0 0 2px 2px #eeeeee33;
 }
 
-.my-video-wrapper {
-  border-bottom: 1px solid #555;
+.all-video-wrapper{
+  flex: 1;
+}
+.all-chat-wrapper{
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-.video-wrapper {
+.message-wrapper{
+  flex: 1;
+  padding: 0 10px;
+  margin: 0;
+  color: rgb(238, 238, 238);
+  overflow: auto;
+  border-bottom: 2px solid #666;
+  transition: .3s;
+  scroll-behavior: smooth;
+}
+
+.message-wrapper::-webkit-scrollbar {
+  width: 4px;    
+}
+
+.message-wrapper::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+  background: rgba(255, 254, 254, 0.2);
+}
+
+.message-wrapper::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+  border-radius: 0;
+  background: rgba(0,0,0,0.1);
+}
+
+.message-item{
+  margin: 10px 0;
+  list-style: none;
+}
+
+.message-item .message-header{
+  color: rgb(115, 115, 239);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-size: 14px;
+}
+.message-item .message-content{
+  font-size: 14px;
+  line-height: 1.3em;
+  font-family: '幼圆';
+  margin: 3px 0;
+}
+
+.input-wrapper{
   position: relative;
+  flex-basis: 150px;
+  /* max-height: 300px;
+  min-height: 200px; */
+} 
+
+.input-text-field{
+  height: 80%;
+}
+.input-text-field textarea{
+  color: #eee;
+}
+.input-text-field textarea::-webkit-scrollbar {
+  width: 4px;    
+}
+.input-text-field textarea::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+  background: rgba(255, 254, 254, 0.2);
+}
+.input-text-field textarea::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+  border-radius: 0;
+  background: rgba(0,0,0,0.1);
+}
+
+.send-btn{
+  position: absolute !important;
+  bottom: 3px;
+  right: 3px;
+  z-index: 100;
+}
+
+
+.my-video-wrapper {
+  border-bottom: 1px solid #555;
+  margin-bottom: 5px;
 }
 
 .video-wrapper .mask {
