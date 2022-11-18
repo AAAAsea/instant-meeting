@@ -20,14 +20,14 @@ const Home = () => {
           <h1 className='animate__animated animate__zoomIn'>Instant Meeting</h1>
         </div>
         {/* <span className="desc">Start your own meeting room!</span> */}
-        <div className="start-btn ">
+        <div className="start-btn animate__animated animate__zoomIn">
           <Button
             size='large'
             color='primary'
             variant='contained'
             startIcon={<VideoCameraFrontRounded />}
             onClick={() => { navigate('/create') }}
-            className='animate__animated animate__zoomIn'
+            className=''
           >
             Create
           </Button>
@@ -37,7 +37,7 @@ const Home = () => {
             variant='contained'
             endIcon={<GroupRounded />}
             onClick={() => { navigate('/join') }}
-            className='animate__animated animate__zoomIn'
+            className=''
           >
             Join
           </Button>

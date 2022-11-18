@@ -126,6 +126,9 @@
 
 .other-video {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
 .open-slide-btn {
@@ -156,4 +159,10 @@
 /* 隐藏全屏下的video控件 */
 video::-webkit-media-controls-enclosure {
   display: none;
+}
+
+
+.css-jczwvw-MuiButtonBase-root-MuiButton-root-MuiLoadingButton-root.Mui-disabled{
+  color: white !important;
+  background-color: #333 !important;
 }

@@ -20,10 +20,12 @@ import { Mic } from '@mui/icons-material'
 import { MicOff } from '@mui/icons-material'
 import { Icon } from '@mui/material'
 import { VideocamOffRounded } from '@mui/icons-material'
+import { JoinFullRounded } from '@mui/icons-material'
+import { LinkRounded } from '@mui/icons-material'
 
 const Room = () => {
   const [slideOpen, setSlideOpen] = useState(false);
-  const { myVideo, users, joinRoom, setRoom, roomJoinning, name, setRoomCreated, me, videoOpen } = useContext(SocketContext)
+  const { myVideo, users, joinRoom, setRoom, roomJoinning, name, setRoomCreated, me, videoOpen, roomErrorMsg, roomJoinned } = useContext(SocketContext)
   const { id } = useParams()
   const myVideoRef = useRef();
   const userVideoRef = useRef();
@@ -58,9 +60,10 @@ const Room = () => {
     if (!videoOpen && myVideo === mainVideoRef.current.srcObject) {
       setShowMainVideo(false);
     } else {
+      console.log('hh')
       // 当前用户关闭摄像头
       const currentUser = users.find(user => user.stream === mainVideoRef.current.srcObject);
-      if (currentUser && !currentUser.video) {
+      if (!currentUser || !currentUser.video) {
         setShowMainVideo(false);
       }
     }
@@ -84,12 +87,16 @@ const Room = () => {
     <div id="room" className='animate__animated animate__fadeIn'>
       <div className="loading-btn-wrapper">
         <LoadingButton
-          style={{ visibility: roomJoinning ? 'visible' : 'hidden' }}
-          endIcon={<CircularProgress size={14} color="error" />}
+          loading={roomJoinning}
+          endIcon={<LinkRounded size={14} color="white" />}
           loadingPosition="end"
           className='loading-btn animate__animated animate__zooIn'
-          variant='contained'>
-          视频连接中
+          variant='contained'
+          color='primary'
+        >
+          {roomJoinning ? '媒体连接中' : (
+            roomJoinned ? '已连接' : roomErrorMsg
+          )}
         </LoadingButton>
       </div>
 

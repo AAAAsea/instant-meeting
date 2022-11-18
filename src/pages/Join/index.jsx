@@ -30,8 +30,9 @@ const Join = () => {
   return (
     <>
       <TopNavBar />
-      <Paper className='container animate__animated animate__fadeIn'>
-        <form className='form'>
+      <Paper className='container'>
+        <h2 className='animate__animated animate__fadeIn'>加入房间</h2>
+        <form className='form animate__animated animate__fadeIn'>
           <div className='item'>
             <TextField
               label="房间号"
