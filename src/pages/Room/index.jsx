@@ -90,7 +90,16 @@ const Room = () => {
           loading={roomJoinning}
           endIcon={<LinkRounded size={14} color="white" />}
           loadingPosition="end"
-          className='loading-btn animate__animated animate__zooIn'
+          className={[
+            roomJoinning ? 'loading-btn' : undefined,
+            'animate__animated',
+            'animate__zooIn'
+          ].join(' ')}
+          // className={{
+          //   'loading-btn': true,
+          //   animate__animated: true,
+          //   animate__zooIn: true
+          // }}
           variant='contained'
           color='primary'
         >

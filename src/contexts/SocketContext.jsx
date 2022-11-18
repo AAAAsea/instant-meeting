@@ -145,6 +145,12 @@ const SocketContextProvider = ({ children }) => {
       delete peers[userId];
     })
 
+    peer.on('error', (err) => {
+      console.log(err);
+      setRoomJoinning(false);
+      setRoomErrorMsg('连接失败')
+    })
+
     // 收集signal事件，待socket响应时触发
     eventBucket.current[userId] = (signal) => peer.signal(signal)
   }
@@ -267,7 +273,9 @@ const SocketContextProvider = ({ children }) => {
     if (type) {
       navigator.mediaDevices.getUserMedia({
         video: qualities[quality]
-      }).then(handlePromise)
+      }).then(handlePromise).catch(() => {
+        message.error('该设备不支持')
+      })
     } else {
       navigator.mediaDevices.getDisplayMedia({
         video: qualities[quality]

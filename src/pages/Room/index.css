@@ -155,15 +155,11 @@
 
 .loading-btn{
   transition: .3s;
-}
+  color: white !important;
+  background-color: #333 !important;
+} 
 
 /* 隐藏全屏下的video控件 */
 video::-webkit-media-controls-enclosure {
   display: none;
-}
-
-
-.css-jczwvw-MuiButtonBase-root-MuiButton-root-MuiLoadingButton-root.Mui-disabled{
-  color: white !important;
-  background-color: #333 !important;
 }
