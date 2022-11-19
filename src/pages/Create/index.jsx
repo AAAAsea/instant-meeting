@@ -47,6 +47,7 @@ const Create = () => {
                   handleClick();
                 }
               }}
+              error={name.length > 9}
               helperText={!/^\S{1,9}$/.test(name) ? '最多9个字符' : ''}
               onChange={e => setName(e.target.value.trim())}></TextField>
           </div>
