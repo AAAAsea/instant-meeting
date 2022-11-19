@@ -321,7 +321,8 @@ const SocketContextProvider = ({ children }) => {
 
   const createRoom = () => {
     setRoomCreating(true);
-    socket.emit('createRoom', { name })
+    setName(name.trim());
+    socket.emit('createRoom', { name: name.trim() })
   }
 
   const joinRoom = (room) => {
@@ -330,7 +331,8 @@ const SocketContextProvider = ({ children }) => {
       return
     }
     setRoomJoinning(true);
-    socket.emit('joinRoom', { room, name, stream })
+    setName(name.trim());
+    socket.emit('joinRoom', { room, name: name.trim(), stream })
   }
 
   const sendMessage = (msg) => {

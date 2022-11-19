@@ -22,7 +22,7 @@ const Create = () => {
   }, [roomCreated])
 
   const handleClick = () => {
-    if (!/^\S{1,9}$/.test(name)) {
+    if (!/^\S{1,15}$/.test(name)) {
       message.warning('请输入合法的用户名')
       return;
     }
@@ -47,9 +47,9 @@ const Create = () => {
                   handleClick();
                 }
               }}
-              error={name.length > 9}
-              helperText={!/^\S{1,9}$/.test(name) ? '最多9个字符' : ''}
-              onChange={e => setName(e.target.value.trim())}></TextField>
+              error={name.length > 15}
+              helperText={name.length > 15 ? '最多15个字符' : ''}
+              onChange={e => setName(e.target.value)}></TextField>
           </div>
           <div className="item">
             <TextField label="密码" placeholder='密码' variant='standard' ></TextField>

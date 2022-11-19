@@ -25,7 +25,7 @@ const Join = () => {
       message.warning('请输入正确格式的房间号')
       return;
     }
-    if (!/^\S{1,9}$/.test(name)) {
+    if (!/^\S{1,15}$/.test(name)) {
       message.warning('请输入合法的用户名')
       return;
     }
@@ -63,15 +63,15 @@ const Join = () => {
               value={name}
               autoFocus
               placeholder="请输入您的姓名"
-              error={name.length > 9}
-              helperText={!/^\S{1,9}$/.test(name) ? '最多9个字符' : ''}
+              error={name.length > 15}
+              helperText={name.length > 15 ? '最多15个字符' : ''}
               onKeyUp={e => {
                 console.log(e.code)
                 if (e.code === 'Enter') {
                   handleClick();
                 }
               }}
-              onChange={e => setName(e.target.value.trim())}></TextField>
+              onChange={e => setName(e.target.value)}></TextField>
           </div>
           <Button
             endIcon={<GroupRounded />}
