@@ -7,7 +7,6 @@ import BottomNavBar from '@/components/BottomNavBar'
 import './index.css'
 import { useParams } from 'react-router-dom'
 import { LoadingButton } from '@mui/lab'
-import { CircularProgress } from '@mui/material'
 import { IconButton } from '@mui/material'
 import { ChevronRight } from '@mui/icons-material'
 import { useState } from 'react'
@@ -20,17 +19,19 @@ import { Mic } from '@mui/icons-material'
 import { MicOff } from '@mui/icons-material'
 import { Icon } from '@mui/material'
 import { VideocamOffRounded } from '@mui/icons-material'
-import { JoinFullRounded } from '@mui/icons-material'
 import { LinkRounded } from '@mui/icons-material'
 import { Tabs } from '@mui/material'
 import { Tab } from '@mui/material'
-import { VideoCameraBackRounded } from '@mui/icons-material'
 import { ChatRounded } from '@mui/icons-material'
 import { TextField } from '@mui/material'
 import { Button } from '@mui/material'
 import { formatDate } from '@/utils/tools.js'
 import { MessageContext } from '../../contexts/MessageContext'
 import { VideocamRounded } from '@mui/icons-material'
+import { TransitionGroup } from 'react-transition-group'
+import { Collapse } from '@mui/material'
+import { List } from '@mui/material'
+import { ListItem } from '@mui/material'
 
 const Room = () => {
   const [slideOpen, setSlideOpen] = useState(false);
@@ -39,7 +40,6 @@ const Room = () => {
   const [msg, setMsg] = useState('');
 
   const { myVideo, users, joinRoom, setRoom, roomJoinning, name, setRoomCreated, me, videoOpen, roomErrorMsg, roomJoinned, messages, sendMessage } = useContext(SocketContext)
-  const { message } = useContext(MessageContext)
 
   const { id } = useParams()
   const myVideoRef = useRef();
@@ -303,7 +303,22 @@ const Room = () => {
           </div>
         </div>
       </div>
-
+      <List className="bullet-chat" style={{ opacity: slideOpen ? '0' : '1' }}>
+        <TransitionGroup>
+          {
+            messages.map((e, index) => (
+              <Collapse key={e.time + index + e.id}>
+                <ListItem
+                  className="bullet-chat-item"
+                >
+                  <span className='bullet-chat-name'>{e.name}</span>:
+                  <span className='bullet-chat-content'>{e.msg}</span>
+                </ListItem>
+              </Collapse>
+            ))
+          }
+        </TransitionGroup>
+      </List>
       <BottomNavBar mainVideoRef={mainVideoRef} showMainVideo={showMainVideo}></BottomNavBar>
     </div >
   )

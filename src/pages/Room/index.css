@@ -271,3 +271,52 @@
 video::-webkit-media-controls-enclosure {
   display: none;
 }
+
+.bullet-chat{
+  width: 200px;
+  height: 200px;
+  position: fixed !important;
+  left: 30px;
+  bottom: 50px;
+  overflow-y: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  transition: .3s;
+}
+.bullet-chat-item{
+  width: fit-content !important;
+  background: #78797b;
+  color: #eee;
+  border-radius: 5px;
+  font-size: 14px;
+  margin: 5px 0;
+  padding: 3px 5px !important;
+  animation: disappear 4s ease-in-out;
+  animation-fill-mode : forwards;  /* 动画停留在最后的状态 */
+  text-align: center;
+}
+
+@keyframes disappear {
+  0%{
+    opacity: 0;
+    transform: scaleY(0.01) translateX(-30px);
+  }
+  10%{
+    opacity: 1;
+    transform: scaleY(1) translateX(0);
+  }
+  80%{
+    opacity: 1;
+  }
+  100%{
+    opacity: 0;
+  }
+}
+.bullet-chat-name{
+  color: #f6862a;
+}
+.bullet-chat-content{
+  margin-left: 5px;
+  padding-right: 3px;
+}
