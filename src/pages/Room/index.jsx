@@ -260,7 +260,7 @@ const Room = () => {
                     <div
                       className="message-header"
                       style={{
-                        color: me.current === e.id ? '#5d77e' : '#6e6ce9'
+                        color: me.current === e.id ? '#05d77e' : '#6e6ce9'
                       }}
                     >
                       <span>{e.name}</span>
