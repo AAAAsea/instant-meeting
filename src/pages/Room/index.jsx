@@ -71,6 +71,7 @@ const Room = () => {
     joinRoom(id);
 
     window.onbeforeunload = function (e) {
+      e.preventDefault();
       e.returnValue = ("确定离开当前页面吗？");
     }
     return () => {

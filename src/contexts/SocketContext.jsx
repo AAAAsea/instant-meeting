@@ -7,8 +7,8 @@ import React from 'react'
 import { qualities } from "../utils";
 const SocketContext = createContext();
 
-const socket = io('http://localhost:5000/');
-// const socket = io('https://meet.asea.fun/');
+// const socket = io('http://localhost:5000/');
+const socket = io('https://meet.asea.fun/');
 const peers = {};
 
 // eslint-disable-next-line react/prop-types
@@ -20,7 +20,6 @@ const SocketContextProvider = ({ children }) => {
   const [userVideo, setUserVideo] = useState([]);
   const [myVideo, setMyVideo] = useState(null);
   const [room, setRoom] = useState(""); // make the room controlled cause of the input
-  // const [userStreams, setUserStreams] = useState([]);
   const [voiceOpen, setVoiceOpen] = useState(false);
   const [speakerOpen, setSpeakerOpen] = useState(false); // spaker
   const [videoOpen, setVideoOpen] = useState(false);
@@ -170,14 +169,13 @@ const SocketContextProvider = ({ children }) => {
 
   const initMyVoice = (open) => {
 
-    setVoiceOpen(open)
-
     // 关闭麦克风
     if (!open) {
       if (!stream.current) return;
       const oldMicroPhoneTrack = stream.current.getAudioTracks().find(track => track.label !== 'System Audio')
       oldMicroPhoneTrack && oldMicroPhoneTrack.stop()
       socket.emit('setVoice', { id: me.current, open, room })
+      setVoiceOpen(open)
 
       return;
     }
@@ -185,6 +183,7 @@ const SocketContextProvider = ({ children }) => {
     // 打开音频
     const originStream = stream.current;
     const handlePromise = (currentStream) => {
+      setVoiceOpen(open)
       socket.emit('setVoice', { id: me.current, open, room })
 
       if (!stream.current) {
@@ -216,9 +215,17 @@ const SocketContextProvider = ({ children }) => {
         }
       }
     }
-    navigator.mediaDevices.getUserMedia({
-      audio: true
-    }).then(handlePromise)
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      navigator.mediaDevices.getUserMedia({
+        audio: true
+      }).then(handlePromise).catch(err => {
+        console.log(err);
+        message.error('当前设备或浏览器不支持话筒')
+      })
+    } else {
+      message.error('当前设备或浏览器不支持话筒')
+    }
+
   }
 
   const initMyVideo = ({ type, quality = videoQuality, open }) => {
@@ -284,18 +291,29 @@ const SocketContextProvider = ({ children }) => {
     }
     // camera 1  or screen 0
     if (type) {
-      navigator.mediaDevices.getUserMedia({
-        video: qualities[quality]
-      }).then(handlePromise).catch(() => {
-        message.error('该设备不支持')
-      })
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({
+          video: qualities[quality]
+        }).then(handlePromise).catch(() => {
+          message.error('当前设备或浏览器不支持摄像头')
+        })
+      } else {
+        message.error('当前设备或浏览器不支持摄像头')
+      }
+
     } else {
-      navigator.mediaDevices.getDisplayMedia({
-        video: qualities[quality]
-      }).then(handlePromise).catch(err => {
-        console.log(err)
-        initMyVideo({ type, open: false })
-      })
+      if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
+        navigator.mediaDevices.getDisplayMedia({
+          video: qualities[quality]
+        }).then(handlePromise).catch(err => {
+          console.log(err)
+          initMyVideo({ type, open: false })
+          message.error('当前设备或浏览器未支持屏幕共享')
+        })
+      } else {
+        message.error('当前设备或浏览器未支持屏幕共享')
+      }
+
     }
   }
 
