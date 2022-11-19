@@ -125,8 +125,8 @@ const Room = () => {
           variant='contained'
           color='primary'
         >
-          {roomJoinning ? '媒体连接中' : (
-            roomJoinned ? '已连接' : roomErrorMsg
+          {roomJoinning ? '音视频连接中' : (
+            roomJoinned ? '音视频已连接' : roomErrorMsg
           )}
         </LoadingButton>
       </div>

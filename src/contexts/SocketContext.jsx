@@ -161,7 +161,7 @@ const SocketContextProvider = ({ children }) => {
     peer.on('error', (err) => {
       console.log(err);
       setRoomJoinning(false);
-      setRoomErrorMsg('连接失败')
+      setRoomErrorMsg('音视频连接失败')
     })
 
     // 收集signal事件，待socket响应时触发
