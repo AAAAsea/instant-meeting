@@ -17,22 +17,31 @@ app.get("/", (req, res, next) => {
   res.send("runing")
 })
 
-const rooms = {};
+const rooms = {}; // 房间成员
+const roomsInfo = {}; // 房间信息
 io.on("connection", (socket) => {
 
   socket.emit('me', socket.id);
 
-  socket.on('createRoom', ({ name }) => {
-    const room = Math.floor((Math.random() + 1) * 1e8).toString(); // 随机9位数房间号
-    rooms[room] = []
-    socket.emit('createRoomSuccess', { room })
+  socket.on('createRoom', (data) => {
+    const room = Math.floor((Math.random() * 9) * 1e8).toString(); // 随机9位数房间号
+    const master = { room, id: socket.id, name: data.name };
+    rooms[room] = [master]
+    roomsInfo[room] = { ...data, room };
+    socket.join(room);
+    socket.emit('createRoomSuccess', master)
+    socket.name = data.name;
+
     // console.log('createRoom', room, name)
   });
 
-  socket.on('joinRoom', ({ room, name }) => {
-
+  socket.on('joinRoom', ({ room, name, roomPwd }) => {
+    // console.log(rooms[room], roomPwd)
     if (!rooms[room]) {
       socket.emit('joinError', { msg: '房间不存在' })
+      return;
+    } else if (roomsInfo[room].roomPwd !== roomPwd) {
+      socket.emit('joinError', { msg: '房间密码错误' })
       return;
     } else if (rooms[room].length >= maxNum) {
       socket.emit('joinError', { msg: '房间人数已满' })
@@ -53,6 +62,16 @@ io.on("connection", (socket) => {
     } else {
       socket.emit('joined', { users: rooms[room], newUser, room })
     }
+  })
+
+  socket.on('getPublicRooms', () => {
+    const publicRooms = [];
+    for (let room in roomsInfo) {
+      if (roomsInfo[room].isPublic)
+        publicRooms.push(roomsInfo[room]);
+    }
+    socket.emit('setPublicRooms', publicRooms);
+    // console.log(publicRooms)
   })
 
   socket.on("peerConn", ({ signal, to, name, isInitiator }) => {
@@ -89,17 +108,38 @@ io.on("connection", (socket) => {
     for (let room of socket.rooms) {
       // 除了自己的私有房间
       if (room !== socket.id) {
-        // console.log('removeUser')
+        rooms[room] = rooms[room].filter(user => user.id != socket.id)
+        if (rooms[room].length === 0) {
+          delete rooms[room]
+          delete roomsInfo[room];
+        }
         io.to(room).emit('removeUser', { userId: socket.id, name: socket.name })
       }
     }
   });
 
+  socket.on("leaveRoom", () => {
+    for (let room of socket.rooms) {
+      // 除了自己的私有房间
+      if (room !== socket.id) {
+        rooms[room] = rooms[room].filter(user => user.id != socket.id)
+        if (rooms[room].length === 0) {
+          delete rooms[room]
+          delete roomsInfo[room];
+        }
+        io.to(room).emit('removeUser', { userId: socket.id, name: socket.name })
+        socket.leave(room);
+      }
+    }
+  })
+
   socket.on("disconnect", () => {
     for (let room in rooms) {
       rooms[room] = rooms[room].filter(user => user.id != socket.id)
-      if (rooms[room].length === 0)
+      if (rooms[room].length === 0) {
         delete rooms[room]
+        delete roomsInfo[room];
+      }
     }
   });
 })

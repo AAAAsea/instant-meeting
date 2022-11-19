@@ -59,6 +59,23 @@ const BottomNavBar = (props) => {
     message.success('房间已复制，快去分享吧~')
   }
 
+  const handleFullScreen = (full) => {
+    const currentFullScreenElement = document.fullscreenElement
+    if (full) {
+      setIsFullScreen(true);
+      if (showMainVideo)
+        // eslint-disable-next-line react/prop-types
+        mainVideoRef.current.requestFullscreen()
+      else
+        document.querySelector('#room').requestFullscreen()
+    } else {
+      if (currentFullScreenElement) {
+        document.exitFullscreen();
+        setIsFullScreen(false);
+      }
+    }
+  }
+
   return (
     <div id="bottom">
       <ButtonGroup className='menu-btns animate__animated animate__slideInUp' variant="contained" aria-label="outlined primary button group">
@@ -100,18 +117,7 @@ const BottomNavBar = (props) => {
           <IconButton
             color="primary"
             onClick={() => {
-              const currentFullScreenElement = document.fullscreenElement
-              if (currentFullScreenElement) {
-                document.exitFullscreen();
-                setIsFullScreen(false);
-              } else {
-                setIsFullScreen(true);
-                if (showMainVideo)
-                  // eslint-disable-next-line react/prop-types
-                  mainVideoRef.current.requestFullscreen()
-                else
-                  document.querySelector('#room').requestFullscreen()
-              }
+              handleFullScreen(isFullScreen)
             }}
           >
             {

@@ -9,20 +9,21 @@ import { SocketContext } from '@/contexts/SocketContext'
 import { useNavigate } from 'react-router-dom'
 import { MessageContext } from '../../contexts/MessageContext';
 import { GroupRounded } from '@mui/icons-material';
-import { useParams } from 'react-router-dom'
 import { useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { useState } from 'react'
 
 const Join = () => {
-  const { name, setName, room, setRoom } = useContext(SocketContext);
+  const [roomPwd, setRoomPwd] = useState('');
+  const { name, setName, room, setRoom, joinRoom, roomJoinnedCbRef, roomJoinned } = useContext(SocketContext);
   const { message } = useContext(MessageContext);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams()
   const id = searchParams.get('id');
 
   const handleClick = () => {
-    if (!/^\d{9}$/.test(room)) {
-      message.warning('请输入正确格式的房间号')
+    if (room === '') {
+      message.warning('请输入房间号')
       return;
     }
     if (!/^\S{1,15}$/.test(name)) {
@@ -30,11 +31,19 @@ const Join = () => {
       return;
     }
 
-    navigate(`/room/${room}`)
+    joinRoom({ room, roomPwd: roomPwd.trim() });
+    roomJoinnedCbRef.current = () => {
+      navigate('/room/' + room)
+    }
   }
 
   useEffect(() => {
+    document.title = '' // 需要改变一下才能有反应，不知为啥
+    document.title = '加入房间'
     id && setRoom(id);
+    return () => {
+      setRoom('');
+    }
   }, [])
   return (
     <>
@@ -66,12 +75,26 @@ const Join = () => {
               error={name.length > 15}
               helperText={name.length > 15 ? '最多15个字符' : ''}
               onKeyUp={e => {
-                console.log(e.code)
                 if (e.code === 'Enter') {
                   handleClick();
                 }
               }}
               onChange={e => setName(e.target.value)}></TextField>
+          </div>
+          <div className='item'>
+            <TextField
+              label="密码"
+              variant='standard'
+              value={roomPwd}
+              placeholder="请输入房间密码"
+              error={roomPwd.length > 15}
+              helperText={'没有密码可以留空'}
+              onKeyUp={e => {
+                if (e.code === 'Enter') {
+                  handleClick();
+                }
+              }}
+              onChange={e => setRoomPwd(e.target.value.trim())}></TextField>
           </div>
           <Button
             endIcon={<GroupRounded />}

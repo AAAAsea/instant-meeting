@@ -3,18 +3,19 @@ a{
 }
 
 :root{
-  --text-color: #222;
-  --secondary-text-color: #888;
+  --text-color: #e4e4e4;
+  --secondary-text-color:#a0a0a0;
   --primary: #6e6ce9;
   font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; 
 }
 
-:root[theme="dark"]{
+/* :root[theme="dark"]{
   --text-color: #eee;
-}
+} */
 
 body{
   background: rgb(26,26,26);
+  color: var(--text-color);
 }
 #root{
   height: 100vh;

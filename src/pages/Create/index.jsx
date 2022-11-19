@@ -11,23 +11,80 @@ import { LoadingButton } from '@mui/lab'
 import { useEffect } from 'react'
 import { VideoCameraFrontRounded } from '@mui/icons-material'
 import { AppBar } from '@mui/material'
+import { FormControlLabel } from '@mui/material'
+import { Switch } from '@mui/material'
+import { useState } from 'react'
+import { Collapse } from '@mui/material'
 
 const Create = () => {
+  const [isPublic, setIsPublic] = useState(false)
+  const [roomPwd, setRoomPwd] = useState('');
+  const [roomName, setRoomName] = useState('');
+  const [roomDesc, setRoomDesc] = useState('');
   const { message } = useContext(MessageContext)
-  const { createRoom, name, setName, roomCreated, room, roomCreating } = useContext(SocketContext)
+  const { createRoom, name, setName, roomCreated, room, roomCreating, roomCreatedCbRef } = useContext(SocketContext)
 
   const navigate = useNavigate()
+
   useEffect(() => {
-    roomCreated && navigate('/room/' + room)
-  }, [roomCreated])
+    document.title = '' // 需要改变一下才能有反应，不知为啥
+    document.title = '创建房间'
+  }, [])
 
   const handleClick = () => {
-    if (!/^\S{1,15}$/.test(name)) {
-      message.warning('请输入合法的用户名')
+    // 姓名校验
+    if (name.trim() === '') {
+      message.error('你是谁？🤔')
+      return
+    } else if (name.length > 15) {
+      message.error('姓名不规范，亲人两行泪😭')
       return;
     }
+    // 房间名、房间描述校验
+    if (isPublic) {
+      if (!/^\S{1,10}$/.test(roomName)) {
+        if (roomName === '') {
+          message.error('给你的公共房间起个名字吧😋')
+        } else {
+          message.error('房间名也太长了吧🥲')
+        }
+        return;
+      }
+      if (!/^\S{1,50}$/.test(roomDesc)) {
+        if (roomDesc === '') {
+          message.error('房间描述有利于其他人了解你的房间👈')
+        } else {
+          message.error('房间描述不能太长🥲')
+        }
+        return;
+      }
+    } else {
+      // 密码校验
+      if (!/^\w{0,15}$/.test(roomPwd)) {
+        if (roomPwd.length > 15) {
+          message.error('密码太长啦🥲')
+        } else {
+          message.error('看看你的密码🥲')
+        }
+        return;
+      }
+    }
+    // 创建成功后的回调
+    roomCreatedCbRef.current = (room) => {
+      navigate('/room/' + room)
+    }
 
-    createRoom();
+    createRoom({
+      name: name.trim(),
+      roomName: roomName.trim(),
+      roomPwd: roomPwd.trim(),
+      isPublic,
+      roomDesc: roomDesc.trim()
+    });
+  }
+
+  const handleChange = () => {
+    setIsPublic(!isPublic);
   }
   return (
     <>
@@ -35,7 +92,7 @@ const Create = () => {
       <Paper className='container animate__animated ' >
         <h2 className='animate__animated animate__fadeIn'>创建房间</h2>
         <form className='form animate__animated animate__fadeIn'>
-          <div className="item">
+          <div className="item animate__animated animate__fadeIn">
             <TextField
               label="姓名"
               variant='standard'
@@ -51,8 +108,68 @@ const Create = () => {
               helperText={name.length > 15 ? '最多15个字符' : ''}
               onChange={e => setName(e.target.value)}></TextField>
           </div>
+          <Collapse in={!isPublic}>
+            <div className="item" >
+              <TextField
+                label="密码"
+                variant='standard'
+                value={roomPwd}
+                placeholder="请输入房间密码"
+                onKeyUp={e => {
+                  if (e.code === 'Enter') {
+                    handleClick();
+                  }
+                }}
+                error={roomPwd.length > 15 || !/^\w{0,15}$/.test(roomPwd)}
+                helperText={
+                  roomPwd.length > 15 ? '密码不能超过15个字符' : (
+                    !/^\w{0,15}$/.test(roomPwd) ? '密码只能包括字母、数字和下划线' : '不需要密码可以留空'
+                  )
+                }
+                onChange={e => setRoomPwd(e.target.value.trim())}
+              ></TextField>
+            </div>
+          </Collapse>
+          <Collapse in={isPublic}>
+            <div className="item" style={{ display: !isPublic ? 'none' : 'flex' }}>
+              <TextField
+                label="房间名"
+                variant='standard'
+                value={roomName}
+                placeholder="请输入房间名"
+                autoFocus
+                onKeyUp={e => {
+                  if (e.code === 'Enter') {
+                    handleClick();
+                  }
+                }}
+                error={roomName.length > 10}
+                helperText={roomName.length > 10 ? '最多10个字符' : ''}
+                onChange={e => setRoomName(e.target.value.trim())}
+              ></TextField>
+            </div>
+          </Collapse>
+          <Collapse in={isPublic}>
+            <div className="item">
+              <TextField
+                label="房间描述"
+                variant='standard'
+                value={roomDesc}
+                placeholder="请输入房间描述信息"
+                autoFocus
+                onKeyUp={e => {
+                  if (e.code === 'Enter') {
+                    handleClick();
+                  }
+                }}
+                error={roomDesc.length > 50}
+                helperText={roomDesc.length > 50 ? '最多50个字符' : ''}
+                onChange={e => setRoomDesc(e.target.value.trim())}
+              ></TextField>
+            </div>
+          </Collapse>
           <div className="item">
-            <TextField label="密码" placeholder='密码' variant='standard' ></TextField>
+            <FormControlLabel control={<Switch checked={isPublic} onChange={handleChange} />} label="公开" />
           </div>
           <LoadingButton
             endIcon={<VideoCameraFrontRounded />}

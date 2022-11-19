@@ -40,7 +40,7 @@ const Room = () => {
   const [showMainVideo, setShowMainVideo] = useState(false);
   const [msg, setMsg] = useState('');
 
-  const { myVideo, users, joinRoom, setRoom, roomJoinning, name, setRoomCreated, me, videoOpen, roomErrorMsg, roomJoinned, messages, sendMessage, setMessages } = useContext(SocketContext)
+  const { myVideo, users, joinRoom, setRoom, roomJoinning, name, setName, setRoomCreated, me, videoOpen, roomErrorMsg, roomJoinned, messages, sendMessage, setMessages, setRoomJoinned, leaveRoom, room } = useContext(SocketContext)
 
   const { id } = useParams()
   const myVideoRef = useRef();
@@ -68,15 +68,19 @@ const Room = () => {
       return;
     }
     setRoomCreated(false); // 为了下次再次创建房间
-    joinRoom(id);
 
     window.onbeforeunload = function (e) {
       e.preventDefault();
       e.returnValue = ("确定离开当前页面吗？");
     }
+
+    document.title = name
     return () => {
       window.onbeforeunload = null;
       setMessages([]);
+      setName('');
+      setRoomJoinned(false);
+      leaveRoom(room);
     }
   }, [])
 

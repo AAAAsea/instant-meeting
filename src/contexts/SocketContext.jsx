@@ -7,8 +7,8 @@ import React from 'react'
 import { qualities } from "../utils";
 const SocketContext = createContext();
 
-// const socket = io('http://localhost:5000/');
-const socket = io('https://meet.asea.fun/');
+const socket = io('http://localhost:5000/');
+// const socket = io('https://meet.asea.fun/');
 const peers = {};
 
 // eslint-disable-next-line react/prop-types
@@ -32,6 +32,7 @@ const SocketContextProvider = ({ children }) => {
   const [roomErrorMsg, setRoomErrorMsg] = useState('');
   const [users, setUsers] = useState([]);
   const [messages, setMessages] = useState([]);
+  const [publicRooms, setPublicRooms] = useState([]);
 
   const { message } = useContext(MessageContext)
 
@@ -40,18 +41,32 @@ const SocketContextProvider = ({ children }) => {
   const stream = useRef(null); // useEffect里面只能拿到初始值，故出此下策
   const usersRef = useRef([]); // 同上
   const messagesRef = useRef([]); // 同上
+  const roomJoinnedCbRef = useRef(null);
+  const roomCreatedCbRef = useRef(null);
 
   useEffect(() => {
-    socket.once('me', (id) => me.current = id);
+    socket.on('me', (id) => me.current = id);
 
-    socket.on('createRoomSuccess', ({ room }) => {
+    socket.on('setPublicRooms', (publicRooms) => {
+      setPublicRooms([...publicRooms])
+    })
+
+    socket.on('createRoomSuccess', ({ room, id, name }) => {
       setRoom(room)
       setRoomCreating(false);
       setRoomCreated(true);
+      setRoomJoinned(true);
+      roomCreatedCbRef.current && roomCreatedCbRef.current(room);
+      roomCreatedCbRef.current = null;
+      setUsers([{ id, name, peerConnected: true }]); // 只有我自己
       message.success('创建成功')
     })
 
     socket.on('joined', ({ users, newUser, room }) => {
+      if (newUser.id === me.current) {
+        roomJoinnedCbRef.current && roomJoinnedCbRef.current();
+        roomJoinnedCbRef.current = null;
+      }
       message.info(`${newUser.name}进入了房间`)
       setRoom(room);
       usersRef.current = users;
@@ -61,7 +76,6 @@ const SocketContextProvider = ({ children }) => {
         setRoomJoinned(true);
         return;
       }
-
       // 与未连接的用户建立连接
       users.forEach(user => {
         if (user.id !== socket.id && !peers[user.id]) {
@@ -92,7 +106,7 @@ const SocketContextProvider = ({ children }) => {
     })
 
     socket.on('removeUser', ({ userId, name }) => {
-      peers[userId].destroy()
+      peers[userId] && peers[userId].destroy()
       message.info(`${name}离开了房间`)
       usersRef.current.splice(usersRef.current.findIndex(e => e.id === userId), 1)
       setUsers([...usersRef.current])
@@ -128,19 +142,9 @@ const SocketContextProvider = ({ children }) => {
     })
 
     peer.on('stream', (stream) => {
-      // console.log('onStream', stream)
       const user = usersRef.current.find(user => user.id === userId)
       user.stream = stream;
       setUsers([...usersRef.current])
-    })
-
-    peer.on('track', (track) => {
-      const user = usersRef.current.find(user => user.id === userId)
-      // console.log('onTrack', track)
-      if (user && user.stream) {
-        // console.log(user.stream.getTracks())
-      }
-
     })
 
     peer.on('connect', () => {
@@ -155,11 +159,15 @@ const SocketContextProvider = ({ children }) => {
       setRoomJoinned(true);
     })
 
-    peer.once('close', () => {
+    peer.on('close', () => {
+      const user = usersRef.current.find(user => user.id === userId);
+      user && (user.peerConnected = false);
       delete peers[userId];
     })
 
     peer.on('error', (err) => {
+      const user = usersRef.current.find(user => user.id === userId);
+      user && (user.peerConnected = false);
       console.log(err);
       setRoomJoinning(false);
       setRoomErrorMsg('音视频连接失败')
@@ -178,7 +186,6 @@ const SocketContextProvider = ({ children }) => {
       oldMicroPhoneTrack && oldMicroPhoneTrack.stop()
       socket.emit('setVoice', { id: me.current, open, room })
       setVoiceOpen(open)
-
       return;
     }
 
@@ -237,12 +244,8 @@ const SocketContextProvider = ({ children }) => {
       setVideoOpen(open)
       if (!stream.current) return;
       const oldVideoTrack = stream.current.getVideoTracks()[0];
-      // 同时关掉屏幕共享的音频（已取消音频共享的功能）
-      if (!type) {
-        // const oldSpeakerTrack = stream.current.getAudioTracks().find(track => track.lavel === 'System Audio');
-        // oldSpeakerTrack && oldSpeakerTrack.stop();
-        oldVideoTrack && oldVideoTrack.stop();
-      }
+      oldVideoTrack && oldVideoTrack.stop();
+
       socket.emit('setVideo', { id: me.current, open, room })
       return;
     }
@@ -319,20 +322,28 @@ const SocketContextProvider = ({ children }) => {
     }
   }
 
-  const createRoom = () => {
+  const createRoom = (data) => {
     setRoomCreating(true);
     setName(name.trim());
-    socket.emit('createRoom', { name: name.trim() })
+    socket.emit('createRoom', data)
   }
 
-  const joinRoom = (room) => {
-    if (!/^\d{9}$/.test(room)) {
-      message.error('请输入正确的房间号')
+  const joinRoom = ({ room, roomPwd }) => {
+    if (room === '') {
+      message.error('请输入房间号')
       return
     }
     setRoomJoinning(true);
     setName(name.trim());
-    socket.emit('joinRoom', { room, name: name.trim(), stream })
+    socket.emit('joinRoom', { room, name: name.trim(), roomPwd })
+  }
+
+  const leaveRoom = (room) => {
+    socket.emit('leaveRoom', { room, name: name.trim() })
+  }
+
+  const getPublicRooms = () => {
+    socket.emit('getPublicRooms');
   }
 
   const sendMessage = (msg) => {
@@ -340,7 +351,7 @@ const SocketContextProvider = ({ children }) => {
   }
 
   return (
-    <SocketContext.Provider value={{ me, call, callAccepted, callEnded, myVideo, setMyVideo, name, setName, initMyVideo, createRoom, joinRoom, peers, voiceOpen, initMyVoice, videoOpen, videoType, room, setRoom, roomCreating, roomJoinning, roomCreated, roomJoinned, setRoomCreated, roomErrorMsg, users, speakerOpen, videoQuality, setVideoQuality, messages, setMessages, sendMessage }}>
+    <SocketContext.Provider value={{ me, call, callAccepted, callEnded, myVideo, setMyVideo, name, setName, initMyVideo, createRoom, joinRoom, peers, voiceOpen, initMyVoice, videoOpen, videoType, room, setRoom, roomCreating, roomJoinning, roomCreated, roomJoinned, setRoomCreated, roomErrorMsg, users, speakerOpen, videoQuality, setVideoQuality, messages, setMessages, sendMessage, getPublicRooms, publicRooms, roomJoinnedCbRef, roomCreatedCbRef, setRoomJoinned, leaveRoom }}>
       {children}
     </SocketContext.Provider>
   )
