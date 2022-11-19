@@ -9,11 +9,16 @@ import { SocketContext } from '@/contexts/SocketContext'
 import { useNavigate } from 'react-router-dom'
 import { MessageContext } from '../../contexts/MessageContext';
 import { GroupRounded } from '@mui/icons-material';
+import { useParams } from 'react-router-dom'
+import { useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 
 const Join = () => {
   const { name, setName, room, setRoom } = useContext(SocketContext);
   const { message } = useContext(MessageContext);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams()
+  const id = searchParams.get('id');
 
   const handleClick = () => {
     if (!/^\d{9}$/.test(room)) {
@@ -27,6 +32,10 @@ const Join = () => {
 
     navigate(`/room/${room}`)
   }
+
+  useEffect(() => {
+    id && setRoom(id);
+  }, [])
   return (
     <>
       <TopNavBar />
@@ -40,6 +49,11 @@ const Join = () => {
               placeholder='请输入房间号'
               variant='standard'
               value={room}
+              onKeyUp={e => {
+                if (e.code === 'Enter') {
+                  handleClick();
+                }
+              }}
               onChange={e => setRoom(e.target.value.trim())}></TextField>
           </div>
           <div className='item'>
@@ -47,8 +61,16 @@ const Join = () => {
               label="姓名"
               variant='standard'
               value={name}
+              autoFocus
               placeholder="请输入您的姓名"
+              error={name.length > 9}
               helperText={!/^\S{1,9}$/.test(name) ? '最多9个字符' : ''}
+              onKeyUp={e => {
+                console.log(e.code)
+                if (e.code === 'Enter') {
+                  handleClick();
+                }
+              }}
               onChange={e => setName(e.target.value.trim())}></TextField>
           </div>
           <Button

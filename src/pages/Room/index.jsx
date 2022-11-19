@@ -32,6 +32,7 @@ import { TransitionGroup } from 'react-transition-group'
 import { Collapse } from '@mui/material'
 import { List } from '@mui/material'
 import { ListItem } from '@mui/material'
+import { LinkOffRounded } from '@mui/icons-material'
 
 const Room = () => {
   const [slideOpen, setSlideOpen] = useState(false);
@@ -39,7 +40,7 @@ const Room = () => {
   const [showMainVideo, setShowMainVideo] = useState(false);
   const [msg, setMsg] = useState('');
 
-  const { myVideo, users, joinRoom, setRoom, roomJoinning, name, setRoomCreated, me, videoOpen, roomErrorMsg, roomJoinned, messages, sendMessage } = useContext(SocketContext)
+  const { myVideo, users, joinRoom, setRoom, roomJoinning, name, setRoomCreated, me, videoOpen, roomErrorMsg, roomJoinned, messages, sendMessage, setMessages } = useContext(SocketContext)
 
   const { id } = useParams()
   const myVideoRef = useRef();
@@ -62,7 +63,6 @@ const Room = () => {
   }
 
   useEffect(() => {
-    setRoom(id);
     if (name === '') {
       navigate('/join?id=' + id);
       return;
@@ -75,7 +75,8 @@ const Room = () => {
       e.returnValue = ("确定离开当前页面吗？");
     }
     return () => {
-      window.onbeforeunload = null
+      window.onbeforeunload = null;
+      setMessages([]);
     }
   }, [])
 
@@ -176,8 +177,11 @@ const Room = () => {
               </StyledBadge>
               <div className="avatar-footer">
                 <span className='avatar-desc'>{user.name}</span>
-                <Icon color='primary'>
-                  {user.voice ? <Mic /> : <MicOff />}
+                <Icon color={(!user.voice) ? 'primary' : 'error'}>
+                  {(user.peerConnected || user.id === me.current)
+                    ? (user.voice ? <Mic /> : <MicOff />)
+                    : <LinkOffRounded />
+                  }
                 </Icon>
               </div>
             </div>
@@ -236,7 +240,10 @@ const Room = () => {
                       className='video-mask'
                       style={{ visibility: user.video ? 'hidden' : 'visible' }}
                     >
-                      <VideocamOffRounded />
+                      {user.peerConnected
+                        ? <VideocamOffRounded />
+                        : <LinkOffRounded />
+                      }
                     </Icon>
                     <video
                       style={{ visibility: user.video ? 'visible' : 'hidden' }}

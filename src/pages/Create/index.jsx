@@ -41,6 +41,12 @@ const Create = () => {
               variant='standard'
               value={name}
               placeholder="请输入您的姓名"
+              autoFocus
+              onKeyUp={e => {
+                if (e.code === 'Enter') {
+                  handleClick();
+                }
+              }}
               helperText={!/^\S{1,9}$/.test(name) ? '最多9个字符' : ''}
               onChange={e => setName(e.target.value.trim())}></TextField>
           </div>
@@ -53,6 +59,11 @@ const Create = () => {
             loadingIndicator="创建中..."
             className='submit-btn'
             variant='contained'
+            onKeyUp={e => {
+              if (e.code === 'Enter') {
+                handleClick();
+              }
+            }}
             onClick={handleClick}
           >
             创建

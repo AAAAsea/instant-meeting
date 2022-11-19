@@ -52,11 +52,10 @@ const SocketContextProvider = ({ children }) => {
     })
 
     socket.on('joined', ({ users, newUser, room }) => {
-      // console.log('joined', users)
       message.info(`${newUser.name}进入了房间`)
       setRoom(room);
       usersRef.current = users;
-      setUsers(usersRef.current);
+      setUsers([...usersRef.current]);
       if (users.length === 1) {
         setRoomJoinning(false)
         setRoomJoinned(true);
@@ -148,6 +147,9 @@ const SocketContextProvider = ({ children }) => {
       if (stream.current)
         peer.addStream(stream.current);
       console.log('connected')
+      const user = usersRef.current.find(user => user.id === userId);
+      user && (user.peerConnected = true);
+      setUsers([...usersRef.current]);
       peers[userId] = peer;
       setRoomJoinning(false);
       setRoomJoinned(true);
@@ -336,7 +338,7 @@ const SocketContextProvider = ({ children }) => {
   }
 
   return (
-    <SocketContext.Provider value={{ me, call, callAccepted, callEnded, myVideo, setMyVideo, name, setName, initMyVideo, createRoom, joinRoom, peers, voiceOpen, initMyVoice, videoOpen, videoType, room, setRoom, roomCreating, roomJoinning, roomCreated, roomJoinned, setRoomCreated, roomErrorMsg, users, speakerOpen, videoQuality, setVideoQuality, messages, sendMessage }}>
+    <SocketContext.Provider value={{ me, call, callAccepted, callEnded, myVideo, setMyVideo, name, setName, initMyVideo, createRoom, joinRoom, peers, voiceOpen, initMyVoice, videoOpen, videoType, room, setRoom, roomCreating, roomJoinning, roomCreated, roomJoinned, setRoomCreated, roomErrorMsg, users, speakerOpen, videoQuality, setVideoQuality, messages, setMessages, sendMessage }}>
       {children}
     </SocketContext.Provider>
   )
