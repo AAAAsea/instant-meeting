@@ -161,7 +161,7 @@ const Room = () => {
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                 variant="dot"
                 color='error'
-                invisible={!user.video}
+                invisible={!user.video || !user.peerConnected}
               >
                 <Avatar
                   className='avatar-main '
@@ -177,7 +177,7 @@ const Room = () => {
               </StyledBadge>
               <div className="avatar-footer">
                 <span className='avatar-desc'>{user.name}</span>
-                <Icon color={(!user.voice) ? 'primary' : 'error'}>
+                <Icon color={(!user.voice || !user.peerConnected) ? 'primary' : 'error'}>
                   {(user.peerConnected || user.id === me.current)
                     ? (user.voice ? <Mic /> : <MicOff />)
                     : <LinkOffRounded />
