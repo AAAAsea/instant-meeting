@@ -238,7 +238,7 @@ const Room = () => {
                     <Icon
                       color='primary'
                       className='video-mask'
-                      style={{ visibility: user.video ? 'hidden' : 'visible' }}
+                      style={{ visibility: (user.peerConnected && user.video) ? 'hidden' : 'visible' }}
                     >
                       {user.peerConnected
                         ? <VideocamOffRounded />
