@@ -64,7 +64,7 @@ const RoomDetail = () => {
 
   useEffect(() => {
     if (name === '') {
-      navigate('/join?id=' + id);
+      navigate('/room?id=' + id);
       return;
     }
     setRoomCreated(false); // 为了下次再次创建房间
