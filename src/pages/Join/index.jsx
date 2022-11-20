@@ -53,6 +53,7 @@ const Join = () => {
         <form className='form animate__animated animate__fadeIn'>
           <div className='item'>
             <TextField
+              fullWidth
               label="房间号"
               type="number"
               placeholder='请输入房间号'
@@ -67,6 +68,7 @@ const Join = () => {
           </div>
           <div className='item'>
             <TextField
+              fullWidth
               label="姓名"
               variant='standard'
               value={name}
@@ -83,6 +85,7 @@ const Join = () => {
           </div>
           <div className='item'>
             <TextField
+              fullWidth
               label="密码"
               variant='standard'
               value={roomPwd}
@@ -97,6 +100,7 @@ const Join = () => {
               onChange={e => setRoomPwd(e.target.value.trim())}></TextField>
           </div>
           <Button
+            fullWidth
             endIcon={<GroupRounded />}
             className='submit-btn'
             variant='contained'

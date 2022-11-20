@@ -3,3 +3,8 @@
   margin: 0 auto;
   text-align: center;
 }
+
+.switch-btn{
+  display: flex;
+  justify-content: flex-end;
+}

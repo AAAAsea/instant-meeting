@@ -15,6 +15,9 @@ import { FormControlLabel } from '@mui/material'
 import { Switch } from '@mui/material'
 import { useState } from 'react'
 import { Collapse } from '@mui/material'
+import { IconButton } from '@mui/material'
+import { HelpRounded } from '@mui/icons-material'
+import { Tooltip } from '@mui/material'
 
 const Create = () => {
   const [isPublic, setIsPublic] = useState(false)
@@ -94,6 +97,7 @@ const Create = () => {
         <form className='form animate__animated animate__fadeIn'>
           <div className="item animate__animated animate__fadeIn">
             <TextField
+              fullWidth
               label="姓名"
               variant='standard'
               value={name}
@@ -111,6 +115,7 @@ const Create = () => {
           <Collapse in={!isPublic}>
             <div className="item" >
               <TextField
+                fullWidth
                 label="密码"
                 variant='standard'
                 value={roomPwd}
@@ -133,6 +138,7 @@ const Create = () => {
           <Collapse in={isPublic}>
             <div className="item" style={{ display: !isPublic ? 'none' : 'flex' }}>
               <TextField
+                fullWidth
                 label="房间名"
                 variant='standard'
                 value={roomName}
@@ -152,6 +158,7 @@ const Create = () => {
           <Collapse in={isPublic}>
             <div className="item">
               <TextField
+                fullWidth
                 label="房间描述"
                 variant='standard'
                 value={roomDesc}
@@ -168,10 +175,16 @@ const Create = () => {
               ></TextField>
             </div>
           </Collapse>
-          <div className="item">
+          <div className="item switch-btn">
             <FormControlLabel control={<Switch checked={isPublic} onChange={handleChange} />} label="公开" />
+            <Tooltip title="任意用户都可以在首页看到公开的房间并进入" placement='top'>
+              <IconButton>
+                <HelpRounded></HelpRounded>
+              </IconButton>
+            </Tooltip>
           </div>
           <LoadingButton
+            fullWidth
             endIcon={<VideoCameraFrontRounded />}
             loading={roomCreating}
             loadingIndicator="创建中..."

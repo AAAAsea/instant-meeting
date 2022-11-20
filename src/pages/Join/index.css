@@ -11,7 +11,6 @@
   box-sizing: border-box;
 }
 .item{
-  display: flex;
-  flex-direction: column;
-  margin: 20px 0;
+  width: 100%;
+  margin: 20px auto;
 }
