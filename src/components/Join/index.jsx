@@ -3,7 +3,6 @@ import { Paper } from '@mui/material'
 import { Button } from '@mui/material'
 import React from 'react'
 import { useContext } from 'react'
-import TopNavBar from '@/components/TopNavBar'
 import './index.css'
 import { SocketContext } from '@/contexts/SocketContext'
 import { useNavigate } from 'react-router-dom'
@@ -47,7 +46,6 @@ const Join = () => {
   }, [])
   return (
     <>
-      <TopNavBar />
       <Paper className='container'>
         <h2 className='animate__animated animate__fadeIn'>加入房间</h2>
         <form className='form animate__animated animate__fadeIn'>
@@ -58,6 +56,7 @@ const Join = () => {
               type="number"
               placeholder='请输入房间号'
               variant='standard'
+              autoFocus
               value={room}
               onKeyUp={e => {
                 if (e.code === 'Enter') {
@@ -72,7 +71,7 @@ const Join = () => {
               label="姓名"
               variant='standard'
               value={name}
-              autoFocus
+              autoFocus={id !== null}
               placeholder="请输入您的姓名"
               error={name.length > 15}
               helperText={name.length > 15 ? '最多15个字符' : ''}

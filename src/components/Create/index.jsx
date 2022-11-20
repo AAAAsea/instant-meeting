@@ -2,7 +2,6 @@ import { TextField } from '@mui/material'
 import { Paper } from '@mui/material'
 import React from 'react'
 import { useContext } from 'react'
-import TopNavBar from '../../components/TopNavBar'
 import { MessageContext } from '@/contexts/MessageContext'
 import './index.css'
 import { SocketContext } from '../../contexts/SocketContext'
@@ -10,7 +9,6 @@ import { useNavigate } from 'react-router-dom'
 import { LoadingButton } from '@mui/lab'
 import { useEffect } from 'react'
 import { VideoCameraFrontRounded } from '@mui/icons-material'
-import { AppBar } from '@mui/material'
 import { FormControlLabel } from '@mui/material'
 import { Switch } from '@mui/material'
 import { useState } from 'react'
@@ -91,7 +89,6 @@ const Create = () => {
   }
   return (
     <>
-      <TopNavBar />
       <Paper className='container animate__animated ' >
         <h2 className='animate__animated animate__fadeIn'>创建房间</h2>
         <form className='form animate__animated animate__fadeIn'>

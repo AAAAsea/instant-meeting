@@ -34,7 +34,7 @@ const Home = () => {
               color='primary'
               variant='contained'
               startIcon={<VideoCameraFrontRounded />}
-              onClick={() => { navigate('/create') }}
+              onClick={() => { navigate('/room?type=create') }}
               className=''
             >
               Create
@@ -44,7 +44,7 @@ const Home = () => {
               color='neutral'
               variant='contained'
               endIcon={<GroupRounded />}
-              onClick={() => { navigate('/join') }}
+              onClick={() => { navigate('/room?type=join') }}
               className=''
             >
               Join
