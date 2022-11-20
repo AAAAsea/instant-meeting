@@ -339,6 +339,10 @@ const SocketContextProvider = ({ children }) => {
   }
 
   const leaveRoom = (room) => {
+    setName('');
+    setRoomJoinned(false);
+    messagesRef.current = [];
+    setMessages([])
     socket.emit('leaveRoom', { room, name: name.trim() })
   }
 

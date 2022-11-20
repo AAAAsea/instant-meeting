@@ -73,14 +73,11 @@ const Room = () => {
       e.preventDefault();
       e.returnValue = ("确定离开当前页面吗？");
     }
-
     document.title = name
     return () => {
       window.onbeforeunload = null;
-      setMessages([]);
-      setName('');
-      setRoomJoinned(false);
       leaveRoom(room);
+      console.log('清除messages')
     }
   }, [])
 

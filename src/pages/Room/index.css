@@ -292,7 +292,7 @@ video::-webkit-media-controls-enclosure {
   flex-direction: column;
   justify-content: flex-end;
   transition: .3s;
-  z-index: 999;
+  z-index: 99;
 }
 .bullet-chat-item{
   width: fit-content !important;
