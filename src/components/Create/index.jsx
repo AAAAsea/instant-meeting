@@ -73,12 +73,14 @@ const Create = () => {
     // 创建成功后的回调
     roomCreatedCbRef.current = (room) => {
       navigate('/room/' + room)
+      // console.log('创建成功')
     }
+    // console.log(roomCreatedCbRef.current)
 
     createRoom({
       name: name.trim(),
       roomName: roomName.trim(),
-      roomPwd: roomPwd.trim(),
+      roomPwd: !isPublic ? roomPwd.trim() : '',
       isPublic,
       roomDesc: roomDesc.trim()
     });

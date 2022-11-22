@@ -69,6 +69,7 @@ const SocketContextProvider = ({ children }) => {
       }
       message.info(`${newUser.name}进入了房间`)
       setRoom(room);
+      // console.log('joined', room)
       usersRef.current = users;
       setUsers([...usersRef.current]);
       if (users.length === 1) {
@@ -119,8 +120,18 @@ const SocketContextProvider = ({ children }) => {
     })
 
     socket.on('sendMessage', (data) => {
+      // console.log('smg', data)
       messagesRef.current.push(data);
       setMessages([...messagesRef.current]);
+    })
+
+    socket.on('disconnect', () => {
+      message.error('已断开连接')
+      setRoomErrorMsg('已断开连接')
+    })
+
+    socket.on('connect', () => {
+      message.success('已连接')
     })
 
   }, [])
@@ -323,6 +334,7 @@ const SocketContextProvider = ({ children }) => {
   }
 
   const createRoom = (data) => {
+    // console.log('createRoom')
     setRoomCreating(true);
     setName(name.trim());
     socket.emit('createRoom', data)
@@ -340,6 +352,7 @@ const SocketContextProvider = ({ children }) => {
 
   const leaveRoom = (room) => {
     setName('');
+    setRoom('');
     setRoomJoinned(false);
     messagesRef.current = [];
     setMessages([])
@@ -351,6 +364,7 @@ const SocketContextProvider = ({ children }) => {
   }
 
   const sendMessage = (msg) => {
+    // console.log(msg, room)
     socket.emit('sendMessage', { name, msg, room, time: new Date() })
   }
 

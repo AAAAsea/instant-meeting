@@ -58,7 +58,7 @@ const Home = () => {
                 className="room-item animate__animated animate__zoomIn"
                 key={index}
                 onClick={() => {
-                  navigate('/join?id=' + room.room)
+                  navigate('/room?id=' + room.room)
                 }}
               >
                 <h2 className="room-name">{room.roomName}</h2>

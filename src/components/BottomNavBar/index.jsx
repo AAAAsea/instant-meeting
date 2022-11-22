@@ -30,6 +30,7 @@ import { qualities } from '../../utils'
 import { TurnedInNotOutlined } from '@mui/icons-material'
 import { Box } from '@mui/material'
 import { FullscreenExitRounded } from '@mui/icons-material'
+import { useEffect } from 'react'
 
 const BottomNavBar = (props) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -61,7 +62,7 @@ const BottomNavBar = (props) => {
 
   const handleFullScreen = (full) => {
     const currentFullScreenElement = document.fullscreenElement
-    if (full) {
+    if (!currentFullScreenElement) {
       setIsFullScreen(true);
       if (showMainVideo)
         // eslint-disable-next-line react/prop-types
@@ -75,6 +76,12 @@ const BottomNavBar = (props) => {
       }
     }
   }
+
+  useEffect(() => {
+    window.onresize = () => {
+      setIsFullScreen(document.fullscreenElement !== null);
+    }
+  }, [])
 
   return (
     <div id="bottom">
@@ -117,7 +124,7 @@ const BottomNavBar = (props) => {
           <IconButton
             color="primary"
             onClick={() => {
-              handleFullScreen(isFullScreen)
+              handleFullScreen(!isFullScreen)
             }}
           >
             {

@@ -77,7 +77,6 @@ const RoomDetail = () => {
     return () => {
       window.onbeforeunload = null;
       leaveRoom(room);
-      console.log('清除messages')
     }
   }, [])
 

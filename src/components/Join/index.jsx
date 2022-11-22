@@ -40,9 +40,6 @@ const Join = () => {
     document.title = '' // 需要改变一下才能有反应，不知为啥
     document.title = '加入房间'
     id && setRoom(id);
-    return () => {
-      setRoom('');
-    }
   }, [])
   return (
     <>
