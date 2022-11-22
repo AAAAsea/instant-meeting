@@ -130,7 +130,7 @@ const SocketContextProvider = ({ children }) => {
       setRoomErrorMsg('已断开连接')
     })
 
-    socket.on('connect', () => {
+    socket.on('connection', () => {
       message.success('已连接')
     })
 

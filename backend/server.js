@@ -24,9 +24,9 @@ io.on("connection", (socket) => {
   socket.emit('me', socket.id);
 
   socket.on('createRoom', (data) => {
-    let room = Math.floor((Math.random() * 9) * 1e8).toString(); // 随机9位数房间号
+    let room = Math.floor(((Math.random() * 9) + 1) * 1e8).toString(); // 随机9位数房间号
     while (rooms[room]) {
-      room = Math.floor((Math.random() * 9) * 1e8).toString(); // 随机9位数房间号
+      room = Math.floor(((Math.random() * 9) + 1) * 1e8).toString(); // 随机9位数房间号
     }
     const master = { room, id: socket.id, name: data.name };
     rooms[room] = [master]

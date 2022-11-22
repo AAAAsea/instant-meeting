@@ -74,6 +74,7 @@ const RoomDetail = () => {
       e.returnValue = ("确定离开当前页面吗？");
     }
     document.title = name
+    setRoom(id)
     return () => {
       window.onbeforeunload = null;
       leaveRoom(room);
@@ -106,7 +107,7 @@ const RoomDetail = () => {
         video.srcObject = user.stream
       }
     })
-  }, [myVideo, users])
+  }, [myVideo, users, videoOpen])
 
   useEffect(() => {
     chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
