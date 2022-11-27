@@ -35,6 +35,12 @@ io.on("connection", (socket) => {
     socket.emit('createRoomSuccess', master)
     socket.name = data.name;
 
+    const publicRooms = [];
+    for (let room in roomsInfo) {
+      if (roomsInfo[room].isPublic)
+        publicRooms.push(roomsInfo[room]);
+    }
+    io.emit('setPublicRooms', publicRooms);
   });
 
   socket.on('joinRoom', ({ room, name, roomPwd }) => {
@@ -107,6 +113,12 @@ io.on("connection", (socket) => {
         if (rooms[room].length === 0) {
           delete rooms[room]
           delete roomsInfo[room];
+          const publicRooms = [];
+          for (let room in roomsInfo) {
+            if (roomsInfo[room].isPublic)
+              publicRooms.push(roomsInfo[room]);
+          }
+          io.emit('setPublicRooms', publicRooms);
         }
         io.to(room).emit('removeUser', { userId: socket.id, name: socket.name })
       }
@@ -123,6 +135,12 @@ io.on("connection", (socket) => {
       }
       io.to(room).emit('removeUser', { userId: socket.id, name: socket.name })
     }
+    const publicRooms = [];
+    for (let room in roomsInfo) {
+      if (roomsInfo[room].isPublic)
+        publicRooms.push(roomsInfo[room]);
+    }
+    io.emit('setPublicRooms', publicRooms);
   })
 
   socket.on("disconnect", () => {
@@ -133,6 +151,12 @@ io.on("connection", (socket) => {
         delete roomsInfo[room];
       }
     }
+    const publicRooms = [];
+    for (let room in roomsInfo) {
+      if (roomsInfo[room].isPublic)
+        publicRooms.push(roomsInfo[room]);
+    }
+    io.emit('setPublicRooms', publicRooms);
   });
 })
 server.listen(PORT, () => { console.log(`Server listening on port ${PORT}`) })

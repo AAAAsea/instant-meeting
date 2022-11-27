@@ -335,3 +335,7 @@ video::-webkit-media-controls-enclosure {
   padding-right: 3px;
   word-break: break-all;
 }
+
+#file-btn{
+  width: 100%;
+}

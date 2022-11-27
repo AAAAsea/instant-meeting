@@ -33,6 +33,7 @@ import { Collapse } from '@mui/material'
 import { List } from '@mui/material'
 import { ListItem } from '@mui/material'
 import { LinkOffRounded } from '@mui/icons-material'
+import { UploadFileRounded } from '@mui/icons-material'
 
 const RoomDetail = () => {
   const [slideOpen, setSlideOpen] = useState(false);
@@ -40,7 +41,7 @@ const RoomDetail = () => {
   const [showMainVideo, setShowMainVideo] = useState(false);
   const [msg, setMsg] = useState('');
 
-  const { myVideo, users, joinRoom, setRoom, roomJoinning, name, setName, setRoomCreated, me, videoOpen, roomErrorMsg, roomJoinned, messages, sendMessage, setMessages, setRoomJoinned, leaveRoom, room } = useContext(SocketContext)
+  const { myVideo, users, setUsers, joinRoom, setRoom, roomJoinning, name, setName, setRoomCreated, me, videoOpen, roomErrorMsg, roomJoinned, messages, sendMessage, setMessages, setRoomJoinned, leaveRoom, room } = useContext(SocketContext)
 
   const { id } = useParams()
   const myVideoRef = useRef();
@@ -69,15 +70,16 @@ const RoomDetail = () => {
     }
     setRoomCreated(false); // 为了下次再次创建房间
 
-    window.onbeforeunload = function (e) {
-      e.preventDefault();
-      e.returnValue = ("确定离开当前页面吗？");
-    }
+    // window.onbeforeunload = (e) => {
+    //   e.preventDefault();
+    //   e.returnValue = ("确定离开当前页面吗？");
+    // }
     document.title = name
     setRoom(id)
     return () => {
       window.onbeforeunload = null;
       leaveRoom(room);
+      setUsers([]);
     }
   }, [])
 
@@ -115,7 +117,7 @@ const RoomDetail = () => {
 
   return (
     <div id="room-detail" className='animate__animated animate__fadeIn'>
-      <div className="loading-btn-wrapper">
+      {/* <div className="loading-btn-wrapper">
         <LoadingButton
           loading={roomJoinning}
           endIcon={<LinkRounded size={14} color="white" />}
@@ -132,7 +134,7 @@ const RoomDetail = () => {
             roomJoinned ? '音视频已连接' : roomErrorMsg
           )}
         </LoadingButton>
-      </div>
+      </div> */}
 
       <div
         style={{
@@ -148,7 +150,6 @@ const RoomDetail = () => {
           ref={mainVideoRef}
         />
       </div>
-
       <div
         style={{
           visibility: showMainVideo ? 'hidden' : 'visible'
@@ -178,7 +179,7 @@ const RoomDetail = () => {
               </StyledBadge>
               <div className="avatar-footer">
                 <span className='avatar-desc'>{user.name}</span>
-                <Icon color={(!user.voice || !user.peerConnected) ? 'primary' : 'error'}>
+                <Icon color={(user.voice && (user.peerConnected || user.id === me.current)) ? 'error' : 'primary'}>
                   {(user.peerConnected || user.id === me.current)
                     ? (user.voice ? <Mic /> : <MicOff />)
                     : <LinkOffRounded />
@@ -283,6 +284,10 @@ const RoomDetail = () => {
               }
             </ul>
             <div className="input-wrapper">
+              {/* <IconButton color="primary" aria-label="upload picture" component="label">
+                <input hidden type="file" onChange={e => { console.log(e.target.files) }} />
+                <UploadFileRounded />
+              </IconButton> */}
               <TextField
                 value={msg}
                 className='input-text-field'

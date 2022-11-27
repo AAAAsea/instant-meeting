@@ -69,9 +69,6 @@ const SocketContextProvider = ({ children }) => {
       }
       message.info(`${newUser.name}进入了房间`)
       setRoom(room);
-      // console.log('joined', room)
-      usersRef.current = users;
-      setUsers([...usersRef.current]);
       if (users.length === 1) {
         setRoomJoinning(false)
         setRoomJoinned(true);
@@ -82,7 +79,12 @@ const SocketContextProvider = ({ children }) => {
         if (user.id !== socket.id && !peers[user.id]) {
           getPeerConnection(user.id, user.name, newUser.id !== socket.id);
         }
+        if (usersRef.current.findIndex(e => e.id === user.id) < 0) {
+          usersRef.current.push(user)
+        }
       })
+      setUsers([...usersRef.current]);
+
     })
 
     // 每次收到peerConn，取出对应的signal事件执行
@@ -139,13 +141,16 @@ const SocketContextProvider = ({ children }) => {
   const getPeerConnection = (userId, userName, isInitiator) => {
     const peer = new Peer({
       initiator: isInitiator,
-      trickle: false
-      // config: {
-      //   iceServers: [
-      //     { urls: 'stun:stun.l.google.com:19302' },
-      //     { urls: 'stun:global.stun.twilio.com:3478?transport=udp' }
-      //   ]
-      // }
+      trickle: false,
+      config: {
+        iceServers: [
+          {
+            urls: 'turn:124.221.154.52:3478',
+            credential: 'password',
+            username: 'username'
+          }
+        ]
+      }
     })
 
     peer.on('signal', (signal) => {
@@ -168,6 +173,8 @@ const SocketContextProvider = ({ children }) => {
       peers[userId] = peer;
       setRoomJoinning(false);
       setRoomJoinned(true);
+      message.success(`与${userName}已连接`)
+
     })
 
     peer.on('close', () => {
@@ -182,6 +189,7 @@ const SocketContextProvider = ({ children }) => {
       console.log(err);
       setRoomJoinning(false);
       setRoomErrorMsg('音视频连接失败')
+      message.error(`与${userName}连接失败`)
     })
 
     // 收集signal事件，待socket响应时触发
@@ -369,7 +377,7 @@ const SocketContextProvider = ({ children }) => {
   }
 
   return (
-    <SocketContext.Provider value={{ me, call, callAccepted, callEnded, myVideo, setMyVideo, name, setName, initMyVideo, createRoom, joinRoom, peers, voiceOpen, initMyVoice, videoOpen, videoType, room, setRoom, roomCreating, roomJoinning, roomCreated, roomJoinned, setRoomCreated, roomErrorMsg, users, speakerOpen, videoQuality, setVideoQuality, messages, setMessages, sendMessage, getPublicRooms, publicRooms, roomJoinnedCbRef, roomCreatedCbRef, setRoomJoinned, leaveRoom }}>
+    <SocketContext.Provider value={{ me, call, callAccepted, callEnded, myVideo, setMyVideo, name, setName, initMyVideo, createRoom, joinRoom, peers, voiceOpen, initMyVoice, videoOpen, videoType, room, setRoom, roomCreating, roomJoinning, roomCreated, roomJoinned, setRoomCreated, roomErrorMsg, users, setUsers, speakerOpen, videoQuality, setVideoQuality, messages, setMessages, sendMessage, getPublicRooms, publicRooms, roomJoinnedCbRef, roomCreatedCbRef, setRoomJoinned, leaveRoom }}>
       {children}
     </SocketContext.Provider>
   )
