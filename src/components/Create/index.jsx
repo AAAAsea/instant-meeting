@@ -23,7 +23,7 @@ const Create = () => {
   const [roomName, setRoomName] = useState('');
   const [roomDesc, setRoomDesc] = useState('');
   const { message } = useContext(MessageContext)
-  const { createRoom, name, setName, roomCreated, room, roomCreating, roomCreatedCbRef } = useContext(SocketContext)
+  const { createRoom, name, setName, roomCreated, room, roomCreating, roomCreatedCbRef, isLive, setIsLive } = useContext(SocketContext)
 
   const navigate = useNavigate()
 
@@ -82,13 +82,11 @@ const Create = () => {
       roomName: roomName.trim(),
       roomPwd: !isPublic ? roomPwd.trim() : '',
       isPublic,
-      roomDesc: roomDesc.trim()
+      roomDesc: roomDesc.trim(),
+      isLive
     });
   }
 
-  const handleChange = () => {
-    setIsPublic(!isPublic);
-  }
   return (
     <>
       <Paper className='container animate__animated ' >
@@ -174,14 +172,15 @@ const Create = () => {
               ></TextField>
             </div>
           </Collapse>
-          <div className="item switch-btn">
-            <FormControlLabel control={<Switch checked={isPublic} onChange={handleChange} />} label="公开" />
-            <Tooltip title="任意用户都可以在首页看到公开的房间并进入" placement='top'>
-              <IconButton>
-                <HelpRounded></HelpRounded>
-              </IconButton>
+          <div className="item switch-btn" >
+            <Tooltip title="任意用户都可以在首页看到公开的房间并进入" placement="top">
+              <FormControlLabel control={<Switch checked={isPublic} onChange={() => { setIsPublic(!isPublic) }} />} label="公开" />
+            </Tooltip>
+            <Tooltip title="无法开麦，最多只有一人可以分享屏幕（包括声音）" placement="top">
+              <FormControlLabel control={<Switch checked={isLive} onChange={() => { setIsLive(!isLive) }} />} label="观影" />
             </Tooltip>
           </div>
+
           <LoadingButton
             fullWidth
             endIcon={<VideoCameraFrontRounded />}

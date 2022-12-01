@@ -33,6 +33,8 @@ const SocketContextProvider = ({ children }) => {
   const [users, setUsers] = useState([]);
   const [messages, setMessages] = useState([]);
   const [publicRooms, setPublicRooms] = useState([]);
+  const [isLive, setIsLive] = useState(false);
+  const [canScreenShare, setCanScreenShare] = useState(true);
 
   const { message } = useContext(MessageContext)
 
@@ -62,13 +64,15 @@ const SocketContextProvider = ({ children }) => {
       message.success('创建成功')
     })
 
-    socket.on('joined', ({ users, newUser, room }) => {
+    socket.on('joined', ({ users, newUser, room, isLive, canScreenShare }) => {
       if (newUser.id === me.current) {
         roomJoinnedCbRef.current && roomJoinnedCbRef.current();
         roomJoinnedCbRef.current = null;
       }
       message.info(`${newUser.name}进入了房间`)
       setRoom(room);
+      setIsLive(isLive);
+      setCanScreenShare(canScreenShare);
       if (users.length === 1) {
         setRoomJoinning(false)
         setRoomJoinned(true);
@@ -100,11 +104,14 @@ const SocketContextProvider = ({ children }) => {
       }
     })
 
-    socket.on('setVideo', ({ userId, open }) => {
+    socket.on('setVideo', ({ userId, open, type }) => {
       const user = usersRef.current.find(user => user.id === userId);
       if (user) {
         user.video = open;
         setUsers([...usersRef.current])
+      }
+      if (!type) {
+        setCanScreenShare(!open);
       }
     })
 
@@ -264,8 +271,9 @@ const SocketContextProvider = ({ children }) => {
       if (!stream.current) return;
       const oldVideoTrack = stream.current.getVideoTracks()[0];
       oldVideoTrack && oldVideoTrack.stop();
-
-      socket.emit('setVideo', { id: me.current, open, room })
+      const oldAudioTrack = stream.current.getAudioTracks()[0];
+      oldAudioTrack && oldAudioTrack.stop();
+      socket.emit('setVideo', { id: me.current, open, room, type })
       return;
     }
 
@@ -273,7 +281,7 @@ const SocketContextProvider = ({ children }) => {
     const originStream = stream.current;
 
     const handlePromise = (currentStream) => {
-      socket.emit('setVideo', { id: me.current, open, room })
+      socket.emit('setVideo', { id: me.current, open, room, type })
       setVideoOpen(open)
       setVideoType(type)
 
@@ -293,7 +301,14 @@ const SocketContextProvider = ({ children }) => {
       const newVideoTrack = currentStream.getVideoTracks()[0];
       oldVideoTrack && stream.current.removeTrack(oldVideoTrack);
       stream.current.addTrack(newVideoTrack);
-      // console.log(oldVideoTrack, newVideoTrack)
+
+      const newAudioTrack = currentStream.getAudioTracks()[0];
+      const oldAudioTrack = stream.current.getAudioTracks()[0];
+      if (newAudioTrack && isLive) {
+        oldAudioTrack && stream.current.removeTrack(oldAudioTrack);
+        stream.current.addTrack(newAudioTrack);
+      }
+
       // 之前没有stream的话需要通知添加stream
       if (!originStream) {
         setMyVideo(stream.current);
@@ -307,8 +322,16 @@ const SocketContextProvider = ({ children }) => {
           if (oldVideoTrack) {
             oldVideoTrack.stop();
             peers[peer].replaceTrack(oldVideoTrack, newVideoTrack, myVideo)
-          } else {
+          } else if (newVideoTrack) {
             peers[peer].addTrack(newVideoTrack, myVideo)
+          }
+
+          // 视频轨道的替换或新增
+          if (oldAudioTrack) {
+            oldAudioTrack.stop();
+            peers[peer].replaceTrack(oldAudioTrack, newAudioTrack, myVideo)
+          } else if (newAudioTrack) {
+            peers[peer].addTrack(newAudioTrack, myVideo)
           }
         }
       }
@@ -328,7 +351,8 @@ const SocketContextProvider = ({ children }) => {
     } else {
       if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
         navigator.mediaDevices.getDisplayMedia({
-          video: qualities[quality]
+          video: qualities[quality],
+          audio: isLive
         }).then(handlePromise).catch(err => {
           console.log(err)
           initMyVideo({ type, open: false })
@@ -377,7 +401,7 @@ const SocketContextProvider = ({ children }) => {
   }
 
   return (
-    <SocketContext.Provider value={{ me, call, callAccepted, callEnded, myVideo, setMyVideo, name, setName, initMyVideo, createRoom, joinRoom, peers, voiceOpen, initMyVoice, videoOpen, videoType, room, setRoom, roomCreating, roomJoinning, roomCreated, roomJoinned, setRoomCreated, roomErrorMsg, users, setUsers, speakerOpen, videoQuality, setVideoQuality, messages, setMessages, sendMessage, getPublicRooms, publicRooms, roomJoinnedCbRef, roomCreatedCbRef, setRoomJoinned, leaveRoom }}>
+    <SocketContext.Provider value={{ me, call, callAccepted, callEnded, myVideo, setMyVideo, name, setName, initMyVideo, createRoom, joinRoom, peers, voiceOpen, initMyVoice, videoOpen, videoType, room, setRoom, roomCreating, roomJoinning, roomCreated, roomJoinned, setRoomCreated, roomErrorMsg, users, setUsers, speakerOpen, videoQuality, setVideoQuality, messages, setMessages, sendMessage, getPublicRooms, publicRooms, roomJoinnedCbRef, roomCreatedCbRef, setRoomJoinned, leaveRoom, isLive, setIsLive, canScreenShare }}>
       {children}
     </SocketContext.Provider>
   )

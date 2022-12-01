@@ -36,7 +36,7 @@ const BottomNavBar = (props) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const open = Boolean(anchorEl);
-  const { initMyVideo, initMyVoice, voiceOpen, videoOpen, videoType, room, videoQuality, setVideoQuality } = useContext(SocketContext);
+  const { initMyVideo, initMyVoice, voiceOpen, videoOpen, videoType, room, videoQuality, setVideoQuality, isLive, canScreenShare } = useContext(SocketContext);
   const { message } = useContext(MessageContext);
   // eslint-disable-next-line react/prop-types
   const { mainVideoRef, showMainVideo } = props;
@@ -89,6 +89,7 @@ const BottomNavBar = (props) => {
 
         <Tooltip title={voiceOpen ? '麦克风已打开' : '麦克风已关闭'}>
           <IconButton
+            style={{ visibility: isLive ? 'hidden' : 'visible' }}
             color={(voiceOpen) ? "error" : "primary"}
             onClick={() => { initMyVoice(!voiceOpen) }}
           >{
@@ -107,7 +108,7 @@ const BottomNavBar = (props) => {
         <Tooltip title={(videoOpen && !videoType) ? "屏幕分享开启" : "屏幕分享已关闭"}>
           <IconButton
             color={(videoOpen && !videoType) ? "error" : "primary"}
-            onClick={() => { initMyVideo({ type: 0, quality: 'h', open: !videoOpen || videoType }) }}
+            onClick={() => { if (!canScreenShare && !videoOpen) { message.warning("当前房间类型最多允许一人分享屏幕"); return; } initMyVideo({ type: 0, quality: 'h', open: !videoOpen || videoType }) }}
           >{
               videoOpen && !videoType ? <ScreenShareRounded /> : <StopScreenShareRounded />
             }</IconButton>

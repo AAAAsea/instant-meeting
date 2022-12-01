@@ -41,7 +41,7 @@ const RoomDetail = () => {
   const [showMainVideo, setShowMainVideo] = useState(false);
   const [msg, setMsg] = useState('');
 
-  const { myVideo, users, setUsers, joinRoom, setRoom, roomJoinning, name, setName, setRoomCreated, me, videoOpen, roomErrorMsg, roomJoinned, messages, sendMessage, setMessages, setRoomJoinned, leaveRoom, room } = useContext(SocketContext)
+  const { myVideo, users, setUsers, joinRoom, setRoom, roomJoinning, name, setName, setRoomCreated, me, videoOpen, roomErrorMsg, roomJoinned, messages, sendMessage, setMessages, setRoomJoinned, leaveRoom, room, isLive } = useContext(SocketContext)
 
   const { id } = useParams()
   const myVideoRef = useRef();

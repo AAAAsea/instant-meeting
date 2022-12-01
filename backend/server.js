@@ -30,7 +30,7 @@ io.on("connection", (socket) => {
     }
     const master = { room, id: socket.id, name: data.name };
     rooms[room] = [master]
-    roomsInfo[room] = { ...data, room };
+    roomsInfo[room] = { ...data, room, canScreenShare: true };
     socket.join(room);
     socket.emit('createRoomSuccess', master)
     socket.name = data.name;
@@ -65,9 +65,9 @@ io.on("connection", (socket) => {
       socket.join(room)
       socket.name = name;
       rooms[room].push(newUser)
-      io.to(room).emit('joined', { users: rooms[room], newUser, room })
+      io.to(room).emit('joined', { users: rooms[room], newUser, room, isLive: roomsInfo[room].isLive, canScreenShare: roomsInfo[room].canScreenShare })
     } else {
-      socket.emit('joined', { users: rooms[room], newUser, room })
+      socket.emit('joined', { users: rooms[room], newUser, room, isLive: roomsInfo[room].isLive, canScreenShare: roomsInfo[room].canScreenShare })
     }
   })
 
@@ -92,11 +92,14 @@ io.on("connection", (socket) => {
     }
   })
 
-  socket.on("setVideo", ({ id, open, room }) => {
+  socket.on("setVideo", ({ id, open, room, type }) => {
     const user = rooms[room] ? rooms[room].find(user => user.id === id) : undefined;
     if (user) {
       user.video = open;
-      io.to(room).emit('setVideo', { userId: id, open })
+      io.to(room).emit('setVideo', { userId: id, open, type })
+    }
+    if (!type) {
+      roomsInfo[room].canScreenShare = !open;
     }
   })
 
