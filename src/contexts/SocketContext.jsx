@@ -45,6 +45,7 @@ const SocketContextProvider = ({ children }) => {
   const messagesRef = useRef([]); // 同上
   const roomJoinnedCbRef = useRef(null);
   const roomCreatedCbRef = useRef(null);
+  const slideOpenRef = useRef(true);
 
   useEffect(() => {
     socket.on('me', (id) => me.current = id);
@@ -131,7 +132,8 @@ const SocketContextProvider = ({ children }) => {
     socket.on('sendMessage', (data) => {
       messagesRef.current.push(data);
       setMessages([...messagesRef.current]);
-      notify(data.name, data.msg)
+      if (!slideOpenRef.current && data.id !== me.current)
+        notify(data.name, data.msg)
     })
 
     socket.on('disconnect', () => {
@@ -404,7 +406,7 @@ const SocketContextProvider = ({ children }) => {
   }
 
   return (
-    <SocketContext.Provider value={{ me, call, callAccepted, callEnded, myVideo, setMyVideo, name, setName, initMyVideo, createRoom, joinRoom, peers, voiceOpen, initMyVoice, videoOpen, videoType, room, setRoom, roomCreating, roomJoinning, roomCreated, roomJoinned, setRoomCreated, roomErrorMsg, users, setUsers, speakerOpen, videoQuality, setVideoQuality, messages, setMessages, sendMessage, getPublicRooms, publicRooms, roomJoinnedCbRef, roomCreatedCbRef, setRoomJoinned, leaveRoom, isLive, setIsLive, canScreenShare }}>
+    <SocketContext.Provider value={{ me, call, callAccepted, callEnded, myVideo, setMyVideo, name, setName, initMyVideo, createRoom, joinRoom, peers, voiceOpen, initMyVoice, videoOpen, videoType, room, setRoom, roomCreating, roomJoinning, roomCreated, roomJoinned, setRoomCreated, roomErrorMsg, users, setUsers, speakerOpen, videoQuality, setVideoQuality, messages, setMessages, sendMessage, getPublicRooms, publicRooms, roomJoinnedCbRef, roomCreatedCbRef, setRoomJoinned, leaveRoom, isLive, setIsLive, canScreenShare, slideOpenRef }}>
       {children}
     </SocketContext.Provider>
   )

@@ -41,7 +41,7 @@ const RoomDetail = () => {
   const [showMainVideo, setShowMainVideo] = useState(false);
   const [msg, setMsg] = useState('');
 
-  const { myVideo, users, setUsers, joinRoom, setRoom, roomJoinning, name, setName, setRoomCreated, me, videoOpen, roomErrorMsg, roomJoinned, messages, sendMessage, setMessages, setRoomJoinned, leaveRoom, room, isLive } = useContext(SocketContext)
+  const { myVideo, users, setUsers, joinRoom, setRoom, roomJoinning, name, setName, setRoomCreated, me, videoOpen, roomErrorMsg, roomJoinned, messages, sendMessage, setMessages, setRoomJoinned, leaveRoom, room, isLive, slideOpenRef } = useContext(SocketContext)
 
   const { id } = useParams()
   const myVideoRef = useRef();
@@ -191,7 +191,7 @@ const RoomDetail = () => {
         }
       </div>
 
-      <div className="open-slide-btn" onClick={() => { setSlideOpen(true) }}>
+      <div className="open-slide-btn" onClick={() => { setSlideOpen(true); slideOpenRef.current = true; }}>
         <ChevronLeft color='primary' />
       </div>
       {/* 侧边栏 */}
@@ -200,7 +200,7 @@ const RoomDetail = () => {
         className="slide-wrapper">
 
         <div className="slide-header">
-          <IconButton onClick={() => { setSlideOpen(false) }}>
+          <IconButton onClick={() => { setSlideOpen(false); slideOpenRef.current = false; }}>
             <ChevronRight color='primary' />
           </IconButton>
           <Tabs textColor='inherit' value={tabValue} onChange={handleChangeTab} aria-label="icon tabs example">
