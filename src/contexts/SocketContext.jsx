@@ -4,7 +4,7 @@ import Peer from 'simple-peer';
 import { useContext } from "react";
 import { MessageContext } from '@/contexts/MessageContext'
 import React from 'react'
-import { qualities } from "../utils";
+import { qualities, notify } from "../utils";
 const SocketContext = createContext();
 
 // const socket = io('http://localhost:5000/');
@@ -129,9 +129,9 @@ const SocketContextProvider = ({ children }) => {
     })
 
     socket.on('sendMessage', (data) => {
-      // console.log('smg', data)
       messagesRef.current.push(data);
       setMessages([...messagesRef.current]);
+      notify(data.name + '：' + data.msg)
     })
 
     socket.on('disconnect', () => {
