@@ -271,8 +271,11 @@ const SocketContextProvider = ({ children }) => {
       if (!stream.current) return;
       const oldVideoTrack = stream.current.getVideoTracks()[0];
       oldVideoTrack && oldVideoTrack.stop();
-      const oldAudioTrack = stream.current.getAudioTracks()[0];
-      oldAudioTrack && oldAudioTrack.stop();
+      // 如果关闭的是屏幕共享，则暂停声音
+      if (!type) {
+        const oldAudioTrack = stream.current.getAudioTracks()[0];
+        oldAudioTrack && oldAudioTrack.stop();
+      }
       socket.emit('setVideo', { id: me.current, open, room, type })
       return;
     }
