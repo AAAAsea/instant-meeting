@@ -1,4 +1,3 @@
-
 export const qualities = {
   'h': {
     width: {
@@ -60,21 +59,22 @@ export const stringToColor = (string) => {
   return color;
 }
 
-export function notify(msg) {
+export function notify(name, msg) {
+  const options = { icon: '/video.svg', body: `“${msg}”` };
   if (!("Notification" in window)) {
     // Check if the browser supports notifications
     console.log("This browser does not support desktop notification");
   } else if (Notification.permission === "granted") {
     // Check whether notification permissions have already been granted;
     // if so, create a notification
-    const notification = new Notification(msg);
+    const notification = new Notification(name + '：', options);
     // …
   } else if (Notification.permission !== "denied") {
     // We need to ask the user for permission
     Notification.requestPermission().then((permission) => {
       // If the user accepts, let's create a notification
       if (permission === "granted") {
-        const notification = new Notification(msg);
+        const notification = new Notification(name, options);
         // …
       }
     });

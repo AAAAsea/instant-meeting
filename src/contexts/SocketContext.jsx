@@ -131,7 +131,7 @@ const SocketContextProvider = ({ children }) => {
     socket.on('sendMessage', (data) => {
       messagesRef.current.push(data);
       setMessages([...messagesRef.current]);
-      notify(data.name + '：' + data.msg)
+      notify(data.name, data.msg)
     })
 
     socket.on('disconnect', () => {

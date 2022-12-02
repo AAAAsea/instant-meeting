@@ -68,7 +68,7 @@ const BottomNavBar = (props) => {
         // eslint-disable-next-line react/prop-types
         mainVideoRef.current.requestFullscreen()
       else
-        document.querySelector('#room').requestFullscreen()
+        document.querySelector('#room-detail').requestFullscreen()
     } else {
       if (currentFullScreenElement) {
         document.exitFullscreen();
