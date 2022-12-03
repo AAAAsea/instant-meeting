@@ -132,7 +132,7 @@ const SocketContextProvider = ({ children }) => {
     socket.on('sendMessage', (data) => {
       messagesRef.current.push(data);
       setMessages([...messagesRef.current]);
-      if (!slideOpenRef.current && data.id !== me.current)
+      if (data.id !== me.current && (document.hidden || !slideOpenRef.current || doucment.fullScreenElement !== null))
         notify(data.name, data.msg)
     })
 
