@@ -511,7 +511,7 @@ const SocketContextProvider = ({ children }) => {
 
   function sendData(file, peer) {
     let start = 0;
-    let chunkSize = 256 * 1024;
+    let chunkSize = 16 * 1024; // chrome 最大256KB，但不同浏览器有差，16保险
 
     if (file.size === 0) {
       message.warning("文件为空");
