@@ -103,8 +103,12 @@ io.on("connection", (socket) => {
     }
   })
 
-  socket.on("sendMessage", ({ msg, room, name, time }) => {
-    io.to(room).emit("sendMessage", { msg, room, name, time, id: socket.id })
+  socket.on("sendMessage", ({ msg, room, name, type, time, file }) => {
+    io.to(room).emit("sendMessage", { msg, name, room, type, file, time, id: socket.id })
+  })
+
+  socket.on("downloadFile", ({ fileIndex, userId }) => {
+    io.to(userId).emit("downloadFile", { fileIndex, userId: socket.id })
   })
 
   socket.on("disconnecting", () => {

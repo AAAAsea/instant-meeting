@@ -22,7 +22,7 @@ module.exports = {
   ],
   // off 0 | warn 1 | error 2
   rules: {
-    'comma-dangle': ['error', 'never'],
+    // 'comma-dangle': ['error', 'never'],
     'no-var': 'error',
     'indent': ['error', 2],
     'no-mixed-spaces-and-tabs': 'error',
