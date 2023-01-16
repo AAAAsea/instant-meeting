@@ -207,9 +207,36 @@
               word-break: break-all;
             }
             .file-message {
-              color: rgb(87, 176, 254);
+              margin-top: 5px;
               cursor: pointer;
-              text-decoration: underline;
+              background-color: rgba(0, 0, 0, 0.5);
+              padding: 2px 5px;
+              border-radius: 5px;
+              display: flex;
+              align-items: center;
+              font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS",
+                sans-serif;
+              .file-icon {
+                flex-basis: 50px;
+                aspect-ratio: 1;
+                align-items: center;
+                svg {
+                  width: 80%;
+                  height: 100%;
+                }
+              }
+              .file-info {
+                width: 0;
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+                .file-name {
+                  overflow: hidden; /*超出部分隐藏*/
+                  white-space: nowrap; /*不换行*/
+                  text-overflow: ellipsis; /*超出部分文字以...显示*/
+                }
+              }
             }
           }
         }

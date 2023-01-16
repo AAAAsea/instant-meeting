@@ -20,3 +20,20 @@ export function formatDate(time, format = 'YY-MM-DD hh:mm:ss') {
 
   return newTime;
 }
+
+function parseNum(num, decimal) {
+  if (!decimal) decimal = 1;
+  return Math.round(num * 10 ** decimal) / (10 ** decimal)
+}
+export function formatSize(size) {
+  if (size < 1024)
+    return ~~(size / 1024) + 'B'
+  else if (size < 1024 * 1024)
+    return ~~(size / 1024) + 'KB'
+  else if (size < 1024 * 1024 * 1024)
+    return parseNum(size / 1024 / 1024, 1) + 'M'
+  else if (size < 1024 ** 4)
+    return parseNum(size / 1024 / 1024 / 1024, 2) + 'G'
+  else if (size < 1024 ** 5)
+    return parseNum(size / 1024 / 1024 / 1024 / 1024, 2) + 'T'
+}

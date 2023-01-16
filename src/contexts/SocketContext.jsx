@@ -525,6 +525,7 @@ const SocketContextProvider = ({ children }) => {
       fileReader.readAsArrayBuffer(slice);
     };
     let readTimeOut = null;
+    const delay = 5;
     fileReader.onload = (e) => {
       if (start >= file.size) {
         return;
@@ -541,7 +542,7 @@ const SocketContextProvider = ({ children }) => {
           } catch (e) {
             // console.log('忙碌')
           }
-        }, 5000);
+        }, delay * 1000);
       }
     };
 

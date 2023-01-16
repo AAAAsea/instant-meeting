@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from "react";
 import { useEffect } from "react";
 import { useRef } from "react";
@@ -7,7 +8,7 @@ import BottomNavBar from "@/components/BottomNavBar";
 import "./index.scss";
 import { useParams } from "react-router-dom";
 import { LoadingButton } from "@mui/lab";
-import { CircularProgress, IconButton } from "@mui/material";
+import { CircularProgress, IconButton, Tooltip } from "@mui/material";
 import { ChevronRight } from "@mui/icons-material";
 import { useState } from "react";
 import { ChevronLeft } from "@mui/icons-material";
@@ -25,7 +26,7 @@ import { Tab } from "@mui/material";
 import { ChatRounded } from "@mui/icons-material";
 import { TextField } from "@mui/material";
 import { Button } from "@mui/material";
-import { formatDate } from "@/utils/tools.js";
+import { formatDate, formatSize } from "@/utils/tools.js";
 import { MessageContext } from "../../contexts/MessageContext";
 import { VideocamRounded } from "@mui/icons-material";
 import { TransitionGroup } from "react-transition-group";
@@ -34,6 +35,16 @@ import { List } from "@mui/material";
 import { ListItem, LinearProgress } from "@mui/material";
 import { LinkOffRounded } from "@mui/icons-material";
 import { UploadFileRounded } from "@mui/icons-material";
+import { SmartDisplayRounded } from "@mui/icons-material";
+import { PictureAsPdfRounded } from "@mui/icons-material";
+import { TheatersRounded } from "@mui/icons-material";
+import { ArticleRounded } from "@mui/icons-material";
+import { BackupTableRounded } from "@mui/icons-material";
+import { FolderZipRounded } from "@mui/icons-material";
+import { AudioFileRounded } from "@mui/icons-material";
+import { InsertDriveFile } from "@mui/icons-material";
+import { InsertDriveFileRounded } from "@mui/icons-material";
+import { InsertPhotoRounded } from "@mui/icons-material";
 
 const RoomDetail = () => {
   const [slideOpen, setSlideOpen] = useState(false);
@@ -93,6 +104,48 @@ const RoomDetail = () => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     sendMessage(file, "file");
+  };
+
+  const FileIcon = (props) => {
+    const fileName = props.fileName.toLowerCase();
+    const suffix = fileName.split(".")[fileName.split(".").length - 1];
+    let type;
+    if (
+      ["jpg", "jpeg", "png", "gif", "webp", "tif", "tiff", "bmp"].includes(
+        suffix
+      )
+    ) {
+      type = "pic";
+    } else if (["mp3", "flac", "ogg", "aac"].includes(suffix)) {
+      type = "audio";
+    } else if (["mp4", "wav", "avi"].includes(suffix)) {
+      type = "video";
+    } else if (suffix === "pdf") {
+      type = "pdf";
+    } else if (suffix === "ppt" || suffix === "pptx") {
+      type = "ppt";
+    } else if (suffix === "doc" || suffix === "docx") {
+      type = "doc";
+    } else if (suffix === "xls" || suffix === "xlsx") {
+      type = "xls";
+    } else if (["zip", "rar", "7z"].includes(suffix)) {
+      type = "zip";
+    } else {
+      type = "other";
+    }
+    const map = {
+      pic: <InsertPhotoRounded></InsertPhotoRounded>,
+      audio: <AudioFileRounded></AudioFileRounded>,
+      video: <SmartDisplayRounded></SmartDisplayRounded>,
+      pdf: <PictureAsPdfRounded></PictureAsPdfRounded>,
+      ppt: <TheatersRounded></TheatersRounded>,
+      doc: <ArticleRounded></ArticleRounded>,
+      xls: <BackupTableRounded></BackupTableRounded>,
+      zip: <FolderZipRounded></FolderZipRounded>,
+      other: <InsertDriveFileRounded></InsertDriveFileRounded>,
+    };
+
+    return map[type];
   };
 
   useEffect(() => {
@@ -346,7 +399,17 @@ const RoomDetail = () => {
                         downloadFile({ file: e.file, userId: e.id });
                       }}
                     >
-                      {e.msg}
+                      <div className="file-icon">
+                        <FileIcon fileName={e.file.fileName} />
+                      </div>
+                      <div className="file-info">
+                        <Tooltip title={e.file.fileName}>
+                          <span className="file-name">{e.file.fileName}</span>
+                        </Tooltip>
+                        <span className="file-size">
+                          {formatSize(e.file.fileSize)}
+                        </span>
+                      </div>
                     </div>
                   ) : (
                     <div className="message-content">{e.msg}</div>
@@ -355,14 +418,16 @@ const RoomDetail = () => {
               ))}
             </ul>
             <div className="input-wrapper">
-              <IconButton
-                color="primary"
-                aria-label="upload picture"
-                component="label"
-              >
-                <input hidden type="file" onChange={handleFileChange} />
-                <UploadFileRounded />
-              </IconButton>
+              <Tooltip title="发送文件" placement="top">
+                <IconButton
+                  color="primary"
+                  aria-label="upload picture"
+                  component="label"
+                >
+                  <input hidden type="file" onChange={handleFileChange} />
+                  <UploadFileRounded />
+                </IconButton>
+              </Tooltip>
               <TextField
                 value={msg}
                 className="input-text-field"
