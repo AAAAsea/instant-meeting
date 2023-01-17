@@ -264,7 +264,7 @@ const SocketContextProvider = ({ children }) => {
       );
       if (
         currentFileRef.current.currentSize >= currentFileRef.current.fileSize &&
-        downloading.current
+        downloadingRef.current
       ) {
         message.success("下载完毕");
         setProgress(0);
