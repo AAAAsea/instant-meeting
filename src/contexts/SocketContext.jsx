@@ -48,8 +48,10 @@ const SocketContextProvider = ({ children }) => {
   const messagesRef = useRef([]); // 同上
   const roomJoinnedCbRef = useRef(null);
   const roomCreatedCbRef = useRef(null);
+  const socketDisconnectCbRef = useRef(null);
   const slideOpenRef = useRef(true);
   const filesRef = useRef([]);
+  const downloadingRef = useRef(false);
   const currentFileRef = useRef({
     fileName: "",
     fileSize: 0,
@@ -160,6 +162,19 @@ const SocketContextProvider = ({ children }) => {
     socket.on("disconnect", () => {
       message.error("已断开连接");
       setRoomErrorMsg("已断开连接");
+      setRoomJoinned(false);
+      socketDisconnectCbRef.current && socketDisconnectCbRef.current();
+
+      if (downloading) message.error("连接断开，传输中断");
+      currentFileRef.current = {
+        fileName: "",
+        fileSize: 0,
+        fileBuffer: [],
+        currentSize: 0,
+      };
+      setDownloading(false);
+      downloadingRef.current = false;
+      setCurrentFile(currentFileRef.current);
     });
 
     socket.on("connection", () => {
@@ -167,6 +182,7 @@ const SocketContextProvider = ({ children }) => {
     });
   }, []);
 
+  // WebRTC建立连接
   const getPeerConnection = (userId, userName, isInitiator) => {
     const peer = new Peer({
       initiator: isInitiator,
@@ -214,6 +230,16 @@ const SocketContextProvider = ({ children }) => {
       const user = usersRef.current.find((user) => user.id === userId);
       user && (user.peerConnected = false);
       delete peers[userId];
+      if (downloading) message.error("连接断开，传输中断");
+      currentFileRef.current = {
+        fileName: "",
+        fileSize: 0,
+        fileBuffer: [],
+        currentSize: 0,
+      };
+      setDownloading(false);
+      downloadingRef.current = false;
+      setCurrentFile(currentFileRef.current);
     });
 
     peer.on("error", (err) => {
@@ -226,7 +252,7 @@ const SocketContextProvider = ({ children }) => {
     });
 
     peer.on("data", (data) => {
-      if (!downloading) setDownloading(true);
+      if (!downloadingRef.current) return;
       currentFileRef.current.fileBuffer.push(data);
       currentFileRef.current.currentSize += data.length;
       setProgress(
@@ -237,7 +263,8 @@ const SocketContextProvider = ({ children }) => {
         )
       );
       if (
-        currentFileRef.current.currentSize === currentFileRef.current.fileSize
+        currentFileRef.current.currentSize >= currentFileRef.current.fileSize &&
+        downloading.current
       ) {
         message.success("下载完毕");
         setProgress(0);
@@ -245,7 +272,6 @@ const SocketContextProvider = ({ children }) => {
         const downloadAnchor = document.createElement("a");
         downloadAnchor.href = URL.createObjectURL(received);
         downloadAnchor.download = currentFileRef.current.fileName;
-        downloadAnchor.textContent = `Click to download`;
         downloadAnchor.click();
 
         currentFileRef.current = {
@@ -255,6 +281,7 @@ const SocketContextProvider = ({ children }) => {
           currentSize: 0,
         };
         setDownloading(false);
+        downloadingRef.current = false;
         setCurrentFile(currentFileRef.current);
       }
     });
@@ -263,6 +290,7 @@ const SocketContextProvider = ({ children }) => {
     eventBucket.current[userId] = (signal) => peer.signal(signal);
   };
 
+  // 初始化音频
   const initMyVoice = (open) => {
     // 关闭麦克风
     if (!open) {
@@ -332,6 +360,7 @@ const SocketContextProvider = ({ children }) => {
     }
   };
 
+  // 初始化视频
   const initMyVideo = ({ type, quality = videoQuality, open }) => {
     // 关闭视频
     if (!open) {
@@ -440,6 +469,7 @@ const SocketContextProvider = ({ children }) => {
     }
   };
 
+  // 创建房间
   const createRoom = (data) => {
     // console.log('createRoom')
     setRoomCreating(true);
@@ -447,6 +477,7 @@ const SocketContextProvider = ({ children }) => {
     socket.emit("createRoom", data);
   };
 
+  // 加入房间
   const joinRoom = ({ room, roomPwd }) => {
     if (room === "") {
       message.error("请输入房间号");
@@ -457,6 +488,7 @@ const SocketContextProvider = ({ children }) => {
     socket.emit("joinRoom", { room, name: name.trim(), roomPwd });
   };
 
+  // 离开房间
   const leaveRoom = (room) => {
     setName("");
     setRoom("");
@@ -466,10 +498,12 @@ const SocketContextProvider = ({ children }) => {
     socket.emit("leaveRoom", { room, name: name.trim() });
   };
 
+  // 获取公共房间
   const getPublicRooms = () => {
     socket.emit("getPublicRooms");
   };
 
+  // 发送消息
   const sendMessage = (msg, type) => {
     const file = msg;
     if (type === "file") {
@@ -490,11 +524,21 @@ const SocketContextProvider = ({ children }) => {
     });
   };
 
+  // 下载文件
   const downloadFile = ({ file, userId }) => {
+    if (users.findIndex((user) => user.id === userId) === -1) {
+      message.warning("该用户已不在房间，文件不可下载");
+      return;
+    }
+    if (userId === me.current) {
+      return;
+    }
     if (downloading) {
       message.warning("当前已有下载任务");
       return;
     }
+    setDownloading(true);
+    downloadingRef.current = true;
     const { fileIndex, fileSize, fileName } = file;
     currentFileRef.current = {
       currentSize: 0,
@@ -509,6 +553,7 @@ const SocketContextProvider = ({ children }) => {
     });
   };
 
+  // 发送文件数据
   function sendData(file, peer) {
     let start = 0;
     let chunkSize = 16 * 1024; // chrome 最大256KB，但不同浏览器有差，16保险
@@ -549,6 +594,20 @@ const SocketContextProvider = ({ children }) => {
     readSlice();
   }
 
+  // 取消下载
+  const cancelDownload = () => {
+    message.error("下载已取消");
+    currentFileRef.current = {
+      fileName: "",
+      fileSize: 0,
+      fileBuffer: [],
+      currentSize: 0,
+    };
+    downloadingRef.current = false;
+    setDownloading(false);
+    setCurrentFile(currentFileRef.current);
+  };
+
   return (
     <SocketContext.Provider
       value={{
@@ -588,6 +647,7 @@ const SocketContextProvider = ({ children }) => {
         publicRooms,
         roomJoinnedCbRef,
         roomCreatedCbRef,
+        socketDisconnectCbRef,
         setRoomJoinned,
         leaveRoom,
         isLive,
@@ -599,6 +659,7 @@ const SocketContextProvider = ({ children }) => {
         progress,
         downloading,
         currentFile,
+        cancelDownload,
       }}
     >
       {children}

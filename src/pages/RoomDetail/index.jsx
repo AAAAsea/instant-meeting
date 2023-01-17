@@ -45,9 +45,10 @@ import { AudioFileRounded } from "@mui/icons-material";
 import { InsertDriveFile } from "@mui/icons-material";
 import { InsertDriveFileRounded } from "@mui/icons-material";
 import { InsertPhotoRounded } from "@mui/icons-material";
+import { DeleteRounded } from "@mui/icons-material";
 
 const RoomDetail = () => {
-  const [slideOpen, setSlideOpen] = useState(false);
+  const [slideOpen, setSlideOpen] = useState(true);
   const [tabValue, setTabValue] = useState(0);
   const [showMainVideo, setShowMainVideo] = useState(false);
   const [msg, setMsg] = useState("");
@@ -79,6 +80,8 @@ const RoomDetail = () => {
     progress,
     downloading,
     currentFile,
+    cancelDownload,
+    socketDisconnectCbRef,
   } = useContext(SocketContext);
 
   const { id } = useParams();
@@ -154,11 +157,13 @@ const RoomDetail = () => {
       return;
     }
     setRoomCreated(false); // 为了下次再次创建房间
-
     // window.onbeforeunload = (e) => {
     //   e.preventDefault();
     //   e.returnValue = ("确定离开当前页面吗？");
     // }
+    socketDisconnectCbRef.current = () => {
+      navigate("/room?type=join");
+    };
     document.title = name;
     setRoom(id);
     return () => {
@@ -203,15 +208,19 @@ const RoomDetail = () => {
 
   return (
     <div id="room-detail" className="animate__animated animate__fadeIn">
-      <div
-        className="progress animate__animated animate__fadeIn"
-        style={{
-          visibility: downloading ? "visible" : "hidden",
-        }}
-      >
-        <h5>正在下载 {currentFile.fileName}</h5>
-        <CircularProgressWithLabel value={progress} />
-      </div>
+      {downloading ? (
+        <div className="progress animate__animated animate__fadeInLeft">
+          <h5>正在下载 {currentFile.fileName}</h5>
+          <CircularProgressWithLabel value={progress} />
+          <Tooltip title="取消下载">
+            <IconButton onClick={cancelDownload} color="primary">
+              <DeleteRounded />
+            </IconButton>
+          </Tooltip>
+        </div>
+      ) : (
+        <></>
+      )}
       <div
         style={{
           visibility: showMainVideo ? "visible" : "hidden",
