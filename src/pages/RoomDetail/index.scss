@@ -65,7 +65,7 @@
   .open-slide-btn {
     padding: 3px 0;
     position: fixed;
-    top: 10px;
+    top: 20px;
     right: 0;
     background: #444;
     border-top-left-radius: 2px;
@@ -74,6 +74,21 @@
     display: flex;
     align-items: center;
     z-index: 10;
+  }
+  .twinkle {
+    animation: twinkle 0.6s ease-in-out infinite;
+  }
+
+  @keyframes twinkle {
+    0% {
+      opacity: 0.1;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0.1;
+    }
   }
   // 侧边栏
   .slide-wrapper {

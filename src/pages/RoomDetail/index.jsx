@@ -8,7 +8,7 @@ import BottomNavBar from "@/components/BottomNavBar";
 import "./index.scss";
 import { useParams } from "react-router-dom";
 import { LoadingButton } from "@mui/lab";
-import { CircularProgress, IconButton, Tooltip } from "@mui/material";
+import { Badge, CircularProgress, IconButton, Tooltip } from "@mui/material";
 import { ChevronRight } from "@mui/icons-material";
 import { useState } from "react";
 import { ChevronLeft } from "@mui/icons-material";
@@ -52,6 +52,8 @@ const RoomDetail = () => {
   const [tabValue, setTabValue] = useState(0);
   const [showMainVideo, setShowMainVideo] = useState(false);
   const [msg, setMsg] = useState("");
+  const [twinkle, setTwinkle] = useState(false);
+  const [unReadMsgCount, setUnReadMsgCount] = useState(-1);
 
   const {
     myVideo,
@@ -89,11 +91,13 @@ const RoomDetail = () => {
   const userVideoRef = useRef();
   const mainVideoRef = useRef();
   const chatContainerRef = useRef();
+  const twinkleTimeOutRef = useRef();
 
   const navigate = useNavigate();
 
   const handleChangeTab = (e, value) => {
     setTabValue(value);
+    if (value) setUnReadMsgCount(0);
   };
 
   const handleSendMessage = () => {
@@ -107,6 +111,13 @@ const RoomDetail = () => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     sendMessage(file, "file");
+  };
+
+  const handleOpenBtnClick = () => {
+    setSlideOpen(true);
+    slideOpenRef.current = true;
+    setTwinkle(false);
+    if (tabValue) setUnReadMsgCount(0);
   };
 
   const FileIcon = (props) => {
@@ -201,9 +212,18 @@ const RoomDetail = () => {
       }
     });
   }, [myVideo, users, videoOpen]);
-
   useEffect(() => {
     chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    if (!slideOpen) {
+      setTwinkle(true);
+      clearTimeout(twinkleTimeOutRef.current);
+      twinkleTimeOutRef.current = setTimeout(() => {
+        setTwinkle(false);
+      }, 5000);
+      setUnReadMsgCount(unReadMsgCount + 1);
+    } else {
+      if (!tabValue) setUnReadMsgCount(unReadMsgCount + 1);
+    }
   }, [messages]);
 
   return (
@@ -290,13 +310,19 @@ const RoomDetail = () => {
       </div>
 
       <div
-        className="open-slide-btn"
-        onClick={() => {
-          setSlideOpen(true);
-          slideOpenRef.current = true;
-        }}
+        className={twinkle ? "open-slide-btn twinkle" : "open-slide-btn"}
+        onClick={handleOpenBtnClick}
       >
-        <ChevronLeft color="primary" />
+        <Badge
+          badgeContent={unReadMsgCount}
+          color="primary"
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "left",
+          }}
+        >
+          <ChevronLeft color="primary" />
+        </Badge>
       </div>
       {/* 侧边栏 */}
       <div
@@ -319,7 +345,21 @@ const RoomDetail = () => {
             aria-label="icon tabs example"
           >
             <Tab icon={<VideocamRounded />} />
-            <Tab icon={<ChatRounded />} />
+
+            <Tab
+              icon={
+                <Badge
+                  badgeContent={unReadMsgCount}
+                  color="primary"
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "left",
+                  }}
+                >
+                  <ChatRounded />
+                </Badge>
+              }
+            />
           </Tabs>
         </div>
 

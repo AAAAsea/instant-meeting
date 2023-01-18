@@ -73,6 +73,7 @@ const SocketContextProvider = ({ children }) => {
       setRoomJoinned(true);
       roomCreatedCbRef.current && roomCreatedCbRef.current(room);
       roomCreatedCbRef.current = null;
+      usersRef.current = [];
       setUsers([{ id, name, peerConnected: true }]); // 只有我自己
       message.success("创建成功");
     });
@@ -81,6 +82,7 @@ const SocketContextProvider = ({ children }) => {
       if (newUser.id === me.current) {
         roomJoinnedCbRef.current && roomJoinnedCbRef.current();
         roomJoinnedCbRef.current = null;
+        usersRef.current = [];
       }
       message.info(`${newUser.name}进入了房间`);
       setRoom(room);
