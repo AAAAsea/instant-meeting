@@ -560,11 +560,6 @@ const SocketContextProvider = ({ children }) => {
     let start = 0;
     let chunkSize = 16 * 1024; // chrome 最大256KB，但不同浏览器有差，16保险
 
-    if (file.size === 0) {
-      message.warning("文件为空");
-      return;
-    }
-
     const fileReader = new FileReader();
     const readSlice = () => {
       const end = Math.min(start + chunkSize, file.size);

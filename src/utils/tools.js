@@ -27,7 +27,7 @@ function parseNum(num, decimal) {
 }
 export function formatSize(size) {
   if (size < 1024)
-    return ~~(size / 1024) + 'B'
+    return ~~(size) + 'B'
   else if (size < 1024 * 1024)
     return ~~(size / 1024) + 'KB'
   else if (size < 1024 * 1024 * 1024)

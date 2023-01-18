@@ -110,6 +110,10 @@ const RoomDetail = () => {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
+    if (file.size === 0) {
+      message.warning("文件为空");
+      return;
+    }
     sendMessage(file, "file");
   };
 
@@ -517,7 +521,7 @@ const RoomDetail = () => {
               <ListItem className="bullet-chat-item">
                 <span className="bullet-chat-name">{e.name}</span>:
                 {e.type === "file" ? (
-                  <span className="bullet-chat-content">{e.msg}</span>
+                  <span className="bullet-chat-content">【文件】 {e.msg}</span>
                 ) : (
                   <span className="bullet-chat-content">{e.msg}</span>
                 )}
