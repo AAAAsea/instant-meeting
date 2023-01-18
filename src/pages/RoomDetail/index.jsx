@@ -54,6 +54,7 @@ const RoomDetail = () => {
   const [msg, setMsg] = useState("");
   const [twinkle, setTwinkle] = useState(false);
   const [unReadMsgCount, setUnReadMsgCount] = useState(-1);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const {
     myVideo,
@@ -164,6 +165,14 @@ const RoomDetail = () => {
     };
 
     return map[type];
+  };
+
+  const handleClose = () => {
+    setModalOpen(false);
+  };
+
+  const handleOpen = () => {
+    setModalOpen(true);
   };
 
   useEffect(() => {

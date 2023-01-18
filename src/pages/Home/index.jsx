@@ -73,7 +73,7 @@ const Home = () => {
                 navigate("/room?id=" + room.room);
               }}
             >
-              <div className="room-info">
+              <div className="person-count">
                 <PersonRounded></PersonRounded>
                 {room.membersCount}/5
               </div>

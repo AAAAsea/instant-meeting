@@ -31,6 +31,7 @@ io.on("connection", (socket) => {
     const master = { room, id: socket.id, name: data.name };
     rooms[room] = [master]
     roomsInfo[room] = { ...data, room, canScreenShare: true };
+    master.roomInfo = roomsInfo[room];
     socket.join(room);
     socket.emit('createRoomSuccess', master)
     socket.name = data.name;
@@ -68,7 +69,7 @@ io.on("connection", (socket) => {
       socket.join(room)
       socket.name = name;
       rooms[room].push(newUser)
-      io.to(room).emit('joined', { users: rooms[room], newUser, room, isLive: roomsInfo[room].isLive, canScreenShare: roomsInfo[room].canScreenShare })
+      io.to(room).emit('joined', { users: rooms[room], newUser, room, isLive: roomsInfo[room].isLive, canScreenShare: roomsInfo[room].canScreenShare, roomInfo: roomsInfo[room] })
     } else {
       socket.emit('joined', { users: rooms[room], newUser, room, isLive: roomsInfo[room].isLive, canScreenShare: roomsInfo[room].canScreenShare })
     }

@@ -38,6 +38,8 @@ const SocketContextProvider = ({ children }) => {
   const [progress, setProgress] = useState(0);
   const [downloading, setDownloading] = useState(false);
   const [currentFile, setCurrentFile] = useState({});
+  const [roomPwd, setRoomPwd] = useState("");
+  const [roomInfo, setRoomInfo] = useState({});
 
   const { message } = useContext(MessageContext);
 
@@ -63,15 +65,15 @@ const SocketContextProvider = ({ children }) => {
     socket.on("me", (id) => (me.current = id));
 
     socket.on("setPublicRooms", (publicRooms) => {
-      console.log(publicRooms);
       setPublicRooms([...publicRooms]);
     });
 
-    socket.on("createRoomSuccess", ({ room, id, name }) => {
+    socket.on("createRoomSuccess", ({ room, id, name, roomInfo }) => {
       setRoom(room);
       setRoomCreating(false);
       setRoomCreated(true);
       setRoomJoinned(true);
+      setRoomInfo(roomInfo);
       roomCreatedCbRef.current && roomCreatedCbRef.current(room);
       roomCreatedCbRef.current = null;
       usersRef.current = [];
@@ -79,32 +81,37 @@ const SocketContextProvider = ({ children }) => {
       message.success("创建成功");
     });
 
-    socket.on("joined", ({ users, newUser, room, isLive, canScreenShare }) => {
-      if (newUser.id === me.current) {
-        roomJoinnedCbRef.current && roomJoinnedCbRef.current();
-        roomJoinnedCbRef.current = null;
-        usersRef.current = [];
-      }
-      message.info(`${newUser.name}进入了房间`);
-      setRoom(room);
-      setIsLive(isLive);
-      setCanScreenShare(canScreenShare);
-      if (users.length === 1) {
-        setRoomJoinning(false);
-        setRoomJoinned(true);
-        return;
-      }
-      // 与未连接的用户建立连接
-      users.forEach((user) => {
-        if (user.id !== socket.id && !peers[user.id]) {
-          getPeerConnection(user.id, user.name, newUser.id !== socket.id);
+    socket.on(
+      "joined",
+      ({ users, newUser, room, isLive, canScreenShare, roomInfo }) => {
+        if (newUser.id === me.current) {
+          roomJoinnedCbRef.current && roomJoinnedCbRef.current();
+          roomJoinnedCbRef.current = null;
+          usersRef.current = [];
         }
-        if (usersRef.current.findIndex((e) => e.id === user.id) < 0) {
-          usersRef.current.push(user);
+        message.info(`${newUser.name}进入了房间`);
+        setRoomInfo(roomInfo);
+        console.log(roomInfo);
+        setRoom(room);
+        setIsLive(isLive);
+        setCanScreenShare(canScreenShare);
+        if (users.length === 1) {
+          setRoomJoinning(false);
+          setRoomJoinned(true);
+          return;
         }
-      });
-      setUsers([...usersRef.current]);
-    });
+        // 与未连接的用户建立连接
+        users.forEach((user) => {
+          if (user.id !== socket.id && !peers[user.id]) {
+            getPeerConnection(user.id, user.name, newUser.id !== socket.id);
+          }
+          if (usersRef.current.findIndex((e) => e.id === user.id) < 0) {
+            usersRef.current.push(user);
+          }
+        });
+        setUsers([...usersRef.current]);
+      }
+    );
 
     // 每次收到peerConn，取出对应的signal事件执行
     socket.on("peerConn", ({ from, signal }) => {
@@ -658,6 +665,9 @@ const SocketContextProvider = ({ children }) => {
         downloading,
         currentFile,
         cancelDownload,
+        roomPwd,
+        setRoomPwd,
+        roomInfo,
       }}
     >
       {children}

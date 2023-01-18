@@ -92,8 +92,10 @@ h1 {
   text-align: right;
 }
 
-.room-info {
+.person-count {
   position: absolute;
   right: 10px;
   top: 10px;
+  display: flex;
+  align-items: center;
 }

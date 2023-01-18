@@ -13,7 +13,6 @@ import { useSearchParams } from "react-router-dom";
 import { useState } from "react";
 
 const Join = () => {
-  const [roomPwd, setRoomPwd] = useState("");
   const {
     name,
     setName,
@@ -22,6 +21,8 @@ const Join = () => {
     joinRoom,
     roomJoinnedCbRef,
     roomJoinned,
+    roomPwd,
+    setRoomPwd,
   } = useContext(SocketContext);
   const { message } = useContext(MessageContext);
   const navigate = useNavigate();

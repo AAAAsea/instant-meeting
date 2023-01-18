@@ -1,7 +1,16 @@
 /* eslint-disable react/prop-types */
-import { Badge } from "@mui/material";
+import {
+  Badge,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Modal,
+} from "@mui/material";
 import { styled } from "@mui/material";
-// import React from 'react'
+import * as React from "react";
+import CircularProgress from "@mui/material/CircularProgress";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 
 export const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -32,11 +41,6 @@ export const StyledBadge = styled(Badge)(({ theme }) => ({
   },
 }));
 
-import * as React from "react";
-import CircularProgress from "@mui/material/CircularProgress";
-import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
-
 export function CircularProgressWithLabel(props) {
   return (
     <Box sx={{ position: "relative", display: "inline-flex" }}>
@@ -58,5 +62,16 @@ export function CircularProgressWithLabel(props) {
         </Typography>
       </Box>
     </Box>
+  );
+}
+
+export function RoomInfoDialog(props) {
+  const { handleClose, open, children, title } = props;
+
+  return (
+    <Dialog onClose={handleClose} open={open}>
+      <DialogTitle>{title}</DialogTitle>
+      <DialogContent>{children}</DialogContent>
+    </Dialog>
   );
 }
