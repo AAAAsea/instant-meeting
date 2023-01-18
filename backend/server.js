@@ -38,7 +38,7 @@ io.on("connection", (socket) => {
     const publicRooms = [];
     for (let room in roomsInfo) {
       if (roomsInfo[room].isPublic)
-        publicRooms.push(roomsInfo[room]);
+        publicRooms.push({ ...roomsInfo[room], membersCount: rooms[room].length });
     }
     io.emit('setPublicRooms', publicRooms);
   });
@@ -52,6 +52,9 @@ io.on("connection", (socket) => {
       return;
     } else if (rooms[room].length >= maxNum) {
       socket.emit('joinError', { msg: '房间人数已满' })
+      return;
+    } else if (rooms[room].findIndex(e => e.name === name) !== -1) {
+      socket.emit('joinError', { msg: '当前用户名已被占用' })
       return;
     }
 
@@ -75,7 +78,7 @@ io.on("connection", (socket) => {
     const publicRooms = [];
     for (let room in roomsInfo) {
       if (roomsInfo[room].isPublic)
-        publicRooms.push(roomsInfo[room]);
+        publicRooms.push({ ...roomsInfo[room], membersCount: rooms[room].length });
     }
     socket.emit('setPublicRooms', publicRooms);
   })
@@ -123,7 +126,8 @@ io.on("connection", (socket) => {
           const publicRooms = [];
           for (let room in roomsInfo) {
             if (roomsInfo[room].isPublic)
-              publicRooms.push(roomsInfo[room]);
+              publicRooms.push({ ...roomsInfo[room], membersCount: rooms[room].length });
+
           }
           io.emit('setPublicRooms', publicRooms);
         }
@@ -145,7 +149,7 @@ io.on("connection", (socket) => {
     const publicRooms = [];
     for (let room in roomsInfo) {
       if (roomsInfo[room].isPublic)
-        publicRooms.push(roomsInfo[room]);
+        publicRooms.push({ ...roomsInfo[room], membersCount: rooms[room].length });
     }
     io.emit('setPublicRooms', publicRooms);
   })
@@ -161,7 +165,7 @@ io.on("connection", (socket) => {
     const publicRooms = [];
     for (let room in roomsInfo) {
       if (roomsInfo[room].isPublic)
-        publicRooms.push(roomsInfo[room]);
+        publicRooms.push({ ...roomsInfo[room], membersCount: rooms[room].length });
     }
     io.emit('setPublicRooms', publicRooms);
   });

@@ -1,14 +1,14 @@
-#home{
+#home {
   min-height: 100vh;
-  background: rgb(26,26,26);
+  background: rgb(26, 26, 26);
 }
-h1{
-  background: linear-gradient(to right, #5d8de6, #9708CC);
+h1 {
+  background: linear-gradient(to right, #5d8de6, #9708cc);
   -webkit-background-clip: text;
   color: transparent;
   font-size: 90px;
   font-weight: bolder;
-  transition: .1s;
+  transition: 0.1s;
   text-align: center;
 }
 
@@ -18,52 +18,51 @@ h1{
     margin-bottom: 100px;
   } */
 }
-.home-main{
+.home-main {
   height: 90vh;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
 }
-.h1-container{
+.h1-container {
   position: relative;
   margin-top: -100px;
 }
-.h1-bg{
+.h1-bg {
   width: 100%;
   height: 50%;
   position: absolute;
-  top: 50%; 
+  top: 50%;
   left: 50%;
   border-radius: 50%;
-  background-image: linear-gradient( -45deg, #9708CC 50%,#7d44d8 50%);
+  background-image: linear-gradient(-45deg, #9708cc 50%, #7d44d8 50%);
   filter: blur(80px);
-  transform: translate(-50%,-50%);
+  transform: translate(-50%, -50%);
 }
-.desc{
+.desc {
   color: var(--secondary-text-color);
   height: 50px;
 }
-.start-btn{
+.start-btn {
   display: flex;
   gap: 40px;
-  
 }
-.start-btn button{
+.start-btn button {
   line-height: 20px;
   border-radius: 8px;
 }
-#logo{
+#logo {
   position: absolute;
   left: 20px;
   top: 10px;
   width: 40px;
   height: 40px;
   cursor: pointer;
-  transition: .3s;
+  transition: 0.3s;
 }
 
-.public-rooms{
+.public-rooms {
   width: 80%;
   display: grid;
   flex-wrap: wrap;
@@ -71,7 +70,7 @@ h1{
   gap: 20px;
   margin: 0 auto;
 }
-.room-item{
+.room-item {
   background: #2f2f2f;
   border-radius: 10px;
   padding: 20px;
@@ -80,15 +79,21 @@ h1{
   flex-direction: column;
   cursor: pointer;
 }
-.room-name{
+.room-name {
   margin: 10px 0;
 }
-.room-desc{
+.room-desc {
   color: var(--secondary-text-color);
   word-break: break-all;
   flex: 1;
 }
-.room-footer{
+.room-footer {
   margin-top: 10px;
   text-align: right;
+}
+
+.room-info {
+  position: absolute;
+  right: 10px;
+  top: 10px;
 }
