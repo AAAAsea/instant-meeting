@@ -467,7 +467,10 @@ const RoomDetail = () => {
           </div>
         </div>
       </div>
-      <List className="bullet-chat" style={{ opacity: slideOpen ? "0" : "1" }}>
+      <List
+        className="bullet-chat"
+        style={{ opacity: slideOpen && tabValue ? "0" : "1" }}
+      >
         <TransitionGroup>
           {messages.map((e, index) => (
             <Collapse key={e.time + index + e.id}>
