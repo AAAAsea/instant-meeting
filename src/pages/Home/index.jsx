@@ -1,15 +1,15 @@
 import { Button } from "@mui/material";
-import React from "react";
+import React, { useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import "./index.scss";
 import Footer from "@/components/Footer";
 import logo from "/video.svg";
-import { GroupRounded } from "@mui/icons-material";
-import { VideoCameraFrontRounded } from "@mui/icons-material";
-import { useEffect } from "react";
-import { useContext } from "react";
-import { SocketContext } from "../../contexts/SocketContext";
-import { PersonRounded } from "@mui/icons-material";
+import {
+  VideoCameraFrontRounded,
+  PersonRounded,
+  GroupRounded,
+} from "@mui/icons-material";
+import { SocketContext } from "@/contexts/SocketContext";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -36,7 +36,6 @@ const Home = () => {
               Instant Meeting
             </h1>
           </div>
-          {/* <span className="desc">Start your own meeting room!</span> */}
           <div className="start-btn animate__animated animate__zoomIn">
             <Button
               size="large"

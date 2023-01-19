@@ -1,35 +1,38 @@
 import React from "react";
-import { useContext } from "react";
+import { useContext, useMemo, useState, useEffect } from "react";
 import "./index.scss";
 import CopyToClipboard from "react-copy-to-clipboard";
-
-import { RoomInfoDialog } from "@/components/MUI";
-import { Button, ButtonGroup, DialogActions } from "@mui/material";
+import { qualities } from "@/utils";
 import { SocketContext } from "@/contexts/SocketContext";
 import { MessageContext } from "@/contexts/MessageContext";
-import { IconButton } from "@mui/material";
-import { useMemo } from "react";
-import { MicRounded } from "@mui/icons-material";
-import { MicOffRounded } from "@mui/icons-material";
-import { VideocamRounded } from "@mui/icons-material";
-import { VideocamOffRounded } from "@mui/icons-material";
-import { ScreenShareRounded } from "@mui/icons-material";
-import { StopScreenShareRounded } from "@mui/icons-material";
-import { ShareRounded } from "@mui/icons-material";
-import { FullscreenRounded } from "@mui/icons-material";
-import { Tooltip } from "@mui/material";
-import { HdRounded } from "@mui/icons-material";
-import { Menu } from "@mui/material";
-import { MenuItem } from "@mui/material";
-import { useState } from "react";
-import { ListItemIcon } from "@mui/material";
-import { Check } from "@mui/icons-material";
-import { ListItemText } from "@mui/material";
-import { MenuList } from "@mui/material";
-import { qualities } from "../../utils";
-import { Box } from "@mui/material";
-import { FullscreenExitRounded } from "@mui/icons-material";
-import { useEffect } from "react";
+import { RoomInfoDialog } from "@/components/MUI";
+import {
+  Button,
+  ButtonGroup,
+  DialogActions,
+  IconButton,
+  Tooltip,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  ListItemText,
+  MenuList,
+  Box,
+} from "@mui/material";
+
+import {
+  HdRounded,
+  MicRounded,
+  MicOffRounded,
+  VideocamRounded,
+  VideocamOffRounded,
+  ScreenShareRounded,
+  StopScreenShareRounded,
+  ShareRounded,
+  FullscreenRounded,
+  Check,
+  FullscreenExitRounded,
+} from "@mui/icons-material";
 
 const BottomNavBar = (props) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -48,7 +51,6 @@ const BottomNavBar = (props) => {
     setVideoQuality,
     isLive,
     canScreenShare,
-    roomPwd,
     roomInfo,
   } = useContext(SocketContext);
   const { message } = useContext(MessageContext);

@@ -1,12 +1,9 @@
-import React from "react";
-import { useContext } from "react";
-import { useEffect } from "react";
-import { useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import Create from "../../components/Create";
-import Join from "../../components/Join";
-import TopNavBar from "../../components/TopNavBar";
-import { SocketContext } from "../../contexts/SocketContext";
+import Create from "@/components/Create";
+import Join from "@/components/Join";
+import TopNavBar from "@/components/TopNavBar";
+import { SocketContext } from "@/contexts/SocketContext";
 
 const Room = () => {
   const [search, setSearch] = useSearchParams();
