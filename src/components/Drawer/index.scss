@@ -1,0 +1,230 @@
+// 侧边栏
+.slide-wrapper {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 200px;
+  transition: 0.3s;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #333;
+  z-index: 100;
+  overflow: hidden;
+
+  .slide-header {
+    display: flex;
+    height: 50px;
+    align-items: center;
+    button {
+      height: 40px;
+      width: 40px;
+      box-sizing: border-box;
+      margin-left: 5px;
+    }
+  }
+  .slide-body {
+    width: 200%;
+    display: flex;
+    transition: 0.3s;
+    flex: 1;
+    /* height如果不设置会撑开，设置以后就会固定撑满剩下区域 */
+    height: 0;
+
+    .all-video-wrapper {
+      flex: 1;
+
+      .video-wrapper {
+        position: relative;
+        width: 100%;
+        max-height: 150px;
+        margin: 0 auto;
+        border-radius: 5px;
+        border: 2px solid #eeeeee11;
+        box-sizing: border-box;
+        .video-item {
+          width: 100%;
+          height: 100%;
+          border-radius: 5px;
+          cursor: pointer;
+          &:hover {
+            box-shadow: 0 0 2px 2px #eeeeee33;
+          }
+        }
+        .mask {
+          position: absolute;
+          right: 5px;
+          bottom: 5px;
+          font-size: 10px;
+          background-color: #00000099;
+          z-index: 10;
+          max-width: 150px;
+          text-align: center;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          transform: scale(0.9);
+        }
+        .video-mask {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%) scale(1.5);
+        }
+      }
+      .my-video-wrapper {
+        border-bottom: 1px solid #555;
+        margin-bottom: 5px;
+      }
+      .other-video {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+    }
+    .all-chat-wrapper {
+      flex: 1;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      .message-wrapper {
+        flex: 1;
+        padding: 0 10px;
+        margin: 0;
+        color: rgb(238, 238, 238);
+        overflow: auto;
+        border-bottom: 2px solid #666;
+        transition: 0.3s;
+        scroll-behavior: smooth;
+        &::-webkit-scrollbar {
+          width: 4px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          border-radius: 10px;
+          box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+          background: rgba(255, 254, 254, 0.2);
+        }
+
+        &::-webkit-scrollbar-track {
+          box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+          border-radius: 0;
+          background: rgba(0, 0, 0, 0.1);
+        }
+        .message-item {
+          margin: 10px 0;
+          list-style: none;
+          .message-header {
+            color: rgb(115, 115, 239);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            font-size: 14px;
+          }
+          .message-content {
+            font-size: 14px;
+            line-height: 1.3em;
+            font-family: "幼圆";
+            margin: 3px 0;
+            word-break: break-all;
+          }
+          .file-message {
+            margin-top: 5px;
+            cursor: pointer;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 2px 5px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS",
+              sans-serif;
+            .file-icon {
+              flex-basis: 50px;
+              aspect-ratio: 1;
+              align-items: center;
+              svg {
+                width: 80%;
+                height: 100%;
+              }
+            }
+            .file-info {
+              width: 0;
+              flex: 1;
+              display: flex;
+              flex-direction: column;
+              gap: 5px;
+              .file-name {
+                overflow: hidden; /*超出部分隐藏*/
+                white-space: nowrap; /*不换行*/
+                text-overflow: ellipsis; /*超出部分文字以...显示*/
+              }
+            }
+          }
+        }
+      }
+
+      .input-wrapper {
+        position: relative;
+        flex-basis: 150px;
+        .input-text-field {
+          height: 80%;
+          textarea {
+            color: #eee;
+          }
+          textarea::-webkit-scrollbar {
+            width: 4px;
+          }
+          textarea::-webkit-scrollbar-thumb {
+            border-radius: 10px;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+            background: rgba(255, 254, 254, 0.2);
+          }
+          textarea::-webkit-scrollbar-track {
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+            border-radius: 0;
+            background: rgba(0, 0, 0, 0.1);
+          }
+        }
+        .send-btn {
+          position: absolute !important;
+          bottom: 3px;
+          right: 3px;
+          z-index: 100;
+        }
+      }
+    }
+  }
+}
+
+// 展开按钮
+.open-slide-btn {
+  padding: 3px 0;
+  position: fixed;
+  top: 20px;
+  right: 0;
+  background: #444;
+  border-top-left-radius: 2px;
+  border-bottom-left-radius: 2px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  z-index: 10;
+}
+.twinkle {
+  animation: twinkle 0.6s ease-in-out infinite;
+}
+
+@keyframes twinkle {
+  0% {
+    opacity: 0.1;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.1;
+  }
+}
