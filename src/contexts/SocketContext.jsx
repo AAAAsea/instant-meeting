@@ -1,14 +1,18 @@
-import { createContext, useEffect, useRef, useState } from "react";
+import React, {
+  createContext,
+  useEffect,
+  useRef,
+  useState,
+  useContext,
+} from "react";
 import { io } from "socket.io-client";
 import Peer from "simple-peer";
-import { useContext } from "react";
 import { MessageContext } from "@/contexts/MessageContext";
-import React from "react";
 import { qualities, notify } from "../utils";
 const SocketContext = createContext();
 
-const socket = io("http://localhost:5000/");
-// const socket = io("https://meet.asea.fun/");
+// const socket = io("http://localhost:5000/");
+const socket = io("https://meet.asea.fun/");
 const peers = {};
 
 // eslint-disable-next-line react/prop-types
