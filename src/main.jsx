@@ -24,7 +24,7 @@ const theme = createTheme({
       dark: "#1e1e1e",
       contrastText: "#AAB8E4",
     },
-    // mode: "dark",
+    mode: "dark",
   },
 });
 

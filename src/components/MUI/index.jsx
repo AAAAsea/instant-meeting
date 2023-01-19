@@ -5,6 +5,7 @@ import {
   DialogContent,
   DialogTitle,
   Modal,
+  Slide,
 } from "@mui/material";
 import { styled } from "@mui/material";
 import * as React from "react";
@@ -65,11 +66,21 @@ export function CircularProgressWithLabel(props) {
   );
 }
 
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
 export function RoomInfoDialog(props) {
   const { handleClose, open, children, title } = props;
 
   return (
-    <Dialog onClose={handleClose} open={open}>
+    <Dialog
+      TransitionComponent={Transition}
+      maxWidth="xs"
+      fullWidth
+      onClose={handleClose}
+      open={open}
+    >
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>{children}</DialogContent>
     </Dialog>

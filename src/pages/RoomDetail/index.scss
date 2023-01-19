@@ -141,21 +141,22 @@
           }
           .mask {
             position: absolute;
-            right: 10px;
-            bottom: 10px;
-            color: white;
-            text-shadow: 1px 1px 2px #000;
-            font-size: 14px;
+            right: 5px;
+            bottom: 5px;
+            // color: white;
+            // text-shadow: 1px 1px 2px #000;
+            font-size: 10px;
             background-color: #00000099;
-            padding: 3px 5px;
-            border-radius: 3px;
-            line-height: 16px;
+            // padding: 3px 5px;
+            // border-radius: 3px;
+            // line-height: 16px;
             z-index: 10;
             max-width: 150px;
             text-align: center;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            transform: scale(0.9);
           }
           .video-mask {
             position: absolute;

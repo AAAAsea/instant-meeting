@@ -8,7 +8,13 @@ import BottomNavBar from "@/components/BottomNavBar";
 import "./index.scss";
 import { useParams } from "react-router-dom";
 import { LoadingButton } from "@mui/lab";
-import { Badge, CircularProgress, IconButton, Tooltip } from "@mui/material";
+import {
+  Badge,
+  Chip,
+  CircularProgress,
+  IconButton,
+  Tooltip,
+} from "@mui/material";
 import { ChevronRight } from "@mui/icons-material";
 import { useState } from "react";
 import { ChevronLeft } from "@mui/icons-material";
@@ -193,7 +199,7 @@ const RoomDetail = () => {
     return () => {
       window.onbeforeunload = null;
       leaveRoom(room);
-      setUsers([]);
+      // setUsers([]);
     };
   }, []);
 
@@ -299,7 +305,9 @@ const RoomDetail = () => {
               </Avatar>
             </StyledBadge>
             <div className="avatar-footer">
-              <span className="avatar-desc">{user.name}</span>
+              <span className="avatar-desc">
+                {user.name === name ? user.name + "（我）" : user.name}
+              </span>
               <Icon
                 color={
                   user.voice && (user.peerConnected || user.id === me.current)
@@ -384,7 +392,21 @@ const RoomDetail = () => {
         >
           <div className="all-video-wrapper">
             <div className="video-wrapper my-video-wrapper">
-              <span className="mask">{name}📍</span>
+              <Chip
+                className="mask"
+                avatar={
+                  <Avatar
+                    sx={{
+                      bgcolor: stringToColor(name),
+                      width: 20,
+                      height: 20,
+                    }}
+                  >
+                    {name[0]}
+                  </Avatar>
+                }
+                label={name + "（我）"}
+              />
               <Icon
                 color="primary"
                 className="video-mask"
@@ -410,7 +432,21 @@ const RoomDetail = () => {
                 .filter((user) => user.id !== me.current)
                 .map((user) => (
                   <div className="video-wrapper" key={user.id} data={user.id}>
-                    <span className="mask">{user.name}</span>
+                    <Chip
+                      className="mask"
+                      avatar={
+                        <Avatar
+                          sx={{
+                            bgcolor: stringToColor(user.name),
+                            width: 20,
+                            height: 20,
+                          }}
+                        >
+                          {user.name[0]}
+                        </Avatar>
+                      }
+                      label={user.name}
+                    />
                     <Icon
                       color="primary"
                       className="video-mask"
