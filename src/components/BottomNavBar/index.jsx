@@ -242,7 +242,7 @@ const BottomNavBar = (props) => {
           </li>
           <li>
             <span>房间类型：</span>
-            <span>{roomInfo.isLive ? "普通房" : "观影房"}</span>
+            <span>{roomInfo.isLive ? "观影房" : "普通房"}</span>
           </li>
           <li>
             <span>是否公开：</span>

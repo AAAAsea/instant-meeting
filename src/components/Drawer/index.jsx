@@ -35,7 +35,7 @@ import {
 /* eslint-disable react/prop-types */
 import { useEffect, useRef, useContext, useState } from "react";
 import { SocketContext } from "../../contexts/SocketContext";
-import { stringToColor, formatDate } from "@/utils";
+import { stringToColor, formatDate, formatSize } from "@/utils";
 import "./index.scss";
 
 function Drawer(props) {
