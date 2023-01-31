@@ -1,17 +1,20 @@
 /* eslint-disable react/prop-types */
+import * as React from "react";
 import {
   Badge,
   Dialog,
   DialogContent,
   DialogTitle,
+  DialogContentText,
+  DialogActions,
   Modal,
   Slide,
+  Button,
+  Box,
+  Typography,
 } from "@mui/material";
 import { styled } from "@mui/material";
-import * as React from "react";
 import CircularProgress from "@mui/material/CircularProgress";
-import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
 
 export const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -84,5 +87,34 @@ export function RoomInfoDialog(props) {
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>{children}</DialogContent>
     </Dialog>
+  );
+}
+
+export function AlertDialog(props) {
+  const { handleClose, open, content, title, handleConfirm, handleCancel } =
+    props;
+
+  return (
+    <div>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            {content}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancel}>取消</Button>
+          <Button variant="contained" onClick={handleConfirm} autoFocus>
+            确定
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
   );
 }

@@ -2,7 +2,6 @@ import { app, BrowserWindow, ipcMain } from 'electron'
 import fs from 'fs'
 import os from 'os'
 import path from 'path'
-import { electron } from 'process'
 
 process.env.DIST_ELECTRON = path.join(__dirname, './')
 process.env.DIST = path.join(process.env.DIST_ELECTRON, '../dist')

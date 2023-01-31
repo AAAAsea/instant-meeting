@@ -5,7 +5,7 @@ import CopyToClipboard from "react-copy-to-clipboard";
 import { qualities } from "@/utils";
 import { SocketContext } from "@/contexts/SocketContext";
 import { MessageContext } from "@/contexts/MessageContext";
-import { RoomInfoDialog } from "@/components/MUI";
+import { RoomInfoDialog, AlertDialog } from "@/components/MUI";
 import {
   Button,
   ButtonGroup,
@@ -33,12 +33,15 @@ import {
   Check,
   FullscreenExitRounded,
 } from "@mui/icons-material";
+import { ExitToAppRounded } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
 const BottomNavBar = (props) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const open = Boolean(anchorEl);
+  const [alertOpen, setAlertOpen] = useState(false);
 
   const {
     initMyVideo,
@@ -56,6 +59,7 @@ const BottomNavBar = (props) => {
   const { message } = useContext(MessageContext);
   // eslint-disable-next-line react/prop-types
   const { mainVideoRef, showMainVideo } = props;
+  const navigate = useNavigate();
 
   const shareLink = useMemo(
     () => `房间号：${room}\n房间链接：${location.href}\n快来加入我的房间吧！`,
@@ -74,6 +78,16 @@ const BottomNavBar = (props) => {
     }
   };
 
+  const handleAlertClose = () => {
+    setAlertOpen(false);
+  };
+  const handleConfirm = () => {
+    navigate(-1);
+    handleAlertClose();
+  };
+  const handleCancel = () => {
+    handleAlertClose();
+  };
   const share = () => {
     handleModalClose();
     message.success("房间已复制，快去分享吧~");
@@ -101,6 +115,10 @@ const BottomNavBar = (props) => {
 
   const handleModalOpen = () => {
     setModalOpen(true);
+  };
+
+  const leaveRoom = () => {
+    setAlertOpen(true);
   };
 
   useEffect(() => {
@@ -194,6 +212,13 @@ const BottomNavBar = (props) => {
             </CopyToClipboard>
           </Box>
         </Tooltip>
+        <Tooltip title={`离开房间`}>
+          <Box>
+            <IconButton color="primary" onClick={leaveRoom}>
+              <ExitToAppRounded />
+            </IconButton>
+          </Box>
+        </Tooltip>
       </ButtonGroup>
 
       <Menu
@@ -263,6 +288,15 @@ const BottomNavBar = (props) => {
           </Button>
         </DialogActions>
       </RoomInfoDialog>
+
+      <AlertDialog
+        title="确定离开房间？"
+        content="离开房间后，若房间内仍然有人，则房间不会销毁，你依然可以进入。"
+        handleConfirm={handleConfirm}
+        handleCancel={handleCancel}
+        handleAlertClose={handleClose}
+        open={alertOpen}
+      ></AlertDialog>
     </div>
   );
 };
