@@ -29,5 +29,6 @@ module.exports = {
     // 'quotes': ['error', 'single'],
     'no-multiple-empty-lines': ['error', { max: 1 }],
     "react/prop-types": [2, { ignore: ['children'] }]
-  }
+  },
+  "parser": "babel-eslint"
 }

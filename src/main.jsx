@@ -6,7 +6,6 @@ import { SocketContextProvider } from "./contexts/SocketContext";
 import { createTheme } from "@mui/material/styles";
 import { ThemeProvider } from "@emotion/react";
 import "animate.css";
-
 const theme = createTheme({
   status: {
     danger: "#e53e3e",

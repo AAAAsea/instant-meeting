@@ -44,6 +44,7 @@ const SocketContextProvider = ({ children }) => {
   const [currentFile, setCurrentFile] = useState({});
   const [roomPwd, setRoomPwd] = useState("");
   const [roomInfo, setRoomInfo] = useState({});
+  const [isElectron] = useState(import.meta.env.IS_ELECTRON);
 
   const { message } = useContext(MessageContext);
 
@@ -267,7 +268,12 @@ const SocketContextProvider = ({ children }) => {
 
     peer.on("data", (data) => {
       if (!downloadingRef.current) return;
-      currentFileRef.current.fileBuffer.push(data);
+      if (isElectron) {
+        window.electron.ipcRenderer.send("downloading", data);
+      } else {
+        currentFileRef.current.fileBuffer.push(data);
+      }
+
       currentFileRef.current.currentSize += data.length;
       setProgress(
         Math.round(
@@ -282,11 +288,16 @@ const SocketContextProvider = ({ children }) => {
       ) {
         message.success("下载完毕");
         setProgress(0);
-        const received = new Blob(currentFileRef.current.fileBuffer);
-        const downloadAnchor = document.createElement("a");
-        downloadAnchor.href = URL.createObjectURL(received);
-        downloadAnchor.download = currentFileRef.current.fileName;
-        downloadAnchor.click();
+        if (isElectron) {
+          window.electron.ipcRenderer.send("downloadOver");
+          message.success("下载完毕");
+        } else {
+          const received = new Blob(currentFileRef.current.fileBuffer);
+          const downloadAnchor = document.createElement("a");
+          downloadAnchor.href = URL.createObjectURL(received);
+          downloadAnchor.download = currentFileRef.current.fileName;
+          downloadAnchor.click();
+        }
 
         currentFileRef.current = {
           fileName: "",
@@ -554,6 +565,7 @@ const SocketContextProvider = ({ children }) => {
     setDownloading(true);
     downloadingRef.current = true;
     const { fileIndex, fileSize, fileName } = file;
+    window.electron.ipcRenderer.send("downloadStart", fileName);
     currentFileRef.current = {
       currentSize: 0,
       fileName,
@@ -606,6 +618,8 @@ const SocketContextProvider = ({ children }) => {
   // 取消下载
   const cancelDownload = () => {
     message.error("下载已取消");
+    window.electron.ipcRenderer.send("downloadOver");
+
     currentFileRef.current = {
       fileName: "",
       fileSize: 0,

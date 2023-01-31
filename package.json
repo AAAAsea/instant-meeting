@@ -2,15 +2,52 @@
   "name": "videoroom",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
+  "homepage": "./",
+  "author": "Asea",
+  "description": "Instant Meeting",
+  "main": "dist-electron/main.js",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
     "serve": "nodemon ./backend/server.js",
     "lint": "eslint **/*.jsx",
-    "electron:serve": "electron ."
+    "electron:serve": "electron .",
+    "electron:build": "electron-builder"
   },
+  "build":{
+    "appId": "YourAppID",
+    "asar": true,
+    "icon": "public/favicon.ico",
+    "directories": {
+      "output": "release/${version}"
+    },
+    "files": [
+      "dist-electron",
+      "dist",
+      "!node_modules"
+    ],
+    "mac": {
+      "artifactName": "${productName}_${version}.${ext}",
+      "target": ["dmg"]
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ],
+      "artifactName": "${productName}_${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "deleteAppDataOnUninstall": false
+    }
+  }
+  ,
   "husky": {
     "hooks": {
       "pre-commit": "npm test"
@@ -37,6 +74,11 @@
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.9",
     "@vitejs/plugin-react": "^2.2.0",
+    "electron": "^22.1.0",
+    "electron-builder": "^23.6.0",
+    "electron-is-dev": "^2.0.0",
+    "electron-packager": "^17.1.1",
+    "esbuild": "^0.17.5",
     "eslint": "^8.27.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jsx-a11y": "^6.6.1",
@@ -45,6 +87,7 @@
     "eslint-plugin-react": "^7.31.10",
     "eslint-plugin-react-hooks": "^4.6.0",
     "husky": "^8.0.2",
-    "vite": "^3.2.4"
+    "vite": "^3.2.4",
+    "vite-electron-plugin": "^0.7.4"
   }
 }
