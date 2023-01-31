@@ -9,6 +9,7 @@ import { io } from "socket.io-client";
 import Peer from "simple-peer";
 import { MessageContext } from "@/contexts/MessageContext";
 import { qualities, notify } from "../utils";
+import isEle from "is-electron";
 const SocketContext = createContext();
 
 // const socket = io("http://localhost:5000/");
@@ -44,7 +45,7 @@ const SocketContextProvider = ({ children }) => {
   const [currentFile, setCurrentFile] = useState({});
   const [roomPwd, setRoomPwd] = useState("");
   const [roomInfo, setRoomInfo] = useState({});
-  const [isElectron] = useState(import.meta.env.IS_ELECTRON);
+  const [isElectron] = useState(isEle());
 
   const { message } = useContext(MessageContext);
 
@@ -550,7 +551,7 @@ const SocketContextProvider = ({ children }) => {
   };
 
   // 下载文件
-  const downloadFile = ({ file, userId }) => {
+  const downloadFile = async ({ file, userId }) => {
     if (users.findIndex((user) => user.id === userId) === -1) {
       message.warning("该用户已不在房间，文件不可下载");
       return;
@@ -562,21 +563,36 @@ const SocketContextProvider = ({ children }) => {
       message.warning("当前已有下载任务");
       return;
     }
-    setDownloading(true);
-    downloadingRef.current = true;
-    const { fileIndex, fileSize, fileName } = file;
-    window.electron.ipcRenderer.send("downloadStart", fileName);
-    currentFileRef.current = {
-      currentSize: 0,
-      fileName,
-      fileSize,
-      fileBuffer: [],
+    const start = () => {
+      setDownloading(true);
+      downloadingRef.current = true;
+      const { fileIndex, fileSize, fileName } = file;
+      currentFileRef.current = {
+        currentSize: 0,
+        fileName,
+        fileSize,
+        fileBuffer: [],
+      };
+      setCurrentFile(currentFileRef.current);
+      socket.emit("downloadFile", {
+        fileIndex,
+        userId,
+      });
     };
-    setCurrentFile(currentFileRef.current);
-    socket.emit("downloadFile", {
-      fileIndex,
-      userId,
-    });
+    if (isElectron) {
+      window.electron.ipcRenderer
+        .invoke("dialog:openDirectory")
+        .then((directoryPath) => {
+          if (!directoryPath) return;
+          window.electron.ipcRenderer.send("downloadStart", {
+            fileName: file.fileName,
+            directoryPath,
+          });
+          start();
+        });
+    } else {
+      start();
+    }
   };
 
   // 发送文件数据
@@ -618,7 +634,7 @@ const SocketContextProvider = ({ children }) => {
   // 取消下载
   const cancelDownload = () => {
     message.error("下载已取消");
-    window.electron.ipcRenderer.send("downloadOver");
+    window.electron.ipcRenderer.send("downloadCanceled");
 
     currentFileRef.current = {
       fileName: "",
@@ -686,6 +702,7 @@ const SocketContextProvider = ({ children }) => {
         roomPwd,
         setRoomPwd,
         roomInfo,
+        isElectron,
       }}
     >
       {children}

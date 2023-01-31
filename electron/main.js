@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from 'electron'
+import { app, BrowserWindow, ipcMain, dialog } from 'electron'
 import fs from 'fs'
 import os from 'os'
 import path from 'path'
@@ -115,14 +115,28 @@ ipcMain.on('minimize', () => {
 })
 
 // 文件持久化
-ipcMain.on("downloadStart", (e, name) => {
-  const filePath = os.homedir() + '\\\\Desktop\\\\' + name;
+const handleDirectoryOpen = async () => {
+  const { canceled, filePaths } = await dialog.showOpenDialog({ properties: ['openDirectory'] })
+  if (canceled) {
+    return
+  } else {
+    return filePaths[0]
+  }
+}
+ipcMain.handle('dialog:openDirectory', handleDirectoryOpen)
+ipcMain.on("downloadStart", (e, { fileName, directoryPath }) => {
+  const filePath = directoryPath + '\\' + fileName;
   fileStream = fs.createWriteStream(filePath);
 })
 ipcMain.on("downloading", (e, buffer) => {
   fileStream.write(buffer)
 })
 ipcMain.on("downloadOver", (e) => {
-  console.log('over')
   fileStream.end();
+})
+ipcMain.on("downloadCanceled", (e) => {
+  fileStream.end();
+  fs.unlink(fileStream.path, err => {
+    console.log(err)
+  });
 })

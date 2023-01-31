@@ -15,7 +15,7 @@
     "electron:serve": "electron .",
     "electron:build": "electron-builder"
   },
-  "build":{
+  "build": {
     "appId": "YourAppID",
     "asar": true,
     "icon": "public/favicon.ico",
@@ -29,13 +29,17 @@
     ],
     "mac": {
       "artifactName": "${productName}_${version}.${ext}",
-      "target": ["dmg"]
+      "target": [
+        "dmg"
+      ]
     },
     "win": {
       "target": [
         {
           "target": "nsis",
-          "arch": ["x64"]
+          "arch": [
+            "x64"
+          ]
         }
       ],
       "artifactName": "${productName}_${version}.${ext}"
@@ -46,8 +50,7 @@
       "allowToChangeInstallationDirectory": true,
       "deleteAppDataOnUninstall": false
     }
-  }
-  ,
+  },
   "husky": {
     "hooks": {
       "pre-commit": "npm test"
@@ -60,6 +63,7 @@
     "@mui/lab": "5.0.0-alpha.107",
     "@mui/material": "^5.10.14",
     "animate.css": "^4.1.1",
+    "is-electron": "^2.2.1",
     "react": "^18.2.0",
     "react-copy-to-clipboard": "^5.1.0",
     "react-dom": "^18.2.0",
