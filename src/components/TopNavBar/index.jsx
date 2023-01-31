@@ -11,18 +11,22 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 import "./index.css";
+import logo from "/video.svg";
+
 const TopNavBar = (props) => {
   // eslint-disable-next-line react/prop-types
   const { value, onChange } = props;
   const navigate = useNavigate();
-  const back = () => {
-    navigate("/");
-  };
+
   return (
     <nav>
-      <Button className="back-button" onClick={back} variant="contained">
-        返回
-      </Button>
+      <img
+        id="logo"
+        src={logo}
+        onClick={() => {
+          navigate("/");
+        }}
+      />
       <Tabs
         centered
         textColor="inherit"

@@ -2,10 +2,10 @@
 import React, { Suspense, lazy } from "react";
 import { createBrowserRouter, createHashRouter } from "react-router-dom";
 import Error from "./pages/Error";
-
+import Room from "./pages/Room";
 const RoomDetail = lazy(() => import("./pages/RoomDetail"));
-const Room = lazy(() => import("./pages/Room"));
 const Home = lazy(() => import("./pages/Home"));
+
 const createRouter = import.meta.env.IS_ELECTRON
   ? createHashRouter
   : createBrowserRouter;
@@ -34,18 +34,6 @@ export const router = createRouter([
   },
   {
     path: "/room",
-    element: (
-      <Suspense>
-        <Room />
-      </Suspense>
-    ),
-  },
-  {
-    path: "*",
-    element: (
-      <Suspense>
-        <Home />
-      </Suspense>
-    ),
+    element: <Room />,
   },
 ]);

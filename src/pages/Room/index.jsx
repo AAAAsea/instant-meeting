@@ -4,6 +4,7 @@ import Create from "@/components/Create";
 import Join from "@/components/Join";
 import TopNavBar from "@/components/TopNavBar";
 import { SocketContext } from "@/contexts/SocketContext";
+import "./index.scss";
 
 const Room = () => {
   const [search, setSearch] = useSearchParams();
