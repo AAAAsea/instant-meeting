@@ -5,6 +5,9 @@ import Join from "@/components/Join";
 import TopNavBar from "@/components/TopNavBar";
 import { SocketContext } from "@/contexts/SocketContext";
 import "./index.scss";
+import { Tab, Tabs } from "@mui/material";
+import { VideoCameraFrontRounded } from "@mui/icons-material";
+import { GroupRounded } from "@mui/icons-material";
 
 const Room = () => {
   const [search, setSearch] = useSearchParams();
@@ -18,7 +21,19 @@ const Room = () => {
 
   return (
     <div id="room">
-      <TopNavBar value={value} onChange={setValue} />
+      <TopNavBar />
+      <Tabs
+        className="room-tabs"
+        centered
+        textColor="inherit"
+        value={value}
+        onChange={(e, val) => {
+          setValue(val);
+        }}
+      >
+        <Tab icon={<VideoCameraFrontRounded />} />
+        <Tab icon={<GroupRounded />} />
+      </Tabs>
       {value ? <Join /> : <Create />}
     </div>
   );

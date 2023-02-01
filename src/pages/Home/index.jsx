@@ -3,13 +3,14 @@ import React, { useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import "./index.scss";
 import Footer from "@/components/Footer";
-import logo from "/video.svg";
 import {
   VideoCameraFrontRounded,
   PersonRounded,
   GroupRounded,
 } from "@mui/icons-material";
 import { SocketContext } from "@/contexts/SocketContext";
+import { SettingsDrawer } from "../../components/SettingsDrawer";
+import TopNavBar from "../../components/TopNavBar";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -22,13 +23,7 @@ const Home = () => {
   return (
     <>
       <div id="home">
-        <img
-          id="logo"
-          src={logo}
-          onClick={() => {
-            navigate("/");
-          }}
-        />
+        <TopNavBar />
         <div className="home-main">
           <div className="h1-container">
             <div className="h1-bg"></div>
@@ -82,7 +77,7 @@ const Home = () => {
             </div>
           ))}
         </div>
-        <Footer></Footer>
+        <Footer />
       </div>
     </>
   );
