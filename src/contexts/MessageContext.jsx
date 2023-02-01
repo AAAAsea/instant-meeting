@@ -1,43 +1,44 @@
-import React,{ useState } from "react";
+import React, { useState } from "react";
 import { createContext } from "react";
 
 const MessageContext = createContext();
 
-const ContextProvider = ({ children }) => {
+const MessageContextProvider = ({ children }) => {
   const [messageOpen, setMessageOpen] = useState(false);
   const [messageContent, setMessageContent] = useState(false);
-  const [messageType, setMessageType] = useState('success');
+  const [messageType, setMessageType] = useState("success");
   const showMessage = (type, content) => {
     setMessageOpen(true);
     setMessageType(type);
     setMessageContent(content);
-  }
+  };
   const message = {
     success(content) {
-      showMessage('success', content)
+      showMessage("success", content);
     },
     error(content) {
-      showMessage('error', content)
+      showMessage("error", content);
     },
     warning(content) {
-      showMessage('warning', content)
+      showMessage("warning", content);
     },
     info(content) {
-      showMessage('info', content)
-    }
-  }
+      showMessage("info", content);
+    },
+  };
   return (
-    <MessageContext.Provider value={{
-      messageOpen,
-      setMessageOpen,
-      messageContent,
-      messageType,
-      message
-    }}>
+    <MessageContext.Provider
+      value={{
+        messageOpen,
+        setMessageOpen,
+        messageContent,
+        messageType,
+        message,
+      }}
+    >
       {children}
     </MessageContext.Provider>
-  )
+  );
+};
 
-}
-
-export { ContextProvider, MessageContext }
+export { MessageContextProvider, MessageContext };

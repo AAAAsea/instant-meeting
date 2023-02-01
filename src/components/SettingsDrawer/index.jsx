@@ -13,21 +13,12 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
-import { useState } from "react";
+import { useContext } from "react";
+import { SettingsContext } from "../../contexts/SettingsContext";
 
 export const SettingsDrawer = (props) => {
   const { open, setOpen } = props;
-  const [theme, setTheme] = useState("system");
-
-  React.useEffect(() => {
-    let initialTheme = "system";
-    try {
-      initialTheme = localStorage.getItem("theme") || initialTheme;
-    } catch (error) {
-      // do nothing
-    }
-    setTheme(initialTheme);
-  }, []);
+  const { theme, setTheme } = useContext(SettingsContext);
 
   const toggleDrawer = (state) => {
     return () => {
