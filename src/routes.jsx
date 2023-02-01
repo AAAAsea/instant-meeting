@@ -36,4 +36,8 @@ export const router = createRouter([
     path: "/room",
     element: <Room />,
   },
+  {
+    path: "*",
+    element: <Home />,
+  },
 ]);
