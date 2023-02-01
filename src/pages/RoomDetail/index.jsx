@@ -8,13 +8,14 @@ import { StyledBadge, CircularProgressWithLabel } from "@/components/MUI";
 import Drawer from "@/components/Drawer";
 import { Bullet } from "@/components/Bullet";
 import BottomNavBar from "@/components/BottomNavBar";
-import { IconButton, Tooltip, Icon, Avatar } from "@mui/material";
+import { IconButton, Tooltip, Icon, Avatar, Divider } from "@mui/material";
 import {
   LinkOffRounded,
   DeleteRounded,
   MicOff,
   Mic,
 } from "@mui/icons-material";
+import { InfoOutlined } from "@mui/icons-material";
 
 const RoomDetail = () => {
   const [slideOpen, setSlideOpen] = useState(true);
@@ -59,6 +60,97 @@ const RoomDetail = () => {
 
   return (
     <div id="room-detail" className="animate__animated animate__fadeIn">
+      <Divider sx={{ width: "100%" }} />
+
+      <div className="room-main">
+        <div className="room-main-left">
+          {/* 主视频窗口 */}
+          <div
+            style={{
+              visibility: showMainVideo ? "visible" : "hidden",
+            }}
+            className="main-video-wrapper"
+          >
+            <video
+              className="main-video"
+              playsInline
+              muted
+              autoPlay
+              ref={mainVideoRef}
+            />
+          </div>
+          {/* 用户头像列表 */}
+          <div
+            style={{
+              visibility: showMainVideo ? "hidden" : "visible",
+            }}
+            className="avatar-wrapper"
+          >
+            {users.map((user) => (
+              <div
+                className="avatar-item animate__animated animate__zoomIn"
+                key={user.id}
+              >
+                <StyledBadge
+                  overlap="circular"
+                  anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                  variant="dot"
+                  color="error"
+                  invisible={!user.video || !user.peerConnected}
+                >
+                  <Avatar
+                    className="avatar-main "
+                    sizes="large"
+                    sx={{
+                      bgcolor: stringToColor(user.name),
+                      width: 60,
+                      height: 60,
+                    }}
+                  >
+                    {user.name[0]}
+                  </Avatar>
+                </StyledBadge>
+                <div className="avatar-footer">
+                  <span className="avatar-desc">
+                    {user.name === name ? user.name + "（我）" : user.name}
+                  </span>
+                  <Icon
+                    color={
+                      user.voice &&
+                      (user.peerConnected || user.id === me.current)
+                        ? "error"
+                        : "primary"
+                    }
+                  >
+                    {user.peerConnected || user.id === me.current ? (
+                      user.voice ? (
+                        <Mic />
+                      ) : (
+                        <MicOff />
+                      )
+                    ) : (
+                      <LinkOffRounded />
+                    )}
+                  </Icon>
+                </div>
+              </div>
+            ))}
+          </div>
+          {/* 底部导航 */}
+          <BottomNavBar
+            mainVideoRef={mainVideoRef}
+            showMainVideo={showMainVideo}
+          />
+        </div>
+        {/* 侧边栏 */}
+        <Drawer
+          className="room-main-right"
+          open={slideOpen}
+          setOpen={setSlideOpen}
+          mainVideoRef={mainVideoRef}
+          setShowMainVideo={setShowMainVideo}
+        />
+      </div>
       {/* 下载按钮 */}
       <div
         className="progress animate__animated animate__fadeInLeft"
@@ -72,88 +164,8 @@ const RoomDetail = () => {
           </IconButton>
         </Tooltip>
       </div>
-      {/* 主视频窗口 */}
-      <div
-        style={{
-          visibility: showMainVideo ? "visible" : "hidden",
-        }}
-        className="main-video-wrapper"
-      >
-        <video
-          className="main-video"
-          playsInline
-          muted
-          autoPlay
-          ref={mainVideoRef}
-        />
-      </div>
-      {/* 用户头像列表 */}
-      <div
-        style={{
-          visibility: showMainVideo ? "hidden" : "visible",
-        }}
-        className="avatar-wrapper"
-      >
-        {users.map((user) => (
-          <div
-            className="avatar-item animate__animated animate__zoomIn"
-            key={user.id}
-          >
-            <StyledBadge
-              overlap="circular"
-              anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-              variant="dot"
-              color="error"
-              invisible={!user.video || !user.peerConnected}
-            >
-              <Avatar
-                className="avatar-main "
-                sizes="large"
-                sx={{
-                  bgcolor: stringToColor(user.name),
-                  width: 60,
-                  height: 60,
-                }}
-              >
-                {user.name[0]}
-              </Avatar>
-            </StyledBadge>
-            <div className="avatar-footer">
-              <span className="avatar-desc">
-                {user.name === name ? user.name + "（我）" : user.name}
-              </span>
-              <Icon
-                color={
-                  user.voice && (user.peerConnected || user.id === me.current)
-                    ? "error"
-                    : "primary"
-                }
-              >
-                {user.peerConnected || user.id === me.current ? (
-                  user.voice ? (
-                    <Mic />
-                  ) : (
-                    <MicOff />
-                  )
-                ) : (
-                  <LinkOffRounded />
-                )}
-              </Icon>
-            </div>
-          </div>
-        ))}
-      </div>
-      {/* 侧边栏 */}
-      <Drawer
-        open={slideOpen}
-        setOpen={setSlideOpen}
-        mainVideoRef={mainVideoRef}
-        setShowMainVideo={setShowMainVideo}
-      />
       {/* 弹幕 */}
       <Bullet />
-      {/* 底部导航 */}
-      <BottomNavBar mainVideoRef={mainVideoRef} showMainVideo={showMainVideo} />
     </div>
   );
 };

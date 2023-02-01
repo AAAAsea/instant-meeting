@@ -1,4 +1,4 @@
-import { Button } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import React, { useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import "./index.scss";
@@ -21,65 +21,66 @@ const Home = () => {
   }, []);
 
   return (
-    <>
-      <div id="home">
-        <TopNavBar />
-        <div className="home-main">
-          <div className="h1-container">
-            <div className="h1-bg"></div>
-            <h1 className="animate__animated animate__zoomIn">
-              Instant Meeting
-            </h1>
-          </div>
-          <div className="start-btn animate__animated animate__zoomIn">
-            <Button
-              size="large"
-              color="primary"
-              variant="contained"
-              startIcon={<VideoCameraFrontRounded />}
-              onClick={() => {
-                navigate("/room?type=create");
-              }}
-              className=""
-            >
-              Create
-            </Button>
-            <Button
-              size="large"
-              color="neutral"
-              variant="contained"
-              endIcon={<GroupRounded />}
-              onClick={() => {
-                navigate("/room?type=join");
-              }}
-              className=""
-            >
-              Join
-            </Button>
-          </div>
+    <Box
+      id="home"
+      sx={{
+        bgcolor: "background.main",
+        color: "text.main",
+      }}
+    >
+      <TopNavBar />
+      <div className="home-main">
+        <div className="h1-container">
+          <div className="h1-bg"></div>
+          <h1 className="animate__animated animate__zoomIn">Instant Meeting</h1>
         </div>
-        <div className="public-rooms">
-          {publicRooms.map((room, index) => (
-            <div
-              className="room-item animate__animated animate__zoomIn"
-              key={index}
-              onClick={() => {
-                navigate("/room?id=" + room.room);
-              }}
-            >
-              <div className="person-count">
-                <PersonRounded></PersonRounded>
-                {room.membersCount}/5
-              </div>
-              <h2 className="room-name">{room.roomName}</h2>
-              <p className="room-desc">{room.roomDesc}</p>
-              <div className="room-footer">@ {room.name}</div>
-            </div>
-          ))}
+        <div className="start-btn animate__animated animate__zoomIn">
+          <Button
+            size="large"
+            variant="contained"
+            startIcon={<VideoCameraFrontRounded />}
+            onClick={() => {
+              navigate("/room?type=create");
+            }}
+            className=""
+          >
+            Create
+          </Button>
+          <Button
+            size="large"
+            color="neutral"
+            variant="contained"
+            endIcon={<GroupRounded />}
+            onClick={() => {
+              navigate("/room?type=join");
+            }}
+            className=""
+          >
+            Join
+          </Button>
         </div>
-        <Footer />
       </div>
-    </>
+      <div className="public-rooms">
+        {publicRooms.map((room, index) => (
+          <div
+            className="room-item animate__animated animate__zoomIn"
+            key={index}
+            onClick={() => {
+              navigate("/room?id=" + room.room);
+            }}
+          >
+            <div className="person-count">
+              <PersonRounded></PersonRounded>
+              {room.membersCount}/5
+            </div>
+            <h2 className="room-name">{room.roomName}</h2>
+            <p className="room-desc">{room.roomDesc}</p>
+            <div className="room-footer">@ {room.name}</div>
+          </div>
+        ))}
+      </div>
+      <Footer />
+    </Box>
   );
 };
 

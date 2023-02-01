@@ -1,6 +1,6 @@
 #home {
   min-height: 100vh;
-  background: rgb(26, 26, 26);
+  // background: rgb(26, 26, 26);
 }
 h1 {
   background: linear-gradient(to right, #5d8de6, #9708cc);
@@ -41,7 +41,7 @@ h1 {
   transform: translate(-50%, -50%);
 }
 .desc {
-  color: var(--secondary-text-color);
+  // color: var(--secondary-text-color);
   height: 50px;
 }
 .start-btn {
@@ -73,7 +73,7 @@ h1 {
   margin: 10px 0;
 }
 .room-desc {
-  color: var(--secondary-text-color);
+  // color: var(--secondary-text-color);
   word-break: break-all;
   flex: 1;
 }

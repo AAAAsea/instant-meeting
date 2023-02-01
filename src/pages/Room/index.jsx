@@ -5,7 +5,7 @@ import Join from "@/components/Join";
 import TopNavBar from "@/components/TopNavBar";
 import { SocketContext } from "@/contexts/SocketContext";
 import "./index.scss";
-import { Tab, Tabs } from "@mui/material";
+import { Box, Tab, Tabs } from "@mui/material";
 import { VideoCameraFrontRounded } from "@mui/icons-material";
 import { GroupRounded } from "@mui/icons-material";
 
@@ -34,7 +34,7 @@ const Room = () => {
         <Tab icon={<VideoCameraFrontRounded />} />
         <Tab icon={<GroupRounded />} />
       </Tabs>
-      {value ? <Join /> : <Create />}
+      <Box>{value ? <Join /> : <Create />}</Box>
     </div>
   );
 };

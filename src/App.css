@@ -3,9 +3,9 @@ a{
 }
 
 :root{
-  --text-color: #e4e4e4;
-  --secondary-text-color:#a0a0a0;
-  --primary: #6e6ce9;
+  /* --text-color: #e4e4e4; */
+  /* --secondary-text-color:#a0a0a0; */
+  /* --primary: #6e6ce9; */
   font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; 
 }
 
@@ -14,8 +14,8 @@ a{
 } */
 
 body{
-  background: rgb(26,26,26);
-  color: var(--text-color);
+  /* background: rgb(26,26,26); */
+  /* color: var(--text-color); */
 }
 #root{
   height: 100vh;
@@ -68,4 +68,8 @@ body::-webkit-scrollbar-track {
   display: flex;
   align-items: center;
   cursor: pointer;
+}
+
+.window-title, .window-controls-container {
+  display: none !important;
 }

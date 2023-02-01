@@ -1,8 +1,8 @@
 {
-  "name": "instant-meeting",
+  "name": "Instant Meeting",
   "private": true,
   "version": "0.0.0",
-  "homepage": "./",
+  "homepage": "https://meet.asea.fun",
   "author": "Asea",
   "description": "Instant Meeting",
   "main": "dist-electron/main.js",
@@ -63,6 +63,7 @@
     "@mui/lab": "5.0.0-alpha.107",
     "@mui/material": "^5.10.14",
     "animate.css": "^4.1.1",
+    "custom-electron-titlebar": "^4.1.6",
     "is-electron": "^2.2.1",
     "react": "^18.2.0",
     "react-copy-to-clipboard": "^5.1.0",

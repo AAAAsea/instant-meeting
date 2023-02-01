@@ -1,5 +1,5 @@
 #bottom {
-  position: fixed;
+  position: absolute;
   left: 50%;
   bottom: 10px;
   z-index: 99;
@@ -9,7 +9,7 @@
   height: 40px;
 }
 .menu-btns button {
-  background: #333333;
+  // background: #333333;
   margin: 0 5px;
 }
 .room-info {

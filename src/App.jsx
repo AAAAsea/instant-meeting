@@ -2,12 +2,12 @@ import React from "react";
 import Message from "./components/Message/Message";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./routes";
-import { ThemeProvider } from "@emotion/react";
 import "./App.css";
 import { useContext } from "react";
 import { SettingsContext } from "./contexts/SettingsContext";
-import { createTheme } from "@mui/material/styles";
-import { useMediaQuery } from "@mui/material";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { Box, useMediaQuery } from "@mui/material";
+import { SettingsDrawer } from "./components/SettingsDrawer";
 
 const themes = {
   light: createTheme({
@@ -15,6 +15,9 @@ const themes = {
       danger: "#e53e3e",
     },
     palette: {
+      background: {
+        main: "#ffffff",
+      },
       primary: {
         main: "#6e6ce9",
         darker: "#6e6ce9",
@@ -22,10 +25,10 @@ const themes = {
         contrastText: "#ffffff",
       },
       neutral: {
-        main: "#2F2F2F",
+        main: "#eeeeee",
         light: "#2F2F2F",
-        dark: "#1e1e1e",
-        contrastText: "#AAB8E4",
+        dark: "#dddddd",
+        contrastText: "#111111",
       },
       mode: "light",
     },
@@ -35,6 +38,9 @@ const themes = {
       danger: "#e53e3e",
     },
     palette: {
+      background: {
+        main: "#1A1A1A",
+      },
       primary: {
         main: "#6e6ce9",
         darker: "#6e6ce9",
@@ -42,10 +48,10 @@ const themes = {
         contrastText: "#ffffff",
       },
       neutral: {
-        main: "#2F2F2F",
+        main: "#333",
         light: "#2F2F2F",
-        dark: "#1e1e1e",
-        contrastText: "#AAB8E4",
+        dark: "#222",
+        contrastText: "#ffffff",
       },
       mode: "dark",
     },
@@ -60,8 +66,17 @@ const App = () => {
   return (
     <>
       <ThemeProvider theme={themes[theme]}>
-        <RouterProvider router={router} />
-        <Message></Message>
+        <Box
+          sx={{
+            color: "text.primary",
+            bgcolor: "background.main",
+            height: "100%",
+          }}
+        >
+          <RouterProvider router={router} />
+          <Message></Message>
+          <SettingsDrawer />
+        </Box>
       </ThemeProvider>
     </>
   );

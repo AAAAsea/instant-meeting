@@ -16,16 +16,18 @@ import React from "react";
 import { useContext } from "react";
 import { SettingsContext } from "../../contexts/SettingsContext";
 
-export const SettingsDrawer = (props) => {
-  const { open, setOpen } = props;
-  const { theme, setTheme } = useContext(SettingsContext);
+export const SettingsDrawer = () => {
+  const { theme, setTheme, drawerOpen, setDrawerOpen } =
+    useContext(SettingsContext);
 
   const toggleDrawer = (state) => {
     return () => {
-      setOpen(state);
+      setDrawerOpen(state);
     };
   };
   const handleChangeThemeMode = (e, theme) => {
+    if (!theme) return;
+    localStorage.setItem("theme", theme);
     setTheme(theme);
   };
   const Heading = styled(Typography)(({ theme }) => ({
@@ -48,7 +50,7 @@ export const SettingsDrawer = (props) => {
     <Drawer
       anchor="right"
       onClose={toggleDrawer(false)}
-      open={open}
+      open={drawerOpen}
       PaperProps={{
         elevation: 0,
         sx: { width: { xs: 310, sm: 360 }, borderRadius: "10px 0px 0px 10px" },
@@ -84,7 +86,7 @@ export const SettingsDrawer = (props) => {
         >
           <IconToggleButton
             value="light"
-            aria-label="亮色"
+            aria-label="日间"
             data-ga-event-category="settings"
             data-ga-event-action="light"
           >
@@ -93,7 +95,7 @@ export const SettingsDrawer = (props) => {
           </IconToggleButton>
           <IconToggleButton
             value="system"
-            aria-label="跟随系统"
+            aria-label="系统"
             data-ga-event-category="settings"
             data-ga-event-action="system"
           >

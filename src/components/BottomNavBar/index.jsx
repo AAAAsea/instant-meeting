@@ -35,6 +35,8 @@ import {
 } from "@mui/icons-material";
 import { ExitToAppRounded } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import { Settings } from "@mui/icons-material";
+import { SettingsContext } from "../../contexts/SettingsContext";
 
 const BottomNavBar = (props) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -57,6 +59,8 @@ const BottomNavBar = (props) => {
     roomInfo,
   } = useContext(SocketContext);
   const { message } = useContext(MessageContext);
+  const { drawerOpen, setDrawerOpen } = useContext(SettingsContext);
+
   // eslint-disable-next-line react/prop-types
   const { mainVideoRef, showMainVideo } = props;
   const navigate = useNavigate();
@@ -131,7 +135,6 @@ const BottomNavBar = (props) => {
     <div id="bottom">
       <ButtonGroup
         className="menu-btns animate__animated animate__slideInUp"
-        variant="contained"
         aria-label="outlined primary button group"
       >
         <Tooltip title={voiceOpen ? "麦克风已打开" : "麦克风已关闭"}>
@@ -216,6 +219,18 @@ const BottomNavBar = (props) => {
           <Box>
             <IconButton color="primary" onClick={leaveRoom}>
               <ExitToAppRounded />
+            </IconButton>
+          </Box>
+        </Tooltip>
+        <Tooltip title={`设置`}>
+          <Box>
+            <IconButton
+              color="primary"
+              onClick={() => {
+                setDrawerOpen(true);
+              }}
+            >
+              <Settings />
             </IconButton>
           </Box>
         </Tooltip>

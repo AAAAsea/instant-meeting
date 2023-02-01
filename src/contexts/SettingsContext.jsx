@@ -5,6 +5,8 @@ const SettingsContext = createContext();
 
 const SettingsContextProvider = ({ children }) => {
   const [theme, setTheme] = useState("dark");
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
   React.useEffect(() => {
     let initialTheme = "system";
     try {
@@ -12,6 +14,8 @@ const SettingsContextProvider = ({ children }) => {
     } catch (error) {
       // do nothing
     }
+    if (!["system", "dark", "light"].includes(initialTheme))
+      initialTheme = "system";
     setTheme(initialTheme);
   }, []);
 
@@ -20,6 +24,8 @@ const SettingsContextProvider = ({ children }) => {
       value={{
         theme,
         setTheme,
+        drawerOpen,
+        setDrawerOpen,
       }}
     >
       {children}

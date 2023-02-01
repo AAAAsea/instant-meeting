@@ -182,6 +182,7 @@ function Drawer(props) {
       <div
         className={twinkle ? "open-slide-btn twinkle" : "open-slide-btn"}
         onClick={handleOpenBtnClick}
+        style={{ opacity: open ? 0 : 1 }}
       >
         <Badge
           badgeContent={unReadMsgCount}
@@ -191,11 +192,13 @@ function Drawer(props) {
             horizontal: "left",
           }}
         >
-          <ChevronLeft color="primary" />
+          <IconButton>
+            <ChevronLeft color="primary" />
+          </IconButton>
         </Badge>
       </div>
       <div
-        style={{ transform: open ? "translateX(0)" : "translateX(100%)" }}
+        style={{ marginRight: open ? 0 : "-200px" }}
         className="slide-wrapper"
       >
         <div className="slide-header">

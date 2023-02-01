@@ -1,6 +1,5 @@
 import { app, BrowserWindow, ipcMain, dialog } from 'electron'
 import fs from 'fs'
-import os from 'os'
 import path from 'path'
 
 process.env.DIST_ELECTRON = path.join(__dirname, './')
@@ -63,6 +62,7 @@ async function createWindow() {
     if (url.startsWith('https:')) shell.openExternal(url)
     return { action: 'deny' }
   })
+
 }
 
 app.whenReady().then(createWindow)
