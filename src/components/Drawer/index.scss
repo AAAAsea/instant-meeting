@@ -1,6 +1,8 @@
 .drawer {
   border-radius: 10px 0 0 10px;
   border-left: 1px solid rgba(128, 128, 128, 0.2);
+  height: 100%;
+  // border: 1px solid red;
   // 侧边栏
   .slide-wrapper {
     transition: 0.3s;

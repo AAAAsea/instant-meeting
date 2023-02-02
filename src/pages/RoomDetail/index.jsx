@@ -143,13 +143,14 @@ const RoomDetail = () => {
           />
         </div>
         {/* 侧边栏 */}
-        <Drawer
-          className="room-main-right"
-          open={slideOpen}
-          setOpen={setSlideOpen}
-          mainVideoRef={mainVideoRef}
-          setShowMainVideo={setShowMainVideo}
-        />
+        <div className="room-main-right">
+          <Drawer
+            open={slideOpen}
+            setOpen={setSlideOpen}
+            mainVideoRef={mainVideoRef}
+            setShowMainVideo={setShowMainVideo}
+          />
+        </div>
       </div>
       {/* 下载按钮 */}
       <div
