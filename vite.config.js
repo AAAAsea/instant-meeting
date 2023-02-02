@@ -12,6 +12,10 @@ export default defineConfig({
       ],
     }),
   ],
+  base: '/', // 防止部署后二级路由无法访问
+  build: {
+    assetsDir: '/'
+  },
   server: {
     open: true,
     port: 3000,
