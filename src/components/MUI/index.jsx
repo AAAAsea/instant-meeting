@@ -61,7 +61,7 @@ export function CircularProgressWithLabel(props) {
           justifyContent: "center",
         }}
       >
-        <Typography variant="caption" component="div" color="#eee">
+        <Typography variant="caption" component="div">
           {`${props.value}%`}
         </Typography>
       </Box>

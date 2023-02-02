@@ -68,7 +68,7 @@ const App = () => {
     theme = prefersDarkMode ? "dark" : "light";
   }
   document.documentElement.setAttribute("theme", theme);
-  console.log("app");
+
   return (
     <>
       <ThemeProvider theme={themes[theme]}>

@@ -9,7 +9,7 @@
   flex-direction: column;
   justify-content: flex-end;
   transition: 0.3s;
-  z-index: 99;
+  pointer-events: none;
   .bullet-chat-item {
     width: fit-content !important;
     border-radius: 5px;

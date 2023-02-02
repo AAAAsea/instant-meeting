@@ -27,6 +27,7 @@ import {
 const RoomDetail = () => {
   const [slideOpen, setSlideOpen] = useState(true);
   const [showMainVideo, setShowMainVideo] = useState(false);
+  const [tabValue, setTabValue] = useState(0);
   const mainVideoRef = useRef();
 
   const {
@@ -150,6 +151,8 @@ const RoomDetail = () => {
         {/* 侧边栏 */}
         <div className="room-main-right">
           <Drawer
+            tabValue={tabValue}
+            setTabValue={setTabValue}
             open={slideOpen}
             setOpen={setSlideOpen}
             mainVideoRef={mainVideoRef}
@@ -172,7 +175,7 @@ const RoomDetail = () => {
         </Tooltip>
       </Paper>
       {/* 弹幕 */}
-      <Bullet />
+      <Bullet tabValue={tabValue} slideOpen={slideOpen} />
     </div>
   );
 };

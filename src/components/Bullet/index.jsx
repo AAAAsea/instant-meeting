@@ -6,7 +6,7 @@ import "./index.scss";
 export const Bullet = (props) => {
   const { messages } = useContext(SocketContext);
   // eslint-disable-next-line react/prop-types
-  const { slideOpen } = props;
+  const { slideOpen, tabValue } = props;
   return (
     <List
       className="bullet-chat"

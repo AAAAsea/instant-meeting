@@ -43,10 +43,16 @@ import { stringToColor, formatDate, formatSize } from "@/utils";
 import "./index.scss";
 
 function Drawer(props) {
-  const { open, setOpen, mainVideoRef, setShowMainVideo } = props;
+  const {
+    open,
+    setOpen,
+    mainVideoRef,
+    setShowMainVideo,
+    tabValue,
+    setTabValue,
+  } = props;
 
   const [msg, setMsg] = useState("");
-  const [tabValue, setTabValue] = useState(0);
   const [twinkle, setTwinkle] = useState(false);
   const [unReadMsgCount, setUnReadMsgCount] = useState(-1);
 
