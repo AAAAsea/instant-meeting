@@ -66,7 +66,8 @@ const BottomNavBar = (props) => {
   const navigate = useNavigate();
 
   const shareLink = useMemo(
-    () => `房间号：${room}\n房间链接：${location.href}\n快来加入我的房间吧！`,
+    () =>
+      `房间号：${room}\n房间链接：https://meet.asea.fun/room/${room}\n快来加入我的房间吧！`,
     [room]
   );
 
