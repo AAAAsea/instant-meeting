@@ -3,10 +3,14 @@ import React from "react";
 import {
   Avatar,
   Badge,
+  Box,
   Button,
   Chip,
+  Divider,
+  Fade,
   Icon,
   IconButton,
+  Paper,
   Tab,
   Tabs,
   TextField,
@@ -179,24 +183,25 @@ function Drawer(props) {
 
   return (
     <div className="drawer">
-      <div
-        className={twinkle ? "open-slide-btn twinkle" : "open-slide-btn"}
-        onClick={handleOpenBtnClick}
-        style={{ opacity: open ? 0 : 1 }}
-      >
-        <Badge
-          badgeContent={unReadMsgCount}
-          color="primary"
-          anchorOrigin={{
-            vertical: "top",
-            horizontal: "left",
-          }}
+      <Fade in={!open}>
+        <div
+          className={twinkle ? "open-slide-btn twinkle" : "open-slide-btn"}
+          onClick={handleOpenBtnClick}
         >
-          <IconButton>
-            <ChevronLeft color="primary" />
-          </IconButton>
-        </Badge>
-      </div>
+          <Badge
+            badgeContent={unReadMsgCount}
+            color="primary"
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "left",
+            }}
+          >
+            <IconButton sx={{ bgcolor: "background.light" }}>
+              <ChevronLeft color="primary" />
+            </IconButton>
+          </Badge>
+        </div>
+      </Fade>
       <div
         style={{ marginRight: open ? 0 : "-200px" }}
         className="slide-wrapper"
@@ -241,8 +246,11 @@ function Drawer(props) {
             transform: !tabValue ? "translateX(0)" : "translateX(-50%)",
           }}
         >
-          <div className="all-video-wrapper">
-            <div className="video-wrapper my-video-wrapper">
+          <div className="all-video-wrapper .beautify-scroll">
+            <Box
+              className="video-wrapper my-video-wrapper"
+              sx={{ bgcolor: "background.light" }}
+            >
               <Chip
                 className="mask"
                 avatar={
@@ -269,7 +277,8 @@ function Drawer(props) {
                 style={{ visibility: videoOpen ? "visible" : "hidden" }}
                 onClick={(e) => {
                   setShowMainVideo(e.target.srcObject !== null);
-                  mainVideoRef.current.srcObject = e.target.srcObject;
+                  if (mainVideoRef.current.srcObject !== e.target.srcObject)
+                    mainVideoRef.current.srcObject = e.target.srcObject;
                 }}
                 className="video-item"
                 playsInline
@@ -277,12 +286,18 @@ function Drawer(props) {
                 muted
                 ref={myVideoRef}
               ></video>
-            </div>
+            </Box>
+            <Divider />
             <div className="other-video" ref={userVideoRef}>
               {users
                 .filter((user) => user.id !== me.current)
                 .map((user) => (
-                  <div className="video-wrapper" key={user.id} data={user.id}>
+                  <Box
+                    className="video-wrapper"
+                    key={user.id}
+                    data={user.id}
+                    sx={{ bgcolor: "background.light" }}
+                  >
                     <Chip
                       className="mask"
                       avatar={
@@ -324,14 +339,18 @@ function Drawer(props) {
                       playsInline
                       autoPlay
                     ></video>
-                  </div>
+                  </Box>
                 ))}
             </div>
           </div>
           <div className="all-chat-wrapper">
-            <ul className="message-wrapper" ref={chatContainerRef}>
+            <Box
+              className="message-wrapper"
+              ref={chatContainerRef}
+              sx={{ bgcolor: "background.light" }}
+            >
               {messages.map((e, index) => (
-                <li className="message-item" key={index}>
+                <div className="message-item" key={index}>
                   <div
                     className="message-header"
                     style={{
@@ -342,7 +361,7 @@ function Drawer(props) {
                     <span>{formatDate(e.time, "hh:mm:ss")}</span>
                   </div>
                   {e.type === "file" ? (
-                    <div
+                    <Paper
                       className="message-content file-message"
                       onClick={() => {
                         downloadFile({ file: e.file, userId: e.id });
@@ -359,14 +378,15 @@ function Drawer(props) {
                           {formatSize(e.file.fileSize)}
                         </span>
                       </div>
-                    </div>
+                    </Paper>
                   ) : (
                     <div className="message-content">{e.msg}</div>
                   )}
-                </li>
+                </div>
               ))}
-            </ul>
+            </Box>
             <div className="input-wrapper">
+              {/* <Divider /> */}
               <Tooltip title="发送文件" placement="top">
                 <IconButton
                   color="primary"
@@ -377,6 +397,7 @@ function Drawer(props) {
                   <UploadFileRounded />
                 </IconButton>
               </Tooltip>
+              <Divider />
               <TextField
                 value={msg}
                 className="input-text-field"

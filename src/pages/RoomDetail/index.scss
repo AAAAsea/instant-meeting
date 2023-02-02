@@ -38,6 +38,8 @@
           height: 80%;
           border-radius: 10px;
           pointer-events: none;
+          box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
+            rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
         }
       }
 
@@ -50,7 +52,7 @@
         display: flex;
         gap: 20px;
         justify-content: center;
-        transition: 0.3s;
+        // transition: 0.3s;
         flex-wrap: wrap;
 
         .avatar-item {
@@ -84,61 +86,6 @@
   /* 隐藏全屏下的video控件 */
   video::-webkit-media-controls-enclosure {
     display: none;
-  }
-
-  .bullet-chat {
-    width: 300px;
-    height: 400px;
-    position: fixed !important;
-    left: 30px;
-    bottom: 50px;
-    overflow-y: hidden;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    transition: 0.3s;
-    z-index: 99;
-    .bullet-chat-item {
-      width: fit-content !important;
-      // background: #78797b;
-      // color: #eee;
-      border-radius: 5px;
-      font-size: 14px;
-      margin: 5px 0;
-      padding: 3px 5px !important;
-      animation: disappear 4s ease-in-out;
-      animation-fill-mode: forwards; /* 动画停留在最后的状态 */
-      text-align: center;
-      .bullet-chat-name {
-        // color: #f6862a;
-        word-break: keep-all;
-      }
-      .bullet-chat-content {
-        margin-left: 5px;
-        padding-right: 3px;
-        word-break: break-all;
-      }
-    }
-  }
-
-  @keyframes disappear {
-    0% {
-      opacity: 0;
-      transform: scaleY(0.01) translateX(-30px, -10px);
-    }
-    10% {
-      opacity: 1;
-      transform: scaleY(1) translateX(0);
-    }
-    80% {
-      opacity: 1;
-      transform: scaleY(1) translateX(0);
-    }
-    100% {
-      user-select: none;
-      opacity: 0;
-      transform: scaleY(0.01) translateX(-30px, -10px);
-    }
   }
 
   #file-btn {

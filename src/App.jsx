@@ -17,6 +17,8 @@ const themes = {
     palette: {
       background: {
         main: "#ffffff",
+        paper: "#eeeeee",
+        light: "#f5f5f5",
       },
       primary: {
         main: "#6e6ce9",
@@ -40,6 +42,8 @@ const themes = {
     palette: {
       background: {
         main: "#1A1A1A",
+        paper: "#000000",
+        light: "#2e2e2e",
       },
       primary: {
         main: "#6e6ce9",
@@ -63,6 +67,8 @@ const App = () => {
   if (theme === "system") {
     theme = prefersDarkMode ? "dark" : "light";
   }
+  document.documentElement.setAttribute("theme", theme);
+  console.log("app");
   return (
     <>
       <ThemeProvider theme={themes[theme]}>

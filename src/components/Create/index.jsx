@@ -92,7 +92,7 @@ const Create = () => {
 
   return (
     <>
-      <Paper className="container animate__animated ">
+      <Paper className="container animate__animated " elevation={10}>
         <h2 className="animate__animated animate__fadeIn">创建房间</h2>
         <form className="form animate__animated animate__fadeIn">
           <div className="item animate__animated animate__fadeIn">

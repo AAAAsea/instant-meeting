@@ -1,8 +1,8 @@
 import React, { useContext } from "react";
-import { Collapse, List, ListItem } from "@mui/material";
+import { Box, Collapse, List, ListItem } from "@mui/material";
 import { TransitionGroup } from "react-transition-group";
 import { SocketContext } from "../../contexts/SocketContext";
-
+import "./index.scss";
 export const Bullet = (props) => {
   const { messages } = useContext(SocketContext);
   // eslint-disable-next-line react/prop-types
@@ -15,8 +15,14 @@ export const Bullet = (props) => {
       <TransitionGroup>
         {messages.map((e, index) => (
           <Collapse key={e.time + index + e.id}>
-            <ListItem className="bullet-chat-item">
-              <span className="bullet-chat-name">{e.name}</span>:
+            <ListItem
+              className="bullet-chat-item"
+              sx={{ bgcolor: "background.light" }}
+            >
+              <Box className="bullet-chat-name" sx={{ color: "primary.main" }}>
+                {e.name}
+              </Box>
+              :
               {e.type === "file" ? (
                 <span className="bullet-chat-content">【文件】 {e.msg}</span>
               ) : (

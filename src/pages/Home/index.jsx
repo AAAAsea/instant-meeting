@@ -18,6 +18,7 @@ const Home = () => {
 
   useEffect(() => {
     getPublicRooms();
+    document.title = "Instant Meeting";
   }, []);
 
   return (

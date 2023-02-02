@@ -101,11 +101,12 @@ const BottomNavBar = (props) => {
   const handleFullScreen = (full) => {
     const currentFullScreenElement = document.fullscreenElement;
     if (!currentFullScreenElement) {
-      setIsFullScreen(true);
-      if (showMainVideo)
-        // eslint-disable-next-line react/prop-types
+      if (showMainVideo) {
+        setIsFullScreen(true);
         mainVideoRef.current.requestFullscreen();
-      else document.querySelector("#room-detail").requestFullscreen();
+      } else {
+        message.warning("当前无正在观看的视频");
+      }
     } else {
       if (currentFullScreenElement) {
         document.exitFullscreen();

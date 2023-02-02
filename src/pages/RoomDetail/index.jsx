@@ -8,14 +8,21 @@ import { StyledBadge, CircularProgressWithLabel } from "@/components/MUI";
 import Drawer from "@/components/Drawer";
 import { Bullet } from "@/components/Bullet";
 import BottomNavBar from "@/components/BottomNavBar";
-import { IconButton, Tooltip, Icon, Avatar, Divider } from "@mui/material";
+import {
+  IconButton,
+  Tooltip,
+  Icon,
+  Avatar,
+  Divider,
+  Fade,
+  Paper,
+} from "@mui/material";
 import {
   LinkOffRounded,
   DeleteRounded,
   MicOff,
   Mic,
 } from "@mui/icons-material";
-import { InfoOutlined } from "@mui/icons-material";
 
 const RoomDetail = () => {
   const [slideOpen, setSlideOpen] = useState(true);
@@ -50,7 +57,7 @@ const RoomDetail = () => {
     socketDisconnectCbRef.current = () => {
       navigate("/room?type=join");
     };
-    document.title = name;
+    document.title = `房间：${room}  昵称：${name}`;
     setRoom(id);
     return () => {
       window.onbeforeunload = null;
@@ -65,20 +72,18 @@ const RoomDetail = () => {
       <div className="room-main">
         <div className="room-main-left">
           {/* 主视频窗口 */}
-          <div
-            style={{
-              visibility: showMainVideo ? "visible" : "hidden",
-            }}
-            className="main-video-wrapper"
-          >
-            <video
-              className="main-video"
-              playsInline
-              muted
-              autoPlay
-              ref={mainVideoRef}
-            />
-          </div>
+          <Fade in={showMainVideo}>
+            <div className="main-video-wrapper">
+              <video
+                className="main-video"
+                playsInline
+                muted
+                autoPlay
+                ref={mainVideoRef}
+              />
+            </div>
+          </Fade>
+
           {/* 用户头像列表 */}
           <div
             style={{
@@ -153,7 +158,8 @@ const RoomDetail = () => {
         </div>
       </div>
       {/* 下载按钮 */}
-      <div
+      <Paper
+        elevation={2}
         className="progress animate__animated animate__fadeInLeft"
         style={{ display: downloading ? "flex" : "none" }}
       >
@@ -164,7 +170,7 @@ const RoomDetail = () => {
             <DeleteRounded />
           </IconButton>
         </Tooltip>
-      </div>
+      </Paper>
       {/* 弹幕 */}
       <Bullet />
     </div>

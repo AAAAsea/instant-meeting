@@ -52,7 +52,7 @@ const Join = () => {
   }, []);
   return (
     <>
-      <Paper className="container">
+      <Paper className="container" elevation={10}>
         <h2 className="animate__animated animate__fadeIn">加入房间</h2>
         <form className="form animate__animated animate__fadeIn">
           <div className="item">

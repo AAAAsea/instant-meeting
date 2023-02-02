@@ -52,7 +52,7 @@ export const SettingsDrawer = () => {
       onClose={toggleDrawer(false)}
       open={drawerOpen}
       PaperProps={{
-        elevation: 0,
+        elevation: 10,
         sx: { width: { xs: 310, sm: 360 }, borderRadius: "10px 0px 0px 10px" },
       }}
     >

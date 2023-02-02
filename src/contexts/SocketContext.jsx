@@ -97,7 +97,6 @@ const SocketContextProvider = ({ children }) => {
         }
         message.info(`${newUser.name}进入了房间`);
         setRoomInfo(roomInfo);
-        console.log(roomInfo);
         setRoom(room);
         setIsLive(isLive);
         setCanScreenShare(canScreenShare);
@@ -634,7 +633,9 @@ const SocketContextProvider = ({ children }) => {
   // 取消下载
   const cancelDownload = () => {
     message.error("下载已取消");
-    window.electron.ipcRenderer.send("downloadCanceled");
+    if (isElectron) {
+      window.electron.ipcRenderer.send("downloadCanceled");
+    }
 
     currentFileRef.current = {
       fileName: "",
