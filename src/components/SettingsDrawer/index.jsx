@@ -32,6 +32,7 @@ import { stringToColor } from "@/utils";
 import { useState } from "react";
 import { LockRounded } from "@mui/icons-material";
 import { useMemo } from "react";
+import { useEffect } from "react";
 
 export const SettingsDrawer = () => {
   const { theme, setTheme, drawerOpen, setDrawerOpen } =
@@ -40,15 +41,28 @@ export const SettingsDrawer = () => {
     useContext(SocketContext);
   const { message } = useContext(MessageContext);
 
-  const [newName, setNewName] = useState(""); // to modify the name
+  const [newName, setNewName] = useState(name); // to modify the name
   const [newMaxNum, setNewMaxNum] = useState(roomInfo.roomMaxNum || 5);
   const [newIsPublic, setNewIsPublic] = useState(roomInfo.isPublic);
   const [newIsLive, setNewIsLive] = useState(roomInfo.isLive);
-  const [newRoomPwd, setNewRoomPwd] = useState("");
-  const [newRoomName, setNewRoomName] = useState("");
-  const [newRoomDesc, setNewRoomDesc] = useState("");
+  const [newRoomPwd, setNewRoomPwd] = useState(roomInfo.roomPwd);
+  const [newRoomName, setNewRoomName] = useState(roomInfo.roomName);
+  const [newRoomDesc, setNewRoomDesc] = useState(roomInfo.roomDesc);
 
   const isDisabled = useMemo(() => roomInfo?.owner?.id !== me.current);
+
+  useEffect(() => {
+    setNewName(name);
+  }, [name]);
+
+  useEffect(() => {
+    setNewMaxNum(roomInfo.roomMaxNum);
+    setNewIsLive(roomInfo.isLive);
+    setNewIsPublic(roomInfo.isPublic);
+    setNewRoomPwd(roomInfo.roomPwd);
+    setNewRoomName(roomInfo.roomName);
+    setNewRoomDesc(roomInfo.roomDesc);
+  }, [roomInfo]);
 
   const Heading = styled(Typography)(({ theme }) => ({
     margin: "20px 0 10px",
@@ -59,10 +73,9 @@ export const SettingsDrawer = () => {
     letterSpacing: ".08rem",
   }));
   const SubHeading = styled(Typography)(({ theme }) => ({
-    margin: "20px 0 10px",
+    margin: "20px 0 20px",
     color: theme.palette.grey[600],
-    fontWeight: 700,
-    fontSize: theme.typography.pxToRem(8),
+    fontSize: theme.typography.pxToRem(13),
     textTransform: "uppercase",
     letterSpacing: ".08rem",
   }));
