@@ -1,4 +1,4 @@
-import { Box, Button } from "@mui/material";
+import { Box, Button, Paper } from "@mui/material";
 import React, { useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import "./index.scss";
@@ -63,7 +63,8 @@ const Home = () => {
       </div>
       <div className="public-rooms">
         {publicRooms.map((room, index) => (
-          <div
+          <Paper
+            elevation={10}
             className="room-item animate__animated animate__zoomIn"
             key={index}
             onClick={() => {
@@ -77,7 +78,7 @@ const Home = () => {
             <h2 className="room-name">{room.roomName}</h2>
             <p className="room-desc">{room.roomDesc}</p>
             <div className="room-footer">@ {room.name}</div>
-          </div>
+          </Paper>
         ))}
       </div>
       <Footer />
