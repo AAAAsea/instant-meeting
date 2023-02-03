@@ -12,6 +12,9 @@ import {
   Tooltip,
   TextField,
   Paper,
+  Slider,
+  Box,
+  FormLabel,
 } from "@mui/material";
 
 const Create = () => {
@@ -19,6 +22,7 @@ const Create = () => {
   const [roomPwd, setRoomPwd] = useState("");
   const [roomName, setRoomName] = useState("");
   const [roomDesc, setRoomDesc] = useState("");
+  const [roomMaxNum, setRoomMaxNum] = useState(5);
   const { message } = useContext(MessageContext);
   const {
     createRoom,
@@ -87,9 +91,24 @@ const Create = () => {
       isPublic,
       roomDesc: roomDesc.trim(),
       isLive,
+      roomMaxNum,
     });
   };
-
+  // slider
+  const marks = [
+    {
+      value: 2,
+      label: "2",
+    },
+    {
+      value: 5,
+      label: "5",
+    },
+    {
+      value: 9,
+      label: "9",
+    },
+  ];
   return (
     <>
       <Paper className="container animate__animated " elevation={10}>
@@ -181,6 +200,24 @@ const Create = () => {
               ></TextField>
             </div>
           </Collapse>
+          <Box
+            sx={{
+              textAlign: "left",
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+            }}
+          >
+            <FormLabel sx={{ whiteSpace: "nowrap" }}>人数限制：</FormLabel>
+            <Slider
+              value={roomMaxNum}
+              max={9}
+              min={2}
+              valueLabelDisplay="auto"
+              marks={marks}
+              onChange={(e, v) => setRoomMaxNum(v)}
+            />
+          </Box>
           <div className="item switch-btn">
             <Tooltip
               title="任意用户都可以在首页看到公开的房间并进入"

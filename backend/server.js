@@ -51,7 +51,7 @@ io.on("connection", (socket) => {
     } else if (roomsInfo[room].roomPwd !== roomPwd) {
       socket.emit('joinError', { msg: '房间密码错误' })
       return;
-    } else if (rooms[room].length >= maxNum) {
+    } else if (rooms[room].length >= roomsInfo[room].roomMaxNum) {
       socket.emit('joinError', { msg: '房间人数已满' })
       return;
     } else if (rooms[room].findIndex(e => e.name === name) !== -1) {

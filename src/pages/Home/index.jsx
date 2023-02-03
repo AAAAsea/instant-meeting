@@ -72,7 +72,7 @@ const Home = () => {
           >
             <div className="person-count">
               <PersonRounded></PersonRounded>
-              {room.membersCount}/10
+              {room.membersCount}/{room.roomMaxNum}
             </div>
             <h2 className="room-name">{room.roomName}</h2>
             <p className="room-desc">{room.roomDesc}</p>
