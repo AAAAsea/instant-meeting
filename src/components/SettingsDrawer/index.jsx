@@ -147,7 +147,6 @@ export const SettingsDrawer = () => {
       roomDesc: newRoomDesc.trim(),
     });
     setDrawerOpen(false);
-    setNewName("");
   };
 
   return (
