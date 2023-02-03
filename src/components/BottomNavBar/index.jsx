@@ -275,6 +275,10 @@ const BottomNavBar = (props) => {
       >
         <ul className="room-info">
           <li>
+            <span>房主：</span>
+            <span>{roomInfo?.owner?.name || "无"}</span>
+          </li>
+          <li>
             <span>房间号：</span>
             <span>{roomInfo.room}</span>
           </li>
@@ -287,16 +291,16 @@ const BottomNavBar = (props) => {
             <span>{roomInfo.isLive ? "观影房" : "普通房"}</span>
           </li>
           <li>
-            <span>是否公开：</span>
-            <span>{roomInfo.isPublic ? "是" : "否"}</span>
-          </li>
-          <li>
             <span>房间名称：</span>
             <span>{roomInfo.roomName || "无"}</span>
           </li>
           <li>
             <span>房间描述：</span>
             <span>{roomInfo.roomDesc || "无"}</span>
+          </li>
+          <li>
+            <span>是否公开：</span>
+            <span>{roomInfo.isPublic ? "是" : "否"}</span>
           </li>
         </ul>
         <DialogActions>

@@ -30,7 +30,7 @@ io.on("connection", (socket) => {
     }
     const master = { room, id: socket.id, name: data.name };
     rooms[room] = [master]
-    roomsInfo[room] = { ...data, room, canScreenShare: true };
+    roomsInfo[room] = { ...data, room, canScreenShare: true, owner: { id: socket.id, name: data.name } };
     master.roomInfo = roomsInfo[room];
     socket.join(room);
     socket.emit('createRoomSuccess', master)
@@ -113,6 +113,26 @@ io.on("connection", (socket) => {
 
   socket.on("downloadFile", ({ fileIndex, userId }) => {
     io.to(userId).emit("downloadFile", { fileIndex, userId: socket.id })
+  })
+
+  socket.on("updateInfo", (data) => {
+    if (rooms[data.room].findIndex(e => (e.name === data.name && e.id !== socket.id)) !== -1) {
+      socket.emit('updateError', { msg: "当前用户名已存在" })
+      return;
+    }
+    for (let user of rooms[data.room]) {
+      if (user.id === socket.id) {
+        user.name = data.name
+      }
+    }
+    const owner = roomsInfo[data.room].owner
+    if (socket.id === owner.id) {
+      owner.name = data.name;
+      roomsInfo[data.room] = { ...roomsInfo[data.room], ...data, owner }
+    } else {
+      roomsInfo[data.room].name = data.name
+    }
+    io.to(data.room).emit("updateInfo", { roomInfo: roomsInfo[data.room], id: socket.id })
   })
 
   socket.on("disconnecting", () => {

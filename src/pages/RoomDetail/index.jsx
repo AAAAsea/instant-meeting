@@ -119,7 +119,7 @@ const RoomDetail = () => {
                 </StyledBadge>
                 <div className="avatar-footer">
                   <span className="avatar-desc">
-                    {user.name === name ? user.name + "（我）" : user.name}
+                    {user.id === me.current ? user.name + "（我）" : user.name}
                   </span>
                   <Icon
                     color={

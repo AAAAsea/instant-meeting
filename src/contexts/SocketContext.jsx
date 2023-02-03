@@ -45,7 +45,14 @@ const SocketContextProvider = ({ children }) => {
   const [downloading, setDownloading] = useState(false);
   const [currentFile, setCurrentFile] = useState({});
   const [roomPwd, setRoomPwd] = useState("");
-  const [roomInfo, setRoomInfo] = useState({});
+  const [roomInfo, setRoomInfo] = useState({
+    maxNum: 5,
+    isPublic: false,
+    isLive: false,
+    roomName: "",
+    roomDesc: "",
+    roomPwd: "",
+  });
   const [isElectron] = useState(isEle());
   const [speed, setSpeed] = useState(0);
 
@@ -84,8 +91,8 @@ const SocketContextProvider = ({ children }) => {
       setRoomInfo(roomInfo);
       roomCreatedCbRef.current && roomCreatedCbRef.current(room);
       roomCreatedCbRef.current = null;
-      usersRef.current = [];
-      setUsers([{ id, name, peerConnected: true }]); // 只有我自己
+      usersRef.current = [{ id, name, peerConnected: true }];
+      setUsers(usersRef.current); // 只有我自己
       message.success("创建成功");
     });
 
@@ -174,6 +181,19 @@ const SocketContextProvider = ({ children }) => {
 
     socket.on("downloadFile", ({ fileIndex, userId }) => {
       sendData(filesRef.current[fileIndex], peers[userId]);
+    });
+
+    socket.on("updateInfo", ({ roomInfo, id }) => {
+      message.success("修改成功");
+      if (me.current === id) setName(roomInfo.name);
+      const user = usersRef.current.find((e) => e.id === id);
+      user && (user.name = roomInfo.name);
+      setRoomInfo(roomInfo);
+      setUsers([...usersRef.current]);
+    });
+
+    socket.on("updateError", ({ msg }) => {
+      message.error(msg);
     });
 
     socket.on("disconnect", () => {
@@ -660,6 +680,11 @@ const SocketContextProvider = ({ children }) => {
     // setCurrentFile(currentFileRef.current); // 注释掉防止闪烁
   };
 
+  const modifyInfo = (data) => {
+    console.log(data);
+    socket.emit("updateInfo", { ...data, room });
+  };
+
   return (
     <SocketContext.Provider
       value={{
@@ -717,6 +742,7 @@ const SocketContextProvider = ({ children }) => {
         roomInfo,
         isElectron,
         speed,
+        modifyInfo,
       }}
     >
       {children}

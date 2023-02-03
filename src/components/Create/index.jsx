@@ -94,21 +94,7 @@ const Create = () => {
       roomMaxNum,
     });
   };
-  // slider
-  const marks = [
-    {
-      value: 2,
-      label: "2",
-    },
-    {
-      value: 5,
-      label: "5",
-    },
-    {
-      value: 9,
-      label: "9",
-    },
-  ];
+
   return (
     <>
       <Paper className="container animate__animated " elevation={10}>
@@ -214,8 +200,8 @@ const Create = () => {
               max={9}
               min={2}
               valueLabelDisplay="auto"
-              marks={marks}
               onChange={(e, v) => setRoomMaxNum(v)}
+              marks
             />
           </Box>
           <div className="item switch-btn">
