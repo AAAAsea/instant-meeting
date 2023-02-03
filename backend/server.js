@@ -8,7 +8,7 @@ const io = require("socket.io")(server, {
     methods: ["GET", "POST"]
   }
 })
-const maxNum = 5;
+const maxNum = 10;
 app.use(cors())
 
 const PORT = process.nextTick.PORT || 5000;

@@ -72,7 +72,7 @@ const Home = () => {
           >
             <div className="person-count">
               <PersonRounded></PersonRounded>
-              {room.membersCount}/5
+              {room.membersCount}/10
             </div>
             <h2 className="room-name">{room.roomName}</h2>
             <p className="room-desc">{room.roomDesc}</p>
