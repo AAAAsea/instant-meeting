@@ -43,6 +43,7 @@ const RoomDetail = () => {
     cancelDownload,
     socketDisconnectCbRef,
     name,
+    speed,
   } = useContext(SocketContext);
 
   const { id } = useParams();
@@ -161,19 +162,18 @@ const RoomDetail = () => {
         </div>
       </div>
       {/* 下载按钮 */}
-      <Paper
-        elevation={2}
-        className="progress animate__animated animate__fadeInLeft"
-        style={{ display: downloading ? "flex" : "none" }}
-      >
-        <h5>正在下载 {currentFile.fileName}</h5>
-        <CircularProgressWithLabel value={progress} />
-        <Tooltip title="取消下载">
-          <IconButton onClick={cancelDownload} color="primary">
-            <DeleteRounded />
-          </IconButton>
-        </Tooltip>
-      </Paper>
+      <Fade in={downloading}>
+        <Paper elevation={2} className="progress">
+          <h5>正在下载 {currentFile.fileName}</h5>
+          <CircularProgressWithLabel value={progress} />
+          <span>{speed}/s</span>
+          <Tooltip title="取消下载">
+            <IconButton onClick={cancelDownload} color="primary">
+              <DeleteRounded />
+            </IconButton>
+          </Tooltip>
+        </Paper>
+      </Fade>
       {/* 弹幕 */}
       <Bullet tabValue={tabValue} slideOpen={slideOpen} />
     </div>

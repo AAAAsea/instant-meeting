@@ -8,8 +8,9 @@ import React, {
 import { io } from "socket.io-client";
 import Peer from "simple-peer";
 import { MessageContext } from "@/contexts/MessageContext";
-import { qualities, notify } from "../utils";
+import { qualities, notify, formatSize } from "../utils";
 import isEle from "is-electron";
+
 const SocketContext = createContext();
 
 // const socket = io("http://localhost:5000/");
@@ -46,6 +47,7 @@ const SocketContextProvider = ({ children }) => {
   const [roomPwd, setRoomPwd] = useState("");
   const [roomInfo, setRoomInfo] = useState({});
   const [isElectron] = useState(isEle());
+  const [speed, setSpeed] = useState(0);
 
   const { message } = useContext(MessageContext);
 
@@ -562,9 +564,19 @@ const SocketContextProvider = ({ children }) => {
       message.warning("当前已有下载任务");
       return;
     }
+    let speedInterval;
     const start = () => {
       setDownloading(true);
       downloadingRef.current = true;
+      // speed
+      let lastSize = 0;
+      clearInterval(speedInterval);
+      speedInterval = setInterval(() => {
+        if (!downloadingRef.current) clearInterval(speedInterval);
+        setSpeed(formatSize(currentFileRef.current.currentSize - lastSize));
+        lastSize = currentFileRef.current.currentSize;
+      }, 1000);
+
       const { fileIndex, fileSize, fileName } = file;
       currentFileRef.current = {
         currentSize: 0,
@@ -645,7 +657,7 @@ const SocketContextProvider = ({ children }) => {
     };
     downloadingRef.current = false;
     setDownloading(false);
-    setCurrentFile(currentFileRef.current);
+    // setCurrentFile(currentFileRef.current); // 注释掉防止闪烁
   };
 
   return (
@@ -704,6 +716,7 @@ const SocketContextProvider = ({ children }) => {
         setRoomPwd,
         roomInfo,
         isElectron,
+        speed,
       }}
     >
       {children}
