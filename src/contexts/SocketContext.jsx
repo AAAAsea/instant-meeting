@@ -167,7 +167,7 @@ const SocketContextProvider = ({ children }) => {
         data.id !== me.current &&
         (document.hidden ||
           !slideOpenRef.current ||
-          document.fullScreenElement !== null)
+          document.fullscreenElement !== null)
       )
         notify(data.name, data.msg);
     });
