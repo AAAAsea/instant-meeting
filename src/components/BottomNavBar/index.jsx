@@ -37,13 +37,16 @@ import { ExitToAppRounded } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { Settings } from "@mui/icons-material";
 import { SettingsContext } from "../../contexts/SettingsContext";
+import { RadioButtonCheckedRounded } from "@mui/icons-material";
+import useMediaRecorder from "../../hooks/useMediaRecorder";
+import { formatSize } from "../../utils";
 
 const BottomNavBar = (props) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-  const open = Boolean(anchorEl);
   const [alertOpen, setAlertOpen] = useState(false);
+  // const [isRecording, setIsRecording] = useState(false);
 
   const {
     initMyVideo,
@@ -60,7 +63,7 @@ const BottomNavBar = (props) => {
   } = useContext(SocketContext);
   const { message } = useContext(MessageContext);
   const { drawerOpen, setDrawerOpen } = useContext(SettingsContext);
-
+  const [isRecording, handleRecord, recordInfo] = useMediaRecorder();
   // eslint-disable-next-line react/prop-types
   const { mainVideoRef, showMainVideo } = props;
   const navigate = useNavigate();
@@ -70,6 +73,14 @@ const BottomNavBar = (props) => {
       `房间号：${room}\n房间链接：https://meet.asea.fun/room/${room}\n快来加入我的房间吧！`,
     [room]
   );
+
+  useEffect(() => {
+    window.onresize = () => {
+      setIsFullScreen(document.fullscreenElement !== null);
+    };
+  }, []);
+
+  const open = Boolean(anchorEl);
 
   // For Menu
   const handleClick = (event) => {
@@ -126,12 +137,6 @@ const BottomNavBar = (props) => {
   const leaveRoom = () => {
     setAlertOpen(true);
   };
-
-  useEffect(() => {
-    window.onresize = () => {
-      setIsFullScreen(document.fullscreenElement !== null);
-    };
-  }, []);
 
   return (
     <div id="bottom">
@@ -233,6 +238,22 @@ const BottomNavBar = (props) => {
               }}
             >
               <Settings />
+            </IconButton>
+          </Box>
+        </Tooltip>
+        <Tooltip
+          title={
+            isRecording
+              ? `正在录制：${recordInfo.time}s ${formatSize(recordInfo.size)}`
+              : "开始录制"
+          }
+        >
+          <Box>
+            <IconButton
+              color={isRecording ? "error" : "primary"}
+              onClick={handleRecord}
+            >
+              <RadioButtonCheckedRounded />
             </IconButton>
           </Box>
         </Tooltip>
