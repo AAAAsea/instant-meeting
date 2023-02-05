@@ -70,6 +70,7 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.4.3",
     "react-transition-group": "^4.4.5",
+    "recordrtc": "^5.6.2",
     "sass": "^1.57.1",
     "simple-peer": "^9.11.1",
     "socket.io-client": "^4.5.3"

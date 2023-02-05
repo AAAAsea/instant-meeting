@@ -31,6 +31,7 @@ specifiers:
   react-dom: ^18.2.0
   react-router-dom: ^6.4.3
   react-transition-group: ^4.4.5
+  recordrtc: ^5.6.2
   sass: ^1.57.1
   simple-peer: ^9.11.1
   socket.io-client: ^4.5.3
@@ -51,6 +52,7 @@ dependencies:
   react-dom: 18.2.0_react@18.2.0
   react-router-dom: 6.4.3_biqbaboplfbrettd7655fr4n2y
   react-transition-group: registry.npmmirror.com/react-transition-group/4.4.5_biqbaboplfbrettd7655fr4n2y
+  recordrtc: registry.npmmirror.com/recordrtc/5.6.2
   sass: registry.npmmirror.com/sass/1.57.1
   simple-peer: 9.11.1
   socket.io-client: 4.5.3
@@ -5374,6 +5376,12 @@ packages:
     engines: {node: '>=8.10.0'}
     dependencies:
       picomatch: registry.npmmirror.com/picomatch/2.3.1
+
+  registry.npmmirror.com/recordrtc/5.6.2:
+    resolution: {integrity: sha512-1QNKKNtl7+KcwD1lyOgP3ZlbiJ1d0HtXnypUy7yq49xEERxk31PHvE9RCciDrulPCY7WJ+oz0R9hpNxgsIurGQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/recordrtc/-/recordrtc-5.6.2.tgz}
+    name: recordrtc
+    version: 5.6.2
+    dev: false
 
   registry.npmmirror.com/regenerator-runtime/0.13.11:
     resolution: {integrity: sha512-kY1AZVr2Ra+t+piVaJ4gxaFaReZVH40AKNo7UCX6W+dEwBo/2oZJzqfuN1qLq1oL45o56cPaTXELwrTh8Fpggg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/regenerator-runtime/-/regenerator-runtime-0.13.11.tgz}

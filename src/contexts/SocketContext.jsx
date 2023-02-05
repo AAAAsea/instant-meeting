@@ -629,7 +629,7 @@ const SocketContextProvider = ({ children }) => {
   // 发送文件数据
   function sendData(file, peer) {
     let start = 0;
-    let chunkSize = 32 * 1024; // chrome 最大256KB，但不同浏览器有差，16保险
+    let chunkSize = 64 * 1024; // chrome 最大256KB，但不同浏览器有差，16保险，尽量在16-64之间
 
     const fileReader = new FileReader();
     const readSlice = () => {
