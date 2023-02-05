@@ -46,7 +46,6 @@ const BottomNavBar = (props) => {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
-  // const [isRecording, setIsRecording] = useState(false);
 
   const {
     initMyVideo,
@@ -64,8 +63,7 @@ const BottomNavBar = (props) => {
   const { message } = useContext(MessageContext);
   const { drawerOpen, setDrawerOpen } = useContext(SettingsContext);
   const [isRecording, handleRecord, recordInfo] = useMediaRecorder();
-  // eslint-disable-next-line react/prop-types
-  const { mainVideoRef, showMainVideo } = props;
+
   const navigate = useNavigate();
 
   const shareLink = useMemo(
@@ -79,6 +77,9 @@ const BottomNavBar = (props) => {
       setIsFullScreen(document.fullscreenElement !== null);
     };
   }, []);
+
+  // eslint-disable-next-line react/prop-types
+  const { mainVideoRef, showMainVideo } = props;
 
   const open = Boolean(anchorEl);
 

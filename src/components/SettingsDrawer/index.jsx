@@ -14,6 +14,8 @@ import {
   FormLabel,
   IconButton,
   InputAdornment,
+  MenuItem,
+  Select,
   Slider,
   styled,
   Switch,
@@ -35,8 +37,14 @@ import { useMemo } from "react";
 import { useEffect } from "react";
 
 export const SettingsDrawer = () => {
-  const { theme, setTheme, drawerOpen, setDrawerOpen } =
-    useContext(SettingsContext);
+  const {
+    theme,
+    setTheme,
+    drawerOpen,
+    setDrawerOpen,
+    recorderMode,
+    setRecorderMode,
+  } = useContext(SettingsContext);
   const { name, roomInfo, modifyInfo, me, roomJoinned } =
     useContext(SocketContext);
   const { message } = useContext(MessageContext);
@@ -73,7 +81,7 @@ export const SettingsDrawer = () => {
     letterSpacing: ".08rem",
   }));
   const SubHeading = styled(Typography)(({ theme }) => ({
-    margin: "20px 0 20px",
+    margin: "10px 0 10px",
     color: theme.palette.grey[600],
     fontSize: theme.typography.pxToRem(13),
     textTransform: "uppercase",
@@ -176,7 +184,7 @@ export const SettingsDrawer = () => {
       </Box>
       <Divider />
       <Box sx={{ pl: 2, pr: 2 }}>
-        <Heading gutterBottom>主题模式</Heading>
+        <Heading gutterBottom>主题模式（自动生效）</Heading>
         <ToggleButtonGroup
           exclusive
           value={theme}
@@ -213,8 +221,7 @@ export const SettingsDrawer = () => {
             夜间
           </IconToggleButton>
         </ToggleButtonGroup>
-
-        <Heading gutterBottom>个人信息</Heading>
+        <Heading gutterBottom>个人信息（保存生效）</Heading>
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <Avatar
             sx={{
@@ -240,7 +247,9 @@ export const SettingsDrawer = () => {
           />
         </Box>
 
-        <Heading gutterBottom>房间设置{isDisabled ? "（无权限）" : ""}</Heading>
+        <Heading gutterBottom>
+          房间设置（保存生效）{isDisabled ? "（无权限）" : ""}
+        </Heading>
         <Collapse in={!newIsPublic}>
           <div className="item">
             <TextField
@@ -390,6 +399,28 @@ export const SettingsDrawer = () => {
         >
           保存
         </Button>
+        <Heading gutterBottom>其它设置（自动生效）</Heading>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <SubHeading>录制模式</SubHeading>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={recorderMode}
+            onChange={(e) => {
+              localStorage.setItem("recorderMode", e.target.value);
+              setRecorderMode(e.target.value);
+            }}
+          >
+            <MenuItem value={0}>当前主视频</MenuItem>
+            <MenuItem value={1}>屏幕或标签页</MenuItem>
+          </Select>
+        </Box>
       </Box>
     </Drawer>
   );
