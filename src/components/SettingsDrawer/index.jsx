@@ -164,7 +164,11 @@ export const SettingsDrawer = () => {
       open={drawerOpen}
       PaperProps={{
         elevation: 10,
-        sx: { width: { xs: 310, sm: 360 }, borderRadius: "10px 0px 0px 10px" },
+        className: "beautify-scroll",
+        sx: {
+          width: { xs: 310, sm: 360 },
+          borderRadius: "10px 0px 0px 10px",
+        },
       }}
     >
       <Box
@@ -183,7 +187,7 @@ export const SettingsDrawer = () => {
         </IconButton>
       </Box>
       <Divider />
-      <Box sx={{ pl: 2, pr: 2 }}>
+      <Box sx={{ pl: 2, pr: 2, pb: 2 }}>
         <Heading gutterBottom>主题模式（自动生效）</Heading>
         <ToggleButtonGroup
           exclusive
