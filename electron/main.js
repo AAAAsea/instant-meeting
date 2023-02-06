@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, dialog } from 'electron'
+import { app, BrowserWindow, ipcMain, dialog, desktopCapturer } from 'electron'
 import fs from 'fs'
 import path from 'path'
 
@@ -96,6 +96,7 @@ ipcMain.handle('open-win', (_, arg) => {
       preload,
       nodeIntegration: true,
       contextIsolation: false,
+      enableRemoteModule: true
     },
   })
 
@@ -105,6 +106,7 @@ ipcMain.handle('open-win', (_, arg) => {
     childWindow.loadFile(indexHtml, { hash: arg })
   }
 })
+
 
 // 关闭窗口
 ipcMain.once('shutDown', () => {
@@ -125,7 +127,22 @@ const handleDirectoryOpen = async () => {
     return filePaths[0]
   }
 }
+
+// 获取窗口
+const handleGetWindows = async () => {
+  const sources = await desktopCapturer.getSources({ types: ['window', 'screen'], fetchWindowIcons: true })
+  // 在渲染进程调用toPNG会报错
+  sources.forEach(source => {
+    if (source.thumbnail)
+      source.thumbnail = source.thumbnail.toPNG();
+    if (source.appIcon)
+      source.appIcon = source.appIcon.toPNG();
+  })
+  return sources
+
+}
 ipcMain.handle('dialog:openDirectory', handleDirectoryOpen)
+ipcMain.handle('getWindows', handleGetWindows)
 ipcMain.on("downloadStart", (e, { fileName, directoryPath }) => {
   const filePath = directoryPath + '\\' + fileName;
   fileStream = fs.createWriteStream(filePath);

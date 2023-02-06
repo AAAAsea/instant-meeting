@@ -15,6 +15,11 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
+import { useState } from "react";
+import { useContext } from "react";
+import { SocketContext } from "@/contexts/SocketContext";
+import { HomeMaxRounded } from "@mui/icons-material";
+import { DesktopWindowsOutlined } from "@mui/icons-material";
 
 export const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -111,6 +116,129 @@ export function AlertDialog(props) {
         <DialogActions>
           <Button onClick={handleCancel}>取消</Button>
           <Button variant="contained" onClick={handleConfirm} autoFocus>
+            确定
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
+  );
+}
+
+export function WindowsDialog(props) {
+  const { handleClose, open, title, handleConfirm, handleCancel, windows } =
+    props;
+  const [currentId, setCurrentId] = useState("");
+  const { initMyVideo, videoOpen, videoType } = useContext(SocketContext);
+
+  const handleWindowConfirm = () => {
+    initMyVideo({
+      type: 0,
+      quality: "h",
+      open: !videoOpen || videoType,
+      sourceId: currentId,
+    });
+    handleCancel();
+  };
+  return (
+    <div>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title" sx={{ fontSize: "1em" }}>
+          {title}
+        </DialogTitle>
+        <DialogContent
+          className="beautify-scroll animate__animated animate__fadeIn"
+          sx={{
+            display: "flex",
+            gap: "10px",
+            flexWrap: "wrap",
+            justifyContent: "space-around",
+            minWidth: "300px",
+            minHeight: "200px",
+          }}
+        >
+          {windows.map((window) => (
+            <Box
+              className="animate__animated animate__fadeIn"
+              key={window.id}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "10px",
+                width: "fit-content",
+                height: "fit-content",
+                fontSize: ".8em",
+              }}
+            >
+              {window.appIcon && window.appIcon.length ? (
+                <Box
+                  sx={{
+                    display: "flex",
+                    gap: "10px",
+                    height: "25px",
+                    alignItems: "center",
+                  }}
+                >
+                  <img
+                    src={URL.createObjectURL(new Blob([window.appIcon]))}
+                    style={{
+                      height: "100%",
+                      borderRadius: "5px",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => {
+                      setCurrentId(window.id);
+                    }}
+                  />
+                  <Box
+                    sx={{
+                      maxWidth: "150px",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {window.name}
+                  </Box>
+                </Box>
+              ) : (
+                <Box
+                  sx={{
+                    height: "30px",
+                    display: "flex",
+                    alignItems: "center",
+                    pl: 1,
+                  }}
+                >
+                  {" "}
+                  {window.name}
+                </Box>
+              )}
+              <img
+                src={URL.createObjectURL(new Blob([window.thumbnail]))}
+                style={{
+                  borderRadius: "5px",
+                  cursor: "pointer",
+                  transition: ".2s",
+                  borderWidth: "3px",
+                  borderStyle: "solid",
+                  borderColor:
+                    currentId === window.id ? "var(--primary)" : "transparent",
+                }}
+                onClick={() => {
+                  setCurrentId(window.id);
+                }}
+              />
+            </Box>
+          ))}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancel}>取消</Button>
+          <Button variant="contained" onClick={handleWindowConfirm} autoFocus>
             确定
           </Button>
         </DialogActions>

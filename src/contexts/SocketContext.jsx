@@ -408,7 +408,7 @@ const SocketContextProvider = ({ children }) => {
   };
 
   // 初始化视频
-  const initMyVideo = ({ type, quality = videoQuality, open }) => {
+  const initMyVideo = ({ type, quality = videoQuality, open, sourceId }) => {
     // 关闭视频
     if (!open) {
       setVideoOpen(open);
@@ -518,12 +518,15 @@ const SocketContextProvider = ({ children }) => {
                 ? {
                     mandatory: {
                       chromeMediaSource: "desktop",
+                      chromeMediaSourceId: sourceId,
                     },
                   }
                 : false,
               video: {
                 mandatory: {
                   chromeMediaSource: "desktop",
+                  chromeMediaSourceId: sourceId,
+                  ...qualities[quality],
                 },
               },
             })

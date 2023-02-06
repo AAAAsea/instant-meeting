@@ -40,12 +40,17 @@ import { SettingsContext } from "../../contexts/SettingsContext";
 import { RadioButtonCheckedRounded } from "@mui/icons-material";
 import useMediaRecorder from "../../hooks/useMediaRecorder";
 import { formatSize } from "../../utils";
+import { WindowsDialog } from "../MUI";
+import isEle from "is-electron";
 
 const BottomNavBar = (props) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
+  const [windowsOpen, setWindowsOpen] = useState(false);
+  const [isElectron, setIsElectron] = useState(isEle());
+  const [windows, setWindows] = useState([]);
 
   const {
     initMyVideo,
@@ -176,20 +181,37 @@ const BottomNavBar = (props) => {
           </IconButton>
         </Tooltip>
         <Tooltip
-          title={videoOpen && !videoType ? "屏幕分享开启" : "屏幕分享已关闭"}
+          title={videoOpen && !videoType ? "正在屏幕分享" : "屏幕分享已关闭"}
         >
           <IconButton
             color={videoOpen && !videoType ? "error" : "primary"}
             onClick={() => {
               if (!canScreenShare && !videoOpen) {
-                message.warning("当前房间类型最多允许一人分享屏幕");
+                message.warning("当前房间类型（观影房）最多允许一人分享屏幕");
                 return;
               }
-              initMyVideo({
-                type: 0,
-                quality: "h",
-                open: !videoOpen || videoType,
-              });
+              if (isElectron) {
+                if (!videoOpen || videoType) {
+                  setWindowsOpen(true);
+                  window.electron.ipcRenderer
+                    .invoke("getWindows")
+                    .then((sources) => {
+                      setWindows(sources);
+                    });
+                } else {
+                  initMyVideo({
+                    type: 0,
+                    quality: "h",
+                    open: !videoOpen || videoType,
+                  });
+                }
+              } else {
+                initMyVideo({
+                  type: 0,
+                  quality: "h",
+                  open: !videoOpen || videoType,
+                });
+              }
             }}
           >
             {videoOpen && !videoType ? (
@@ -340,6 +362,18 @@ const BottomNavBar = (props) => {
         handleAlertClose={handleClose}
         open={alertOpen}
       ></AlertDialog>
+
+      <WindowsDialog
+        title="请选择窗口"
+        windows={windows}
+        handleCancel={() => {
+          setWindowsOpen(false);
+        }}
+        handleClose={() => {
+          setWindowsOpen(false);
+        }}
+        open={windowsOpen}
+      />
     </div>
   );
 };
