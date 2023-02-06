@@ -44,6 +44,8 @@ export const SettingsDrawer = () => {
     setDrawerOpen,
     recorderMode,
     setRecorderMode,
+    recorderQuality,
+    setRecorderQuality,
   } = useContext(SettingsContext);
   const { name, roomInfo, modifyInfo, me, roomJoinned } =
     useContext(SocketContext);
@@ -413,16 +415,41 @@ export const SettingsDrawer = () => {
         >
           <SubHeading>录制模式</SubHeading>
           <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
             value={recorderMode}
             onChange={(e) => {
               localStorage.setItem("recorderMode", e.target.value);
               setRecorderMode(e.target.value);
             }}
+            sx={{ width: "fit-content", fontSize: ".8em", height: "40px" }}
           >
-            <MenuItem value={0}>当前主视频</MenuItem>
-            <MenuItem value={1}>屏幕或标签页</MenuItem>
+            <MenuItem value={0} sx={{ fontSize: ".8em" }}>
+              当前主视频
+            </MenuItem>
+
+            <MenuItem value={1} sx={{ fontSize: ".8em" }}>
+              屏幕或标签页
+            </MenuItem>
+          </Select>
+          <SubHeading>录制质量</SubHeading>
+          <Select
+            value={recorderQuality}
+            onChange={(e) => {
+              localStorage.setItem("recorderQuality", e.target.value);
+              setRecorderQuality(e.target.value);
+            }}
+            sx={{ width: "fit-content", fontSize: ".8em", height: "40px" }}
+          >
+            <MenuItem value={3} sx={{ fontSize: ".8em" }}>
+              高
+            </MenuItem>
+
+            <MenuItem value={2} sx={{ fontSize: ".8em" }}>
+              中
+            </MenuItem>
+
+            <MenuItem value={1} sx={{ fontSize: ".8em" }}>
+              低
+            </MenuItem>
           </Select>
         </Box>
       </Box>

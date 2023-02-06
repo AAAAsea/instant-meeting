@@ -498,18 +498,42 @@ const SocketContextProvider = ({ children }) => {
         message.error("当前设备或浏览器不支持摄像头");
       }
     } else {
-      if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
-        navigator.mediaDevices
-          .getDisplayMedia({
-            video: qualities[quality],
-            audio: isLive,
-          })
-          .then(handlePromise)
-          .catch((err) => {
-            console.log(err);
-            initMyVideo({ type, open: false });
-            message.error("当前设备或浏览器未支持屏幕共享");
-          });
+      if (navigator.mediaDevices) {
+        if (!isElectron && navigator.mediaDevices.getDisplayMedia) {
+          navigator.mediaDevices
+            .getDisplayMedia({
+              video: qualities[quality],
+              audio: isLive,
+            })
+            .then(handlePromise)
+            .catch((err) => {
+              console.log(err);
+              initMyVideo({ type, open: false });
+              message.error("当前设备或浏览器未支持屏幕共享");
+            });
+        } else if (isElectron) {
+          navigator.mediaDevices
+            .getUserMedia({
+              audio: isLive
+                ? {
+                    mandatory: {
+                      chromeMediaSource: "desktop",
+                    },
+                  }
+                : false,
+              video: {
+                mandatory: {
+                  chromeMediaSource: "desktop",
+                },
+              },
+            })
+            .then(handlePromise)
+            .catch((err) => {
+              console.log(err);
+              initMyVideo({ type, open: false });
+              message.error("当前设备或浏览器未支持屏幕共享");
+            });
+        }
       } else {
         message.error("当前设备或浏览器未支持屏幕共享");
       }

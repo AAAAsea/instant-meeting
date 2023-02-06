@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { MessageContext } from "@/contexts/MessageContext";
 import { useContext } from 'react';
 import { useRef } from 'react';
-import { formatDate } from '../utils';
+import { formatDate, formatSize, recorderQualities } from '../utils';
 import { SettingsContext } from '../contexts/SettingsContext';
 
 export default function useMediaRecorder() {
@@ -17,7 +17,7 @@ export default function useMediaRecorder() {
   const stream = useRef(null);
 
   const { message } = useContext(MessageContext)
-  const { recorderMode } = useContext(SettingsContext)
+  const { recorderMode, recorderQuality } = useContext(SettingsContext)
 
   const download = () => {
     setIsRecording(false);
@@ -70,7 +70,11 @@ export default function useMediaRecorder() {
       setIsRecording(true);
       fileSize.current = 0;
       start.current = new Date();
-      const options = { mimeType: "video/webm; codecs=vp9" };
+      const options = {
+        mimeType: "video/webm; codecs=vp9",
+        audioBitsPerSecond: recorderQualities[recorderQuality].audioBitsPerSecond,
+        videoBitsPerSecond: recorderQualities[recorderQuality].videoBitsPerSecond,
+      };
       mediaRecorder.current = new MediaRecorder(stream.current, options);
       mediaRecorder.current.ondataavailable = handleDataAvailable;
       mediaRecorder.current.onstop = download;
@@ -96,7 +100,12 @@ export default function useMediaRecorder() {
   async function startCapture() {
     let captureStream = null;
     try {
-      captureStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+      captureStream = await navigator.mediaDevices.getDisplayMedia({
+        video: {
+          width: { ideal: 1920 },
+          height: { ideal: 1080 }
+        }, audio: true
+      });
     } catch (err) {
       console.error("Error: " + err);
     }

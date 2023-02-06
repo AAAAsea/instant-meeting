@@ -39,6 +39,21 @@ export const qualities = {
   }
 }
 
+export const recorderQualities = {
+  3: {
+    audioBitsPerSecond: 128000,
+    videoBitsPerSecond: 5000000
+  },
+  2: {
+    audioBitsPerSecond: 128000,
+    videoBitsPerSecond: 3000000,
+  },
+  1: {
+    audioBitsPerSecond: 64000,
+    videoBitsPerSecond: 1000000
+  }
+}
+
 export const stringToColor = (string) => {
   let hash = 0;
   let i;

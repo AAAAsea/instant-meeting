@@ -7,6 +7,7 @@ const SettingsContextProvider = ({ children }) => {
   const [theme, setTheme] = useState("dark");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [recorderMode, setRecorderMode] = useState(0); // 0 主视频   1 屏幕分享
+  const [recorderQuality, setRecorderQuality] = useState(2); // 3 高 2 中 1 低
 
   React.useEffect(() => {
     let initialTheme = "system";
@@ -30,6 +31,22 @@ const SettingsContextProvider = ({ children }) => {
       initialRecorderMode = 0;
     }
     setRecorderMode(initialRecorderMode);
+
+    let initialRecorderQuality = 0;
+    try {
+      initialRecorderQuality =
+        localStorage.getItem("recorderQuality") || initialRecorderQuality;
+    } catch (error) {
+      // do nothing
+    }
+    if (
+      initialRecorderQuality != 1 &&
+      initialRecorderQuality != 2 &&
+      initialRecorderQuality != 3
+    ) {
+      initialRecorderQuality = 2;
+    }
+    setRecorderQuality(initialRecorderQuality);
   }, []);
 
   return (
@@ -41,6 +58,8 @@ const SettingsContextProvider = ({ children }) => {
         setDrawerOpen,
         recorderMode,
         setRecorderMode,
+        recorderQuality,
+        setRecorderQuality,
       }}
     >
       {children}
