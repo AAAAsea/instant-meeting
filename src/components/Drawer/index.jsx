@@ -259,6 +259,7 @@ function Drawer(props) {
             >
               <Chip
                 className="mask"
+                sx={{ bgcolor: "background.paper" }}
                 avatar={
                   <Avatar
                     sx={{
