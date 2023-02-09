@@ -8,7 +8,7 @@ import isEle from "is-electron";
 const RoomDetail = lazy(() => import("./pages/RoomDetail"));
 const Home = lazy(() => import("./pages/Home"));
 
-const createRouter = isEle() ? createHashRouter : createBrowserRouter;
+const createRouter = isEle() ? createHashRouter : createHashRouter;
 
 export const router = createRouter([
   {

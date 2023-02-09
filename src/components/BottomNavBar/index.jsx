@@ -42,6 +42,7 @@ import useMediaRecorder from "../../hooks/useMediaRecorder";
 import { formatSize } from "../../utils";
 import { WindowsDialog } from "../MUI";
 import isEle from "is-electron";
+import { ContentCopy } from "@mui/icons-material";
 
 const BottomNavBar = (props) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -324,7 +325,20 @@ const BottomNavBar = (props) => {
           </li>
           <li>
             <span>房间号：</span>
-            <span>{roomInfo.room}</span>
+            <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+              <CopyToClipboard text={roomInfo.room}>
+                <ContentCopy
+                  color="primary"
+                  size="small"
+                  fontSize="14px"
+                  sx={{ cursor: "pointer" }}
+                  onClick={() => {
+                    message.success("复制成功");
+                  }}
+                />
+              </CopyToClipboard>
+              <span>{roomInfo.room}</span>
+            </div>
           </li>
           <li>
             <span>房间密码：</span>

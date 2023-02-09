@@ -21,5 +21,20 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
       "simple-peer": "simple-peer/simplepeer.min.js"
     }
+  },
+  // base: '/',
+  // root: '/',
+  build: {
+    rollupOptions: {
+      input: {
+        remote: path.resolve(__dirname, 'src/remote_control_page/index.html'),
+        index: path.resolve('./index.html'),
+      },
+      output: {
+        chunkFileNames: 'static/js/[name]-[hash].js',
+        entryFileNames: 'static/js/[name]-[hash].js',
+        assetFileNames: 'static/[ext]/[name]-[hash].[ext]',
+      }
+    }
   }
 })

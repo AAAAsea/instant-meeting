@@ -3,6 +3,7 @@
 ```bash
 pnpm i
 pnpm dev
+# robotjs的安装比较麻烦，安装以后执行以下npx electron-rebuild
 ```
 
 ### 后端 node + express + socket.io
@@ -49,3 +50,4 @@ pnpm serve
 - [x] 关闭视频后黑屏
 - [x] 单独音频
 - [x] 发不出去消息
+`npx electron-rebuild -t dev`

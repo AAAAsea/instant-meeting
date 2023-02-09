@@ -28,7 +28,7 @@ io.on("connection", (socket) => {
     while (rooms[room]) {
       room = Math.floor(((Math.random() * 9) + 1) * 1e8).toString(); // 随机9位数房间号
     }
-    const master = { room, id: socket.id, name: data.name };
+    const master = { room, id: socket.id, name: data.name, isElectron: data.isElectron };
     rooms[room] = [master]
     roomsInfo[room] = { ...data, room, canScreenShare: true, owner: { id: socket.id, name: data.name } };
     master.roomInfo = roomsInfo[room];
@@ -44,7 +44,7 @@ io.on("connection", (socket) => {
     io.emit('setPublicRooms', publicRooms);
   });
 
-  socket.on('joinRoom', ({ room, name, roomPwd }) => {
+  socket.on('joinRoom', ({ room, name, roomPwd, isElectron }) => {
     if (!rooms[room]) {
       socket.emit('joinError', { msg: '房间不存在' })
       return;
@@ -62,7 +62,8 @@ io.on("connection", (socket) => {
     // 未加入过
     const newUser = {
       name,
-      id: socket.id
+      id: socket.id,
+      isElectron
     }
 
     if (rooms[room].findIndex(e => e.id === socket.id) === -1) {
@@ -84,8 +85,8 @@ io.on("connection", (socket) => {
     socket.emit('setPublicRooms', publicRooms);
   })
 
-  socket.on("peerConn", ({ signal, to, name, isInitiator }) => {
-    io.to(to).emit("peerConn", { signal, from: socket.id, to, name, isInitiator })
+  socket.on("peerConn", ({ signal, to, name, isInitiator, type }) => {
+    io.to(to).emit("peerConn", { signal, from: socket.id, to, name, isInitiator, type })
   })
 
   socket.on("setVoice", ({ id, open, room }) => {
@@ -133,6 +134,14 @@ io.on("connection", (socket) => {
       roomsInfo[data.room].name = data.name
     }
     io.to(data.room).emit("updateInfo", { roomInfo: roomsInfo[data.room], id: socket.id })
+  })
+
+  socket.on("requestRemoteControl", ({ id, name }) => {
+    io.to(id).emit("requestRemoteControl", { id: socket.id, name })
+  })
+
+  socket.on("answerRemoteControl", ({ id, answer, name }) => {
+    io.to(id).emit("answerRemoteControl", { answer, id: socket.id, name })
   })
 
   socket.on("disconnecting", () => {

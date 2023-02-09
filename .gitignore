@@ -28,3 +28,4 @@ release
 # Upload
 upload.bat
 test
+build

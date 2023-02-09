@@ -1,6 +1,7 @@
-import { app, BrowserWindow, ipcMain, dialog, desktopCapturer } from 'electron'
+import { app, BrowserWindow, ipcMain, dialog, desktopCapturer, BrowserView } from 'electron'
 import fs from 'fs'
 import path from 'path'
+import robot from "robotjs";
 
 process.env.DIST_ELECTRON = path.join(__dirname, './')
 process.env.DIST = path.join(process.env.DIST_ELECTRON, '../dist')
@@ -22,10 +23,12 @@ if (!app.requestSingleInstanceLock()) {
 // process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true'
 
 let win
+let remoteWindows = [];
 // Here, you can also use other preload
 const preload = path.join(__dirname, './preload.js')
 const url = process.env.VITE_DEV_SERVER_URL
 const indexHtml = path.join(process.env.DIST, './index.html')
+const remoteHtml = path.join(process.env.DIST, './src/remote_control_page/index.html')
 
 async function createWindow() {
   win = new BrowserWindow({
@@ -35,6 +38,7 @@ async function createWindow() {
     height: 700,
     minHeight: 700,
     minWidth: 600,
+    show: false,
     webPreferences: {
       preload,
       // Warning: Enable nodeIntegration and disable contextIsolation is not secure in production
@@ -50,6 +54,7 @@ async function createWindow() {
     win.webContents.openDevTools()
   } else {
     win.loadFile(indexHtml)
+    // win.webContents.openDevTools()
   }
 
   // Test actively push message to the Electron-Renderer
@@ -63,6 +68,59 @@ async function createWindow() {
     return { action: 'deny' }
   })
 
+  win.once('ready-to-show', () => {
+    win.show()
+  })
+
+  win.on('close', () => {
+    remoteWindows.forEach(win => {
+      try { if (!win.isDestroyed()) win.close() } catch (e) { }
+    })
+    remoteWindows = [];
+  })
+}
+
+async function createSecondWindow(user) {
+  let win = new BrowserWindow({
+    title: 'Second window',
+    icon: path.join(process.env.PUBLIC, 'favicon.ico'),
+    show: false,
+    webPreferences: {
+      preload,
+      // Warning: Enable nodeIntegration and disable contextIsolation is not secure in production
+      // Consider using contextBridge.exposeInMainWorld
+      // Read more on https://www.electronjs.org/docs/latest/tutorial/context-isolation
+      nodeIntegration: true,
+      contextIsolation: true,
+    },
+  })
+  win.maximize()
+
+  remoteWindows.push(win);
+  win.setMenu(null)
+  if (process.env.VITE_DEV_SERVER_URL) {
+    win.loadURL(url + '/src/remote_control_page/index.html')
+    win.webContents.openDevTools()
+  } else {
+    win.loadFile(remoteHtml)
+    // win.webContents.openDevTools()
+  }
+
+  // Test actively push message to the Electron-Renderer
+  win.webContents.on('did-finish-load', () => {
+    win.webContents.send('start', user)
+  })
+
+  // Make all links open with the browser, not with the application
+  win.webContents.setWindowOpenHandler(({ url }) => {
+    if (url.startsWith('https:')) shell.openExternal(url)
+    return { action: 'deny' }
+  })
+
+  win.once('ready-to-show', () => {
+    win.show()
+  })
+  return win;
 }
 
 app.whenReady().then(createWindow)
@@ -107,17 +165,6 @@ ipcMain.handle('open-win', (_, arg) => {
   }
 })
 
-
-// 关闭窗口
-ipcMain.once('shutDown', () => {
-  app.exit()
-})
-
-// 最小化窗口
-ipcMain.on('minimize', () => {
-  win.minimize()
-})
-
 // 文件持久化
 const handleDirectoryOpen = async () => {
   const { canceled, filePaths } = await dialog.showOpenDialog({ properties: ['openDirectory'] })
@@ -158,4 +205,55 @@ ipcMain.on("downloadCanceled", (e) => {
   fs.unlink(fileStream.path, err => {
     console.log(err)
   });
+})
+
+
+ipcMain.on("remoteControlStart", (e, user) => {
+  // console.log(user)
+  createSecondWindow(user)
+})
+ipcMain.on("remoteControlClosed", (e) => {
+  const webContents = e.sender
+  webContents.close();
+})
+
+const { width: WIDTH, height: HEIGHT } = robot.getScreenSize();
+
+const handleMouseMove = ({ x, y, width, height }) => {
+  robot.moveMouse(x * WIDTH / width, y * HEIGHT / height);
+}
+
+const handleMouseClick = ({ x, y, width, height, detail }) => {
+  robot.moveMouse(x * WIDTH / width, y * HEIGHT / height);
+  robot.mouseClick(detail === 'click' ? 'left' : 'right', false)
+}
+const handleMouseWheel = ({ deltaX, deltaY }) => {
+  robot.scrollMouse(deltaX, deltaY);
+}
+const handleKeyboard = ({ key, detail, modified }) => {
+  try {
+    robot.keyTap(key, modified)
+  } catch (e) { }
+}
+
+ipcMain.on('robot', (e, data) => {
+  const { type } = data;
+  if (type === 'mouse') {
+    switch (data.detail) {
+      case 'mousemove':
+        handleMouseMove(data);
+        break;
+      case 'click':
+        handleMouseClick(data);
+        break;
+      case 'contextmenu':
+        handleMouseClick(data);
+        break;
+      case 'mousewheel':
+        handleMouseWheel(data)
+        break;
+    }
+  } else if (type === 'keyboard') {
+    handleKeyboard(data)
+  }
 })

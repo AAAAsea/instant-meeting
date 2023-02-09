@@ -23,6 +23,7 @@ import {
   MicOff,
   Mic,
 } from "@mui/icons-material";
+import { CancelPresentationRounded } from "@mui/icons-material";
 
 const RoomDetail = () => {
   const [slideOpen, setSlideOpen] = useState(true);
@@ -44,6 +45,9 @@ const RoomDetail = () => {
     socketDisconnectCbRef,
     name,
     speed,
+    remoteControlling,
+    remoteController,
+    cancelRemoteControl,
   } = useContext(SocketContext);
 
   const { id } = useParams();
@@ -55,17 +59,19 @@ const RoomDetail = () => {
       return;
     }
     setRoomCreated(false); // 为了下次再次创建房间
-
     socketDisconnectCbRef.current = () => {
       navigate("/room?type=join");
     };
-    document.title = `房间：${room}  昵称：${name}`;
     setRoom(id);
     return () => {
       window.onbeforeunload = null;
       leaveRoom(room);
     };
   }, []);
+
+  useEffect(() => {
+    document.title = `房间：${room}  昵称：${name}`;
+  }, [room]);
 
   return (
     <div id="room-detail" className="animate__animated animate__fadeIn">
@@ -170,6 +176,17 @@ const RoomDetail = () => {
           <Tooltip title="取消下载">
             <IconButton onClick={cancelDownload} color="primary">
               <DeleteRounded />
+            </IconButton>
+          </Tooltip>
+        </Paper>
+      </Fade>
+
+      <Fade in={remoteControlling}>
+        <Paper elevation={2} className="controller">
+          <h5>{remoteController}正在控制您的电脑</h5>
+          <Tooltip title="停止对方的远程控制">
+            <IconButton onClick={cancelRemoteControl} color="error">
+              <CancelPresentationRounded />
             </IconButton>
           </Tooltip>
         </Paper>

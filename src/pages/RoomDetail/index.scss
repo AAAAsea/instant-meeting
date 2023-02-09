@@ -15,6 +15,16 @@
     gap: 10px;
     padding: 0 10px;
   }
+  .controller {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 10px;
+  }
   .room-main {
     flex: 1;
     display: flex;

@@ -8,6 +8,9 @@ import { SettingsContext } from "./contexts/SettingsContext";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Box, useMediaQuery } from "@mui/material";
 import { SettingsDrawer } from "./components/SettingsDrawer";
+import { AlertDialog } from "@/components/MUI";
+import { SocketContext } from "./contexts/SocketContext";
+import { MessageContext } from "./contexts/MessageContext";
 
 const themes = {
   light: createTheme({
@@ -63,6 +66,16 @@ const themes = {
 };
 const App = () => {
   let { theme } = useContext(SettingsContext);
+  const {
+    remoteControlDialog,
+    setRemoteControlDialog,
+    answerRemoteControl,
+    initMyVideo,
+    remoteControlling,
+    remoteController,
+  } = useContext(SocketContext);
+  const { message } = useContext(MessageContext);
+
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
   if (theme === "system") {
     theme = prefersDarkMode ? "dark" : "light";
@@ -81,6 +94,35 @@ const App = () => {
           <RouterProvider router={router} />
           <Message></Message>
           <SettingsDrawer />
+          <AlertDialog
+            title={"远程控制请求"}
+            open={remoteControlDialog.open}
+            content={`${remoteControlDialog.name}请求远程控制`}
+            confirmTitle="接受"
+            cancelTitle="拒绝"
+            handleConfirm={() => {
+              if (remoteControlling) {
+                message.warning(`${remoteController}正在控制您的屏幕`);
+                return;
+              }
+              setRemoteControlDialog({ ...remoteControlDialog, open: false });
+              answerRemoteControl({ id: remoteControlDialog.id, answer: true });
+            }}
+            handleClose={() => {
+              setRemoteControlDialog({ ...remoteControlDialog, open: false });
+              answerRemoteControl({
+                id: remoteControlDialog.id,
+                answer: false,
+              });
+            }}
+            handleCancel={() => {
+              setRemoteControlDialog({ ...remoteControlDialog, open: false });
+              answerRemoteControl({
+                id: remoteControlDialog.id,
+                answer: false,
+              });
+            }}
+          />
         </Box>
       </ThemeProvider>
     </>

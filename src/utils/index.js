@@ -138,3 +138,14 @@ export function formatSize(size) {
   else if (size < 1024 ** 5)
     return parseNum(size / 1024 / 1024 / 1024 / 1024, 2) + 'T'
 }
+
+export const keyMap = {
+  ArrowUp: 'up',
+  ArrowDo: 'down',
+  ArrowLe: 'right',
+  ArrowRi: 'left',
+  AudioVolumeMute: 'audio_mute',
+  AudioVolumeDown: 'audio_vol_down',
+  AudioVolumeUp: 'audio_vol_up',
+  '': 'space'
+}

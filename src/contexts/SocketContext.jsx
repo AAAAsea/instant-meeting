@@ -55,6 +55,13 @@ const SocketContextProvider = ({ children }) => {
   });
   const [isElectron] = useState(isEle());
   const [speed, setSpeed] = useState(0);
+  const [remoteControlDialog, setRemoteControlDialog] = useState({
+    open: false,
+    name: "",
+    id: "",
+  });
+  const [remoteControlling, setRemoteControlling] = useState(false);
+  const [remoteController, setRemoteController] = useState("");
 
   const { message } = useContext(MessageContext);
 
@@ -75,6 +82,7 @@ const SocketContextProvider = ({ children }) => {
     fileBuffer: [],
     currentSize: 0,
   });
+  const remoteControlPeerRef = useRef();
 
   useEffect(() => {
     socket.on("me", (id) => (me.current = id));
@@ -128,7 +136,11 @@ const SocketContextProvider = ({ children }) => {
     );
 
     // 每次收到peerConn，取出对应的signal事件执行
-    socket.on("peerConn", ({ from, signal }) => {
+    socket.on("peerConn", ({ from, signal, type, name }) => {
+      // console.log("peerConn");
+      if (type === "remoteControl") {
+        if (!peers[from]) getPeerConnection(from, name, false, type);
+      }
       eventBucket.current[from] && eventBucket.current[from](signal);
     });
 
@@ -217,10 +229,29 @@ const SocketContextProvider = ({ children }) => {
     socket.on("connection", () => {
       message.success("已连接");
     });
+
+    socket.on("requestRemoteControl", ({ id, name }) => {
+      setRemoteControlDialog({ ...remoteControlDialog, name, id, open: true });
+    });
+
+    socket.on("answerRemoteControl", ({ answer, id, name }) => {
+      if (answer) {
+        const user = usersRef.current.find((user) => user.id === id);
+        window.electron.ipcRenderer.send("remoteControlStart", { name, id });
+      } else {
+        message.warning(`${name}拒绝了你的远程控制请求`);
+      }
+    });
+
+    return () => {
+      peers.forEach((peer) => {
+        peer.destroy();
+      });
+    };
   }, []);
 
   // WebRTC建立连接
-  const getPeerConnection = (userId, userName, isInitiator) => {
+  const getPeerConnection = (userId, userName, isInitiator, type) => {
     const peer = new Peer({
       initiator: isInitiator,
       trickle: false,
@@ -235,7 +266,10 @@ const SocketContextProvider = ({ children }) => {
       },
     });
 
+    // console.log(peer);
+
     peer.on("signal", (signal) => {
+      // console.log("signal");
       socket.emit("peerConn", {
         signal,
         to: userId,
@@ -246,20 +280,51 @@ const SocketContextProvider = ({ children }) => {
     });
 
     peer.on("stream", (stream) => {
+      // console.log("stream");
       const user = usersRef.current.find((user) => user.id === userId);
       user.stream = stream;
       setUsers([...usersRef.current]);
     });
 
     peer.on("connect", () => {
-      if (stream.current) peer.addStream(stream.current);
-      console.log("connected");
-      const user = usersRef.current.find((user) => user.id === userId);
-      user && (user.peerConnected = true);
-      setUsers([...usersRef.current]);
-      peers[userId] = peer;
-      setRoomJoinning(false);
-      setRoomJoinned(true);
+      if (type === "remoteControl") {
+        remoteControlPeerRef.current = peer;
+        peers[userId] = peer;
+        setRemoteController(userName);
+        setRemoteControlling(true);
+        // console.log("获取屏幕", peer);
+        navigator.mediaDevices
+          .getUserMedia({
+            audio: {
+              mandatory: {
+                chromeMediaSource: "desktop",
+              },
+            },
+            video: {
+              mandatory: {
+                chromeMediaSource: "desktop",
+              },
+            },
+          })
+          .then((stream) => {
+            // console.log(stream);
+            peer.addStream(stream);
+          })
+          .catch((err) => {
+            console.log(err);
+            message.error("当前设备或浏览器未支持屏幕共享");
+          });
+      } else {
+        if (stream.current) peer.addStream(stream.current);
+        console.log("connected");
+        const user = usersRef.current.find((user) => user.id === userId);
+        user && (user.peerConnected = true);
+        setUsers([...usersRef.current]);
+        peers[userId] = peer;
+        setRoomJoinning(false);
+        setRoomJoinned(true);
+      }
+
       message.success(`与${userName}已连接`);
     });
 
@@ -277,9 +342,19 @@ const SocketContextProvider = ({ children }) => {
       setDownloading(false);
       downloadingRef.current = false;
       setCurrentFile(currentFileRef.current);
+      if (type === "remoteControl") {
+        setRemoteControlling(false);
+        message.error(`与${userName}连接失败`);
+        return;
+      }
     });
 
     peer.on("error", (err) => {
+      if (type === "remoteControl") {
+        setRemoteControlling(false);
+        message.error(`与${userName}连接失败`);
+        return;
+      }
       const user = usersRef.current.find((user) => user.id === userId);
       user && (user.peerConnected = false);
       console.log(err);
@@ -289,6 +364,12 @@ const SocketContextProvider = ({ children }) => {
     });
 
     peer.on("data", (data) => {
+      if (type === "remoteControl") {
+        const str = new TextDecoder("utf-8").decode(data);
+        const events = JSON.parse(str);
+        window.electron.ipcRenderer.send("robot", events);
+        return;
+      }
       if (!downloadingRef.current) return;
       if (isElectron) {
         window.electron.ipcRenderer.send("downloading", data);
@@ -548,6 +629,7 @@ const SocketContextProvider = ({ children }) => {
     // console.log('createRoom')
     setRoomCreating(true);
     setName(name.trim());
+    data.isElectron = isElectron;
     socket.emit("createRoom", data);
   };
 
@@ -559,7 +641,7 @@ const SocketContextProvider = ({ children }) => {
     }
     setRoomJoinning(true);
     setName(name.trim());
-    socket.emit("joinRoom", { room, name: name.trim(), roomPwd });
+    socket.emit("joinRoom", { room, name: name.trim(), roomPwd, isElectron });
   };
 
   // 离开房间
@@ -601,7 +683,11 @@ const SocketContextProvider = ({ children }) => {
   // 下载文件
   const downloadFile = async ({ file, userId }) => {
     if (users.findIndex((user) => user.id === userId) === -1) {
-      message.warning("该用户已不在房间，文件不可下载");
+      message.warning("该用户不在房间，文件不可下载");
+      return;
+    }
+    if (!peers[userId] || !peers[userId]._connected) {
+      message.warning("未建立连接，文件暂时不可下载");
       return;
     }
     if (userId === me.current) {
@@ -665,7 +751,7 @@ const SocketContextProvider = ({ children }) => {
       fileReader.readAsArrayBuffer(slice);
     };
     let readTimeOut = null;
-    const delay = 5;
+    const delay = 0.1; // Wait when the dataChannel is full
     fileReader.onload = (e) => {
       if (start >= file.size) {
         return;
@@ -712,6 +798,20 @@ const SocketContextProvider = ({ children }) => {
     socket.emit("updateInfo", { ...data, room });
   };
 
+  const requestRemoteControl = ({ id }) => {
+    socket.emit("requestRemoteControl", { id, name });
+  };
+
+  const answerRemoteControl = ({ id, answer }) => {
+    socket.emit("answerRemoteControl", { id, answer, name });
+  };
+
+  const cancelRemoteControl = () => {
+    remoteControlPeerRef.current.destroy();
+    setRemoteControlling(false);
+    setRemoteController("");
+  };
+
   return (
     <SocketContext.Provider
       value={{
@@ -735,6 +835,7 @@ const SocketContextProvider = ({ children }) => {
         setRoom,
         roomCreating,
         roomJoinning,
+        setRoomJoinning,
         roomCreated,
         roomJoinned,
         setRoomCreated,
@@ -770,6 +871,13 @@ const SocketContextProvider = ({ children }) => {
         isElectron,
         speed,
         modifyInfo,
+        remoteControlDialog,
+        setRemoteControlDialog,
+        requestRemoteControl,
+        answerRemoteControl,
+        remoteControlling,
+        remoteController,
+        cancelRemoteControl,
       }}
     >
       {children}

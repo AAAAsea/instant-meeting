@@ -96,8 +96,16 @@ export function RoomInfoDialog(props) {
 }
 
 export function AlertDialog(props) {
-  const { handleClose, open, content, title, handleConfirm, handleCancel } =
-    props;
+  const {
+    handleClose,
+    open,
+    content,
+    title,
+    handleConfirm,
+    handleCancel,
+    confirmTitle,
+    cancelTitle,
+  } = props;
 
   return (
     <div>
@@ -108,15 +116,15 @@ export function AlertDialog(props) {
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
-        <DialogContent>
+        <DialogContent sx={{ minWidth: "300px" }}>
           <DialogContentText id="alert-dialog-description">
             {content}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCancel}>取消</Button>
+          <Button onClick={handleCancel}>{cancelTitle || "取消"}</Button>
           <Button variant="contained" onClick={handleConfirm} autoFocus>
-            确定
+            {confirmTitle || "确定"}
           </Button>
         </DialogActions>
       </Dialog>

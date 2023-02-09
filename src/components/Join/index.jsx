@@ -11,6 +11,7 @@ import { GroupRounded } from "@mui/icons-material";
 import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useState } from "react";
+import { LoadingButton } from "@mui/lab";
 
 const Join = () => {
   const {
@@ -21,6 +22,8 @@ const Join = () => {
     joinRoom,
     roomJoinnedCbRef,
     roomJoinned,
+    roomJoinning,
+    setRoomJoinning,
     roomPwd,
     setRoomPwd,
   } = useContext(SocketContext);
@@ -49,6 +52,7 @@ const Join = () => {
     document.title = ""; // 需要改变一下才能有反应，不知为啥
     document.title = "加入房间";
     id && setRoom(id);
+    setRoomJoinning(false);
   }, []);
   return (
     <>
@@ -107,15 +111,17 @@ const Join = () => {
               onChange={(e) => setRoomPwd(e.target.value.trim())}
             ></TextField>
           </div>
-          <Button
+          <LoadingButton
             fullWidth
+            loading={roomJoinning && !roomJoinned}
+            loadingIndicator="加入中..."
             endIcon={<GroupRounded />}
             className="submit-btn"
             variant="contained"
             onClick={handleClick}
           >
             加入
-          </Button>
+          </LoadingButton>
         </form>
       </Paper>
     </>

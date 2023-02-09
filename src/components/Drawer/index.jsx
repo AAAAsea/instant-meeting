@@ -41,6 +41,7 @@ import { useEffect, useRef, useContext, useState } from "react";
 import { SocketContext } from "../../contexts/SocketContext";
 import { stringToColor, formatDate, formatSize } from "@/utils";
 import "./index.scss";
+import { Laptop } from "@mui/icons-material";
 
 function Drawer(props) {
   const {
@@ -71,6 +72,8 @@ function Drawer(props) {
     sendMessage,
     slideOpenRef,
     downloadFile,
+    requestRemoteControl,
+    isElectron,
   } = useContext(SocketContext);
 
   const handleChangeTab = (e, value) => {
@@ -346,6 +349,22 @@ function Drawer(props) {
                       playsInline
                       autoPlay
                     ></video>
+                    <Fade in={isElectron && user.isElectron}>
+                      <Tooltip title="请求控制对方电脑">
+                        <IconButton
+                          onClick={() => {
+                            requestRemoteControl({ id: user.id });
+                          }}
+                          sx={{
+                            position: "absolute",
+                            left: "5px",
+                            bottom: "5px",
+                          }}
+                        >
+                          <Laptop />
+                        </IconButton>
+                      </Tooltip>
+                    </Fade>
                   </Box>
                 ))}
             </div>
