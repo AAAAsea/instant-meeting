@@ -52,7 +52,6 @@ const RoomDetail = () => {
 
   const { id } = useParams();
   const navigate = useNavigate();
-
   useEffect(() => {
     if (name === "") {
       navigate("/room?id=" + id);
@@ -84,6 +83,7 @@ const RoomDetail = () => {
             <div className="main-video-wrapper">
               <video
                 className="main-video"
+                id="main-video"
                 playsInline
                 muted
                 autoPlay

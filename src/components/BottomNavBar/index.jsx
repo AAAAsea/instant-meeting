@@ -6,6 +6,7 @@ import { qualities } from "@/utils";
 import { SocketContext } from "@/contexts/SocketContext";
 import { MessageContext } from "@/contexts/MessageContext";
 import { RoomInfoDialog, AlertDialog } from "@/components/MUI";
+import useAudioVolume from "@/hooks/useAudioVolume";
 import {
   Button,
   ButtonGroup,
@@ -43,6 +44,8 @@ import { formatSize } from "../../utils";
 import { WindowsDialog } from "../MUI";
 import isEle from "is-electron";
 import { ContentCopy } from "@mui/icons-material";
+import { MicOutlined } from "@mui/icons-material";
+import { MicNoneOutlined } from "@mui/icons-material";
 
 const BottomNavBar = (props) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -65,11 +68,13 @@ const BottomNavBar = (props) => {
     isLive,
     canScreenShare,
     roomInfo,
+    myVideo,
   } = useContext(SocketContext);
   const { message } = useContext(MessageContext);
   const { drawerOpen, setDrawerOpen } = useContext(SettingsContext);
   const [isRecording, handleRecord, recordInfo] = useMediaRecorder();
-
+  const volume = useAudioVolume(myVideo);
+  const micHeight = useMemo(() => Math.pow(volume, 1 / 3) * 10); // 优化声音显示，增大对微弱声音的敏感度
   const navigate = useNavigate();
 
   const shareLink = useMemo(
@@ -153,13 +158,22 @@ const BottomNavBar = (props) => {
       >
         <Tooltip title={voiceOpen ? "麦克风已打开" : "麦克风已关闭"}>
           <IconButton
-            style={{ visibility: isLive ? "hidden" : "visible" }}
+            style={{
+              visibility: isLive ? "hidden" : "visible",
+              "--height": `${micHeight}px`,
+              "--display": voiceOpen ? "block" : "none",
+            }}
             color={voiceOpen ? "error" : "primary"}
             onClick={() => {
               initMyVoice(!voiceOpen);
             }}
+            className="mic-button"
           >
-            {voiceOpen ? <MicRounded /> : <MicOffRounded />}
+            {voiceOpen ? (
+              <MicNoneOutlined className="mic-out-lined" />
+            ) : (
+              <MicOffRounded />
+            )}
           </IconButton>
         </Tooltip>
 

@@ -878,6 +878,7 @@ const SocketContextProvider = ({ children }) => {
         remoteControlling,
         remoteController,
         cancelRemoteControl,
+        stream,
       }}
     >
       {children}
