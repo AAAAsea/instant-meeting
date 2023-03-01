@@ -51,11 +51,12 @@ const App = () => {
   const handleKeyboardEvent = (e) => {
     let key = e.key;
     if (keyMap[e.key]) key = keyMap[key];
+    else key = key.toLowerCase();
 
     const modified = [];
     if (e.altKey) modified.push("alt");
     if (e.shiftKey) modified.push("shift");
-    if (e.ctrlKey) modified.push("ctrl");
+    if (e.ctrlKey) modified.push("control");
 
     const data = {
       type: "keyboard",

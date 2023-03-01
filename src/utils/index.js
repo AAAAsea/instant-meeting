@@ -141,11 +141,11 @@ export function formatSize(size) {
 
 export const keyMap = {
   ArrowUp: 'up',
-  ArrowDo: 'down',
-  ArrowLe: 'right',
-  ArrowRi: 'left',
+  ArrowDown: 'down',
+  ArrowLeft: 'right',
+  ArrowRight: 'left',
   AudioVolumeMute: 'audio_mute',
   AudioVolumeDown: 'audio_vol_down',
   AudioVolumeUp: 'audio_vol_up',
-  '': 'space'
+  '': 'space',
 }

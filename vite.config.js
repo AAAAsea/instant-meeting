@@ -19,7 +19,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      "simple-peer": "simple-peer/simplepeer.min.js"
+      "simple-peer": "simple-peer/simplepeer.min.js",
     }
   },
   // base: '/',

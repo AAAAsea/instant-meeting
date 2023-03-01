@@ -258,7 +258,7 @@ const SocketContextProvider = ({ children }) => {
       config: {
         iceServers: [
           {
-            urls: "turn:124.221.154.52:3478",
+            urls: "turn:asea.fun:3478",
             credential: "password",
             username: "username",
           },
@@ -367,6 +367,7 @@ const SocketContextProvider = ({ children }) => {
       if (type === "remoteControl") {
         const str = new TextDecoder("utf-8").decode(data);
         const events = JSON.parse(str);
+        console.log(events);
         window.electron.ipcRenderer.send("robot", events);
         return;
       }

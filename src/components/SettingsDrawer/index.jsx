@@ -430,6 +430,15 @@ export const SettingsDrawer = () => {
               屏幕或标签页
             </MenuItem>
           </Select>
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            mt: 1,
+          }}
+        >
           <SubHeading>录制质量</SubHeading>
           <Select
             value={recorderQuality}
@@ -452,6 +461,27 @@ export const SettingsDrawer = () => {
             </MenuItem>
           </Select>
         </Box>
+        {/* <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <SubHeading></SubHeading>
+            <FormControlLabel
+              control={
+                <Switch
+                  disabled={isDisabled}
+                  checked={newIsLive}
+                  onChange={() => {
+                    setNewIsLive(!newIsLive);
+                  }}
+                />
+              }
+              label=""
+            />
+        </Box> */}
       </Box>
     </Drawer>
   );
