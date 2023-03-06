@@ -73,7 +73,7 @@ const BottomNavBar = (props) => {
   const { message } = useContext(MessageContext);
   const { drawerOpen, setDrawerOpen } = useContext(SettingsContext);
   const [isRecording, handleRecord, recordInfo] = useMediaRecorder();
-  const volume = useAudioVolume(myVideo);
+  const volume = useAudioVolume(myVideo, voiceOpen);
   const micHeight = useMemo(() => Math.pow(volume, 1 / 3) * 10); // 优化声音显示，增大对微弱声音的敏感度
   const navigate = useNavigate();
 

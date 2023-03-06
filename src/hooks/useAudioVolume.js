@@ -4,12 +4,12 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { SocketContext } from "../contexts/SocketContext";
 
-export default (stream) => {
+export default (stream, voiceOpen) => {
   const [volume, setVolume] = useState(0);
 
   useEffect(() => {
-
-    if (!stream || !(stream instanceof MediaStream)) return;
+    if (!voiceOpen) return;
+    if (!stream || !(stream instanceof MediaStream) || stream.getAudioTracks().length === 0) return;
     const audioContext = new AudioContext();
     const source = audioContext.createMediaStreamSource(stream);
 
@@ -27,7 +27,7 @@ export default (stream) => {
         audioContext.close();
       };
     });
-  }, [stream]);
+  }, [voiceOpen, stream]);
 
   return volume;
 };
