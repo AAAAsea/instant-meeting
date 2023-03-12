@@ -62,7 +62,7 @@ jobs:
       # step7: cleanup artifacts in dist_electron
       - name: cleanup artifacts
         run: |
-          npx rimraf "release/!(*.exe|*.dmg)"
+          npx rimraf release/!(*.exe|*.dmg)
 
       # step8: upload artifacts
       - name: upload artifacts
