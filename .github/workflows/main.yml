@@ -23,11 +23,11 @@ jobs:
     steps:
       # step1: check out repository
       - name: Check out git repository
-      - uses: actions/checkout@v3
+        uses: actions/checkout@v3
 
       # step2: install node env
       - name: Install Node.js
-      - uses: actions/setup-node@v2-beta
+        uses: actions/setup-node@v2-beta
 
       # step3: npm install
       - name: pnpm install
