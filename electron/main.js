@@ -154,6 +154,8 @@ async function createChildWindow(user) {
     childWin.webContents.openDevTools()
   } else {
     childWin.loadFile(childHtml)
+    childWin.webContents.openDevTools()
+
   }
   return childWin;
 }
@@ -330,3 +332,5 @@ ipcMain.handle('pickColor',()=>{
   const hex = robot.getPixelColor(mouse.x, mouse.y);
   return hex;
 })
+
+ipcMain.handle('getWorletJs',()=>!process.env.VITE_DEV_SERVER_URL ? path.join(process.env.DIST, './worklet.js') : '/worklet.js')

@@ -7,68 +7,81 @@ import InputLabel from "@material-ui/core/InputLabel";
 import {PauseContext, ShapeOutlineContext, ShapeTypeContext, ToolTypeContext} from "../../../context";
 import {ShapeOutlineType, ShapeToolType, ToolType} from "../../../util/toolType";
 import "./index.scss";
+import shapeLine from '../../../icon/shape_line.svg'
+import shapeArrowDown from '../../../icon/shape_arrowdown.svg'
+import shapeArrowLeft from '../../../icon/shape_arrowleft.svg'
+import shapeArrowRight from '../../../icon/shape_arrowright.svg'
+import shapeArrowTop from '../../../icon/shape_arrowtop.svg'
+import shapeCircle from '../../../icon/shape_circle.svg'
+import shapeFourStar from '../../../icon/shape_fourstar.svg'
+import shapeRect from '../../../icon/shape_rect.svg'
+import shapeSixAngle from '../../../icon/shape_sixangle.svg'
+import shapeTriangle from '../../../icon/shape_triangle.svg'
+import shapeShombs from '../../../icon/shape_rhombus.svg'
+import shapePentagon from '../../../icon/shape_pentagon.svg'
+
 
 const selectedShapeClass = "selected-shape";
 
 const shapes = [
     {
         type: ShapeToolType.LINE,
-        img: "./icon/shape_line.svg",
+        img: shapeLine,
         title: "直线"
     },
     {
         type: ShapeToolType.RECT,
-        img: "./icon/shape_rect.svg",
+        img: shapeRect,
         title: "矩形"
     },
     {
         type: ShapeToolType.CIRCLE,
-        img: "./icon/shape_circle.svg",
+        img: shapeCircle,
         title: "圆（椭圆）"
     },
     {
         type: ShapeToolType.RHOMBUS,
-        img: "./icon/shape_rhombus.svg",
+        img: shapeShombs,
         title: "菱形"
     },
     {
         type: ShapeToolType.TRIANGLE,
-        img: "./icon/shape_triangle.svg",
+        img: shapeTriangle,
         title: "三角形"
     },
     {
         type: ShapeToolType.PENTAGON,
-        img: "./icon/shape_pentagon.svg",
+        img: shapePentagon,
         title: "五边形"
     },
     {
         type: ShapeToolType.SEXANGLE,
-        img: "./icon/shape_sexangle.svg",
+        img: shapeSixAngle,
         title: "六边形"
     },
     {
         type: ShapeToolType.ARROW_TOP,
-        img: "./icon/shape_arrowtop.svg",
+        img: shapeArrowTop,
         title: "上箭头"
     },
     {
         type: ShapeToolType.ARROW_RIGHT,
-        img: "./icon/shape_arrowright.svg",
+        img: shapeArrowRight,
         title: "右箭头"
     },
     {
         type: ShapeToolType.ARROW_DOWN,
-        img: "./icon/shape_arrowdown.svg",
+        img: shapeArrowDown,
         title: "下箭头"
     },
     {
         type: ShapeToolType.ARROW_LEFT,
-        img: "./icon/shape_arrowleft.svg",
+        img: shapeArrowLeft,
         title: "左箭头"
     },
     {
         type: ShapeToolType.FOUR_STAR,
-        img: "./icon/shape_fourstar.svg",
+        img: shapeFourStar,
         title: "四角星"
     }
 ];

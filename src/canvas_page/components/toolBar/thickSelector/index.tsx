@@ -5,6 +5,12 @@ import {useState} from "react";
 import {LineWidthType} from "../../../util/toolType";
 import {useContext} from "react";
 import {LineWidthContext, PauseContext} from "../../../context";
+import thickLine1Svg from '../../../icon/thickline1.svg'
+import thickLine2Svg from '../../../icon/thickline2.svg'
+import thickLine3Svg from '../../../icon/thickline3.svg'
+import thickLine4Svg from '../../../icon/thickline4.svg'
+import thicknessSvg from '../../../icon/thickness.svg'
+
 
 interface ThickSelectorProps {
     className?: string;
@@ -13,22 +19,22 @@ interface ThickSelectorProps {
 const thicks = [
     {
         type: LineWidthType.THIN,
-        img: "./icon/thickline1.svg",
+        img: thickLine1Svg,
         title: "1px"
     },
     {
         type: LineWidthType.MIDDLE,
-        img: "./icon/thickline2.svg",
+        img: thickLine2Svg,
         title: "2px"
     },
     {
         type: LineWidthType.BOLD,
-        img: "./icon/thickline3.svg",
+        img: thickLine3Svg,
         title: "3px"
     },
     {
         type: LineWidthType.MAXBOLD,
-        img: "./icon/thickline4.svg",
+        img: thickLine4Svg,
         title: "4px"
     }
 ];
@@ -55,7 +61,7 @@ const ThickSelector: React.FC<ThickSelectorProps> = (props) => {
 
     return (
         <div className={className ? `thickselector ${className}` : "thickselector"}>
-            <img className="thickline" src="./icon/thickness.svg" onClick={onOpen} />
+            <img className="thickline" src={thicknessSvg} onClick={onOpen} />
             <Popover
                 open={open}
                 onClose={onClose}

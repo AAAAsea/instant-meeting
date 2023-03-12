@@ -3,6 +3,13 @@ import { useRef } from "react";
 import { useEffect } from "react";
 import { useState } from "react";
 import { SocketContext } from "../contexts/SocketContext";
+import isElectron from "is-electron";
+
+let worletJs = '/worklet.js'
+const initWorkletJs = async ()=>{
+  isElectron() && (worletJs = await window.electron.ipcRenderer.invoke('getWorletJs'));
+}
+initWorkletJs();
 
 export default (stream, voiceOpen) => {
   const [volume, setVolume] = useState(0);
@@ -14,7 +21,7 @@ export default (stream, voiceOpen) => {
     const source = audioContext.createMediaStreamSource(stream);
 
     // 加载 AudioWorklet 并创建处理器
-    audioContext.audioWorklet.addModule('/worklet.js').then(() => {
+    audioContext.audioWorklet.addModule(worletJs).then(() => {
       const processor = new AudioWorkletNode(audioContext, 'volume-processor');
       source.connect(processor);
       processor.port.onmessage = (event) => {

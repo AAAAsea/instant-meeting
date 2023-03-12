@@ -12,6 +12,10 @@ import {CLEAR_EVENT, REDO_EVENT, UNDO_EVENT} from "../../util/dispatcher/event";
 import SnapShot from "../../util/snapshot";
 import Snapshot from "../../util/snapshot";
 import './index.scss'
+import pencilSvg from '../../icon/pencil.svg'
+import eraserSvg from '../../icon/eraser.svg'
+import sipSvg from '../../icon/sip.svg'
+import paintBucketSvg from '../../icon/paint_bucket.svg'
 
 interface CanvasProps {
     toolType: ToolType;
@@ -25,10 +29,10 @@ interface CanvasProps {
 }
 
 const cursorStyle = {
-  [ToolType.PEN]: "url('/pencil.svg') 2 16, auto",
-  [ToolType.ERASER]: "url('/eraser.svg') 8 14, auto",
-  [ToolType.COLOR_EXTRACT]: "url('/sip.svg') 0 16, auto",
-  [ToolType.COLOR_FILL]: "url('/paint_bucket.svg') 8 16, auto",
+  [ToolType.PEN]: `url('${pencilSvg}') 2 16, auto`,
+  [ToolType.ERASER]: `url('${eraserSvg}') 8 14, auto`,
+  [ToolType.COLOR_EXTRACT]: `url('${sipSvg}') 0 16, auto`,
+  [ToolType.COLOR_FILL]: `url('${paintBucketSvg}') 8 16, auto`,
   [ToolType.SHAPE]: "crosshair",
 }
 

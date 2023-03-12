@@ -5,6 +5,7 @@ import "./index.scss";
 import { CreateTwoTone } from "@mui/icons-material";
 import { FormatColorFillTwoTone } from "@mui/icons-material";
 import { ColorizeTwoTone } from "@mui/icons-material";
+import eraserIconSvg from '../../../icon/eraser_icon.svg'
 
 const selectedToolClass = "selected-tool";
 export interface ToolPanelProps {
@@ -24,7 +25,7 @@ const ToolPanel: React.FC<ToolPanelProps> = (props) => {
                                     <CreateTwoTone className={type === ToolType.PEN ? `tool-item ${selectedToolClass}` : "tool-item"} onClick={() => {setType(ToolType.PEN)}} />
                                 </span>
                                 <span title="橡皮擦">
-                                    <img src="./icon/eraser.svg" className={type === ToolType.ERASER ? `tool-item ${selectedToolClass}` : "tool-item"} onClick={() => {setType(ToolType.ERASER)}} />
+                                    <img src={eraserIconSvg} className={type === ToolType.ERASER ? `tool-item ${selectedToolClass}` : "tool-item"} onClick={() => {setType(ToolType.ERASER)}} />
                                 </span>
                                 <span title="填充">
                                     <FormatColorFillTwoTone className={type === ToolType.COLOR_FILL ? `tool-item ${selectedToolClass}` : "tool-item"} onClick={() => {setType(ToolType.COLOR_FILL)}} />
