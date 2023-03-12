@@ -58,16 +58,6 @@ jobs:
           npm run electron:build --mac
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: dir release
-        if: matrix.os == 'windows-2019'
-        run: |
-          dir release
-
-      - name: dir
-        if: matrix.os == 'windows-2019'
-        run: |
-          dir
         
       # step7: cleanup artifacts in dist_electron
       - name: Cleanup Artifacts for Windows
@@ -79,12 +69,6 @@ jobs:
         if: matrix.os == 'macos-10.15'
         run: |
           npx rimraf "release/!(*.dmg)"
-
-      
-      - name: dir release
-        if: matrix.os == 'windows-2019'
-        run: |
-          dir release
 
       # step8: upload artifacts
       - name: upload artifacts
