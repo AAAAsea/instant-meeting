@@ -1,9 +1,11 @@
 import React from "react";
 import {useContext} from "react";
-import MenuItem from "@material-ui/core/MenuItem";
-import Select from "@material-ui/core/Select";
-import FormControl from "@material-ui/core/FormControl";
-import InputLabel from "@material-ui/core/InputLabel";
+import {
+  InputLabel,
+  MenuItem,
+  Select,
+  FormControl
+} from "@mui/material";
 import {PauseContext, ShapeOutlineContext, ShapeTypeContext, ToolTypeContext} from "../../../context";
 import {ShapeOutlineType, ShapeToolType, ToolType} from "../../../util/toolType";
 import "./index.scss";

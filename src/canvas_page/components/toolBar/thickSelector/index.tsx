@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import Popover from "@material-ui/core/Popover";
+
 import "./index.scss";
 import {useState} from "react";
 import {LineWidthType} from "../../../util/toolType";
@@ -10,6 +10,7 @@ import thickLine2Svg from '../../../icon/thickline2.svg'
 import thickLine3Svg from '../../../icon/thickline3.svg'
 import thickLine4Svg from '../../../icon/thickline4.svg'
 import thicknessSvg from '../../../icon/thickness.svg'
+import { Popover } from "@mui/material";
 
 
 interface ThickSelectorProps {
