@@ -32,37 +32,32 @@ jobs:
       # step3: npm install
       - name: install pnpm
         run: |
-          npm install pnpm
+          npm install --force
 
-      # step4: pnpm install
-      - name: pnpm install
-        run: |
-          pnpm install
-
-      # step5: build app for mac/win
+      # step4: build app for mac/win
       - name: build windows app
         if: matrix.os == 'windows-2019'
         run: |
-          pnpm run electron:build --win
+          npm run electron:build --win
       
       - name: build mac app
         if: matrix.os == 'macos-10.15'
         run: |
-          pnpm run electron:build --mac
+          npm run electron:build --mac
 
-      # step6: cleanup artifacts in dist_electron
+      # step5: cleanup artifacts in dist_electron
       - name: cleanup artifacts
         run: |
           npx rimraf "release/!(*.exe|*.dmg)"
 
-      # step7: upload artifacts
+      # step6: upload artifacts
       - name: upload artifacts
         uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.os }}
           path: dist_electron
 
-      # step8: create release
+      # step7: create release
       - name: release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
