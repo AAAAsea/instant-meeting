@@ -38,8 +38,8 @@ async function createWindow() {
     title: 'Main window',
     icon: path.join(process.env.PUBLIC, 'favicon.ico'),
     width: 600,
-    height: 700,
-    minHeight: 700,
+    height: 720,
+    minHeight: 720,
     minWidth: 600,
     show: false,
     webPreferences: {
@@ -154,7 +154,7 @@ async function createChildWindow(user) {
     childWin.webContents.openDevTools()
   } else {
     childWin.loadFile(childHtml)
-    childWin.webContents.openDevTools()
+    // childWin.webContents.openDevTools()
 
   }
   return childWin;
