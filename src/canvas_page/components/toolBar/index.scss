@@ -1,0 +1,42 @@
+.toolbar {
+  height: 120px;
+  background-color: #f5f6f7;
+  padding: 10px;
+  display: flex;
+  flex-shrink: 0;
+  position: absolute;
+  top: 0;
+  border-radius: 5px;
+  transition: .3s ease;
+  .toolbar-item {
+    margin: 0 5px;
+  }
+
+  .divider {
+    margin: 0 5px;
+  }
+
+  .quit-annotate {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+  }
+  
+  .toolbar-btn{
+    transition: 1s;
+    cursor: pointer;
+    background-color: white;
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, 0);
+    width: 100px;
+    height: 20px;
+    border-radius: 0 0 5px 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

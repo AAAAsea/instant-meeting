@@ -29,6 +29,7 @@ export default defineConfig({
       input: {
         remote: path.resolve(__dirname, 'src/remote_control_page/index.html'),
         index: path.resolve('./index.html'),
+        canvas: path.resolve(__dirname, 'src/canvas_page/index.html')
       },
       output: {
         chunkFileNames: 'static/js/[name]-[hash].js',

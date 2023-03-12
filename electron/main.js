@@ -23,12 +23,15 @@ if (!app.requestSingleInstanceLock()) {
 // process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true'
 
 let win
+let childWin
+let childWinPause = false;
 let remoteWindows = [];
 // Here, you can also use other preload
 const preload = path.join(__dirname, './preload.js')
 const url = process.env.VITE_DEV_SERVER_URL
 const indexHtml = path.join(process.env.DIST, './index.html')
 const remoteHtml = path.join(process.env.DIST, './src/remote_control_page/index.html')
+const childHtml = path.join(process.env.DIST, './src/canvas_page/index.html')
 
 async function createWindow() {
   win = new BrowserWindow({
@@ -54,7 +57,7 @@ async function createWindow() {
     win.webContents.openDevTools()
   } else {
     win.loadFile(indexHtml)
-    win.webContents.openDevTools()
+    // win.webContents.openDevTools()
   }
 
   // Test actively push message to the Electron-Renderer
@@ -77,6 +80,7 @@ async function createWindow() {
       try { if (!win.isDestroyed()) win.close() } catch (e) { }
     })
     remoteWindows = [];
+    try { if (!childWin.isDestroyed()) childWin.close() } catch (e) { }
   })
 }
 
@@ -121,6 +125,37 @@ async function createSecondWindow(user) {
     win.show()
   })
   return win;
+}
+
+async function createChildWindow(user) {
+  childWin = new BrowserWindow({
+    title: 'Canvas window',
+    icon: path.join(process.env.PUBLIC, 'favicon.ico'),
+    fullscreen: true,
+    frame: false,
+    transparent: true,
+    resizable: false,
+    movable: false,
+    minimizable: false,
+    alwaysOnTop: true,
+    skipTaskbar: false, // 是否在任务栏中显示窗口
+    webPreferences: {
+      preload,
+      // Warning: Enable nodeIntegration and disable contextIsolation is not secure in production
+      // Consider using contextBridge.exposeInMainWorld
+      // Read more on https://www.electronjs.org/docs/latest/tutorial/context-isolation
+      nodeIntegration: true,
+      contextIsolation: true,
+    },
+  })
+  childWin.setAlwaysOnTop(true, 'screen-saver')
+  if (process.env.VITE_DEV_SERVER_URL) {
+    childWin.loadURL(url + '/src/canvas_page/index.html')
+    childWin.webContents.openDevTools()
+  } else {
+    childWin.loadFile(childHtml)
+  }
+  return childWin;
 }
 
 app.whenReady().then(createWindow)
@@ -256,4 +291,42 @@ ipcMain.on('robot', (e, data) => {
   } else if (type === 'keyboard') {
     handleKeyboard(data)
   }
+})
+
+ipcMain.on('openCanvas', async () => {
+  childWin = await createChildWindow();
+})
+
+ipcMain.on('pauseCanvas', (e, pause) => {
+  childWinPause = pause;
+  if (pause)
+    childWin.setIgnoreMouseEvents(true, { forward: true });
+  else
+    childWin.setIgnoreMouseEvents(false);
+
+})
+
+ipcMain.on('quitCanvas', () => {
+  childWin.close()
+  try { if (!childWin.isDestroyed()) childWin.close() } catch (e) { console.log(e) }
+})
+
+ipcMain.on('mouseenter', () => {
+  childWin.setIgnoreMouseEvents(false)
+})
+
+ipcMain.on('mouseleave', () => {
+  if(childWinPause)
+    childWin.setIgnoreMouseEvents(true, { forward: true })
+  else
+    childWin.setIgnoreMouseEvents(false)
+
+})
+
+ipcMain.handle('pickColor',()=>{
+  // Get mouse position.
+  const mouse = robot.getMousePos();
+  // Get pixel color in hex format.
+  const hex = robot.getPixelColor(mouse.x, mouse.y);
+  return hex;
 })

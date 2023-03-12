@@ -9,7 +9,7 @@ import { Box, Tab, Tabs } from "@mui/material";
 import { VideoCameraFrontRounded } from "@mui/icons-material";
 import { GroupRounded } from "@mui/icons-material";
 
-const Room = () => {
+const Room = () => { 
   const [search, setSearch] = useSearchParams();
   const type = search.get("type");
   const { setUsers } = useContext(SocketContext);

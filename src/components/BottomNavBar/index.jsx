@@ -19,6 +19,7 @@ import {
   ListItemText,
   MenuList,
   Box,
+  Fade,
 } from "@mui/material";
 
 import {
@@ -46,6 +47,7 @@ import isEle from "is-electron";
 import { ContentCopy } from "@mui/icons-material";
 import { MicOutlined } from "@mui/icons-material";
 import { MicNoneOutlined } from "@mui/icons-material";
+import { ModeEditRounded } from "@mui/icons-material";
 
 const BottomNavBar = (props) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -148,6 +150,11 @@ const BottomNavBar = (props) => {
 
   const leaveRoom = () => {
     setAlertOpen(true);
+  };
+
+  const openCanvas = () => {
+    console.log(window.electron.ipcRenderer);
+    window.electron.ipcRenderer.send("openCanvas");
   };
 
   return (
@@ -267,6 +274,21 @@ const BottomNavBar = (props) => {
             </IconButton>
           </Box>
         </Tooltip>
+        {
+          isElectron && 
+          <Tooltip title={`批注`}>
+            <Box>
+              <IconButton
+                color="primary"
+                onClick={() => {
+                  openCanvas();
+                }}
+              >
+                <ModeEditRounded />
+              </IconButton>
+            </Box>
+        </Tooltip>
+        }
         <Tooltip title={`设置`}>
           <Box>
             <IconButton
