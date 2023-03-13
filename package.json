@@ -17,7 +17,7 @@
     "e-rebuild": "npx electron-rebuild"
   },
   "build": {
-    "appId": "YourAppID",
+    "appId": "fun.asea.meet",
     "asar": true,
     "icon": "public/favicon.ico",
     "directories": {
@@ -51,7 +51,17 @@
       "perMachine": false,
       "allowToChangeInstallationDirectory": true,
       "deleteAppDataOnUninstall": false
-    }
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "AAAAsea",
+        "repo": "instant-meeting",
+        "private": true,
+        "token": "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",
+        "releaseType": "release"
+      }
+    ]
   },
   "husky": {
     "hooks": {
@@ -61,12 +71,14 @@
   "dependencies": {
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
+    "@material-ui/core": "^4.12.4",
     "@mui/icons-material": "^5.10.14",
     "@mui/lab": "5.0.0-alpha.107",
     "@mui/material": "^5.10.14",
     "animate.css": "^4.1.1",
     "color": "^4.2.3",
     "custom-electron-titlebar": "^4.1.6",
+    "electron-updater": "^5.3.0",
     "is-electron": "^2.2.1",
     "material-ui-color": "^1.2.0",
     "material-ui-popup-state": "^1.5.3",

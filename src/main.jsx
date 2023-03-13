@@ -6,6 +6,9 @@ import { MessageContextProvider } from "@/contexts/MessageContext";
 import { SocketContextProvider } from "@/contexts/SocketContext";
 import { SettingsContextProvider } from "@/contexts/SettingsContext";
 
+window.electron.onUpdateMessage((_event, data) => {
+  console.log(data)
+});
 ReactDOM.createRoot(document.getElementById("root")).render(
   // <React.StrictMode>
   <SettingsContextProvider>
