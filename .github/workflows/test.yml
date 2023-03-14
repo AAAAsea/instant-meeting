@@ -60,17 +60,16 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
+      - name: clean
+        run: |
+          npx rimraf `release/!(*.exe)`
 
       # step8: upload artifacts
       - name: upload artifacts
         uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.os }}
-          path: |
-            release/*.exe
-            release/*.dmg
-            release/*.blockmap
-            release/*latest*.yml
+          path: release
             
 
       # step9: create release
