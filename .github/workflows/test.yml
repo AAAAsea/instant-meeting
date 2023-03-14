@@ -1,0 +1,61 @@
+name: test-build
+
+on:
+  push:
+    branches: 
+      - 'master'
+
+jobs:
+  test-build:
+
+    # job's name
+    name: test -uild
+
+    # the type of machine to run the job on
+    runs-on: ${{ matrix.os }}
+
+    # create a build matrix for jobs
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-2019, macos-10.15]
+    
+    steps:
+      # step1: check out repository
+      - name: Check out git repository
+        uses: actions/checkout@v3
+
+      # step2: install node env
+      - name: Install Node.js
+        uses: actions/setup-node@v2-beta
+
+      # step3: npm install
+      - name: npm install
+        run: |
+          npm install --force
+      
+      # step4: npm run build
+      - name: build
+        run: |
+          npm run build
+
+      # step5: build app for mac/win
+      - name: build windows app
+        if: matrix.os == 'windows-2019'
+        run: |
+          npm run electron:build --win
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: build mac app
+        if: matrix.os == 'macos-10.15'
+        run: |
+          npm run electron:build --mac
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+      # step6: cleanup artifacts in dist_electron
+      - name: Cleanup Artifacts
+        run: |
+          npx rimraf "release/*unpacked"
+          npx rimraf "release/builder*" 
