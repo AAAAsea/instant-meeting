@@ -2,7 +2,7 @@ import React from "react";
 import {useContext} from "react";
 import {ColorContext} from "../../../context";
 import {ColorType} from "../../../util/toolType";
-import {ColorPicker, createColor} from "material-ui-color";
+import { MuiColorInput } from 'mui-color-input'
 import "./index.scss";
 import {useState} from "react";
 import {useEffect} from "react";
@@ -102,12 +102,12 @@ const activeColorTypeCls = "active-color-type";
 
 const ColorPanel: React.FC<ColorPanelProps> = (props) => {
     const {className} = props;
-    const [pickerColor, setPickerColor] = useState(createColor("#000000FF"));
+    const [pickerColor, setPickerColor] = useState("#000000FF");
     const colorContext = useContext(ColorContext);
     const activeColorType = colorContext.activeColor;
 
     useEffect(() => {
-        colorContext.setColor(`#${pickerColor.hex}`);
+        colorContext.setColor(pickerColor);
     }, [pickerColor]);
 
     return (
@@ -131,7 +131,7 @@ const ColorPanel: React.FC<ColorPanelProps> = (props) => {
                     }
                 </div>
                 <div className="color-picker">
-                    <ColorPicker value={pickerColor} hideTextfield onChange={(color) => setPickerColor(color)} />
+                    <MuiColorInput value={pickerColor} onChange={(color) => setPickerColor(color)} />
                     <div className="color-picker-title">编辑颜色</div>
                 </div>
             </div>
