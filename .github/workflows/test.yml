@@ -33,3 +33,7 @@ jobs:
           # release the app after building
           release: ${{ startsWith(github.ref, 'refs/tags/v') }}
 
+          build_script_name: 'electron:rebuild'
+          build_script_name: 'build'
+
+
