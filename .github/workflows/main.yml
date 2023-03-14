@@ -35,9 +35,9 @@ jobs:
           npm install --force
 
       # step4: rebuild
-      - name: rebuild
-        run: |
-          npm run e-rebuild
+      # - name: rebuild
+      #   run: |
+      #     npm run electron:rebuild
       
       # step5: npm run build
       - name: build
