@@ -1,4 +1,4 @@
-name: test-build
+name: Test Build
 
 on:
   push:
@@ -7,55 +7,30 @@ on:
 
 jobs:
   test-build:
-
-    # job's name
-    name: test -uild
-
-    # the type of machine to run the job on
     runs-on: ${{ matrix.os }}
 
-    # create a build matrix for jobs
     strategy:
-      fail-fast: false
       matrix:
-        os: [windows-2019, macos-10.15]
-    
+        os: [macos-latest, ubuntu-latest, windows-latest]
+
     steps:
-      # step1: check out repository
-      - name: Check out git repository
-        uses: actions/checkout@v3
+      - name: Check out Git repository
+        uses: actions/checkout@v1
 
-      # step2: install node env
-      - name: Install Node.js
-        uses: actions/setup-node@v2-beta
+      - name: Install Node.js, NPM and Yarn
+        uses: actions/setup-node@v1
+        with:
+          node-version: 17.9.1
 
-      # step3: npm install
-      - name: npm install
-        run: |
-          npm install --force
-      
-      # step4: npm run build
-      - name: build
-        run: |
-          npm run build
+      - name: Build/release Electron app
+        uses: samuelmeuli/action-electron-builder@v1
+        with:
+          # GitHub token, automatically provided to the action
+          # (No need to define this secret in the repo settings)
+          github_token: ${{ secrets.github_token }}
 
-      # step5: build app for mac/win
-      - name: build windows app
-        if: matrix.os == 'windows-2019'
-        run: |
-          npm run electron:build --win
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
-      - name: build mac app
-        if: matrix.os == 'macos-10.15'
-        run: |
-          npm run electron:build --mac
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        
-      # step6: cleanup artifacts in dist_electron
-      - name: Cleanup Artifacts
-        run: |
-          npx rimraf "release/*unpacked"
-          npx rimraf "release/builder*" 
+          # If the commit is tagged with a version (e.g. "v1.0.0"),
+          # release the app after building
+          release: ${{ startsWith(github.ref, 'refs/tags/v') }}
+
+          

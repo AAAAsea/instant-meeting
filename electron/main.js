@@ -348,7 +348,6 @@ function sendStatusToWindow(text) {
 }
 
 autoUpdater.on('checking-for-update', () => {
-  console.log('hhh')
   sendStatusToWindow('Checking for update...');
 })
 
