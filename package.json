@@ -6,6 +6,7 @@
   "author": "Asea",
   "description": "Instant Meeting",
   "main": "dist-electron/main.js",
+  "license": "MIT",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -14,20 +15,18 @@
     "lint": "eslint **/*.jsx",
     "electron:serve": "electron .",
     "electron:build": "electron-builder",
-    "e-rebuild": "npx electron-rebuild"
+    "electron:rebuild": "npx electron-rebuild"
   },
   "build": {
     "appId": "fun.asea.meet",
-    "asar": true,
+    "asar": false,
     "icon": "public/favicon.ico",
     "directories": {
       "output": "release"
     },
     "files": [
       "dist-electron",
-      "dist",
-      "!node_modules",
-      "./node_modules/robotjs"
+      "dist"
     ],
     "mac": {
       "artifactName": "${productName}_${version}.${ext}",
@@ -69,35 +68,23 @@
     }
   },
   "dependencies": {
-    "@emotion/react": "^11.10.5",
-    "@emotion/styled": "^11.10.5",
-    "@material-ui/core": "^4.12.4",
-    "@mui/icons-material": "^5.10.14",
-    "@mui/lab": "5.0.0-alpha.107",
-    "@mui/material": "^5.10.14",
-    "animate.css": "^4.1.1",
-    "color": "^4.2.3",
-    "custom-electron-titlebar": "^4.1.6",
     "electron-updater": "^5.3.0",
-    "is-electron": "^2.2.1",
-    "material-ui-color": "^1.2.0",
-    "material-ui-popup-state": "^1.5.3",
-    "prop-types": "^15.7.2",
-    "react": "^18.2.0",
-    "react-copy-to-clipboard": "^5.1.0",
-    "react-dom": "^18.2.0",
-    "react-router-dom": "^6.4.3",
-    "react-transition-group": "^4.4.5",
-    "robotjs": "^0.6.0",
-    "sass": "^1.57.1",
-    "simple-peer": "^9.11.1",
-    "socket.io-client": "^4.5.3"
+    "robotjs": "^0.6.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.2",
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
+    "@material-ui/core": "^4.12.4",
+    "@mui/icons-material": "^5.11.11",
+    "@mui/lab": "^5.0.0-alpha.122",
+    "@mui/material": "^5.11.12",
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.9",
     "@vitejs/plugin-react": "^2.2.0",
+    "animate.css": "^4.1.1",
+    "color": "^4.2.3",
+    "custom-electron-titlebar": "^4.2.0-beta.0",
     "electron": "^23.0.0",
     "electron-builder": "^23.6.0",
     "electron-is-dev": "^2.0.0",
@@ -112,7 +99,19 @@
     "eslint-plugin-react": "^7.31.10",
     "eslint-plugin-react-hooks": "^4.6.0",
     "husky": "^8.0.2",
+    "is-electron": "^2.2.2",
+    "material-ui-color": "^1.2.0",
+    "material-ui-popup-state": "^5.0.5",
     "prebuild-install": "^7.1.1",
+    "prop-types": "^15.8.1",
+    "react": "^18.2.0",
+    "react-copy-to-clipboard": "^5.1.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.9.0",
+    "react-transition-group": "^4.4.5",
+    "sass": "^1.59.2",
+    "simple-peer": "^9.11.1",
+    "socket.io-client": "^4.6.1",
     "typescript": "^4.9.5",
     "vite": "^3.2.4",
     "vite-electron-plugin": "^0.7.4"

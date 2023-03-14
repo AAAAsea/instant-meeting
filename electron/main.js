@@ -52,18 +52,21 @@ async function createWindow() {
       contextIsolation: true,
     },
   })
+
+
   win.setMenu(null)
   if (process.env.VITE_DEV_SERVER_URL) {
     win.loadURL(url)
     win.webContents.openDevTools()
   } else {
     win.loadFile(indexHtml)
-    // win.webContents.openDevTools()
+    win.webContents.openDevTools()
   }
 
   // Test actively push message to the Electron-Renderer
   win.webContents.on('did-finish-load', () => {
     win.webContents.send('main-process-message', new Date().toLocaleString())
+    autoUpdater.checkForUpdatesAndNotify();
   })
 
   // Make all links open with the browser, not with the application
@@ -338,15 +341,14 @@ ipcMain.handle('getWorletJs',()=>!process.env.VITE_DEV_SERVER_URL ? path.join(pr
 
 // 自动更新
 
-app.on('ready', function(){
-  autoUpdater.checkForUpdatesAndNotify();
-});
+
 
 function sendStatusToWindow(text) {
-  win.webContents.send('updateMessage', text);
+  win &&　win.webContents.send('updateMessage', text);
 }
 
 autoUpdater.on('checking-for-update', () => {
+  console.log('hhh')
   sendStatusToWindow('Checking for update...');
 })
 

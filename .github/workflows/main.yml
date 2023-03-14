@@ -60,15 +60,15 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
       # step7: cleanup artifacts in dist_electron
-      - name: Cleanup Artifacts for Windows
-        if: matrix.os == 'windows-2019'
+      - name: Cleanup Artifacts
         run: |
-          npx rimraf "release/!(*.exe)"
+          npx rimraf "release/*unpacked"
+          npx rimraf "release/builder*" 
       
-      - name: Cleanup Artifacts for MacOS
-        if: matrix.os == 'macos-10.15'
-        run: |
-          npx rimraf "release/!(*.dmg)"
+      # - name: Cleanup Artifacts for MacOS
+      #   if: matrix.os == 'macos-10.15'
+      #   run: |
+      #     npx rimraf "release/!(*.dmg)"
 
       # step8: upload artifacts
       - name: upload artifacts
