@@ -58,8 +58,8 @@
         display: flex;
         gap: 20px;
         justify-content: center;
-        // transition: 0.3s;
         flex-wrap: wrap;
+        width: 80%;
 
         .avatar-item {
           display: flex;
@@ -67,6 +67,7 @@
           gap: 10px;
           align-items: center;
           flex: 1;
+          max-width: 150px;
           min-width: 100px;
           .avatar-main {
             box-shadow: 0 0 6px 1px #66666666;
@@ -74,7 +75,6 @@
           .avatar-footer {
             display: flex;
             align-items: center;
-            // color: #eee;
             text-align: center;
           }
         }

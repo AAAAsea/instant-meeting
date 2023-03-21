@@ -4,10 +4,14 @@
   bottom: 10px;
   z-index: 99;
   transform: translateX(-50%);
+  width:100%;
+
 }
 .menu-btns {
-  height: 40px;
+  height: fit-content;
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 .menu-btns button {
   // background: #333333;

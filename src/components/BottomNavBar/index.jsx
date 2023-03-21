@@ -160,6 +160,7 @@ const BottomNavBar = (props) => {
   return (
     <div id="bottom">
       <ButtonGroup
+        fullWidth
         className="menu-btns animate__animated animate__slideInUp"
         aria-label="outlined primary button group"
       >
