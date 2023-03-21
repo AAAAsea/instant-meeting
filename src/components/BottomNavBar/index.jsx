@@ -258,19 +258,19 @@ const BottomNavBar = (props) => {
             {isFullScreen ? <FullscreenExitRounded /> : <FullscreenRounded />}
           </IconButton>
         </Tooltip>
-        <Tooltip title={`分享`}>
+        <Tooltip
+          title={
+            isRecording
+              ? `正在录制：${recordInfo.time}s ${formatSize(recordInfo.size)}`
+              : "开始录制"
+          }
+        >
           <Box>
-            <CopyToClipboard text={shareLink}>
-              <IconButton color="primary" onClick={handleModalOpen}>
-                <ShareRounded />
-              </IconButton>
-            </CopyToClipboard>
-          </Box>
-        </Tooltip>
-        <Tooltip title={`离开房间`}>
-          <Box>
-            <IconButton color="primary" onClick={leaveRoom}>
-              <ExitToAppRounded />
+            <IconButton
+              color={isRecording ? "error" : "primary"}
+              onClick={handleRecord}
+            >
+              <RadioButtonCheckedRounded />
             </IconButton>
           </Box>
         </Tooltip>
@@ -301,19 +301,19 @@ const BottomNavBar = (props) => {
             </IconButton>
           </Box>
         </Tooltip>
-        <Tooltip
-          title={
-            isRecording
-              ? `正在录制：${recordInfo.time}s ${formatSize(recordInfo.size)}`
-              : "开始录制"
-          }
-        >
+        <Tooltip title={`分享`}>
           <Box>
-            <IconButton
-              color={isRecording ? "error" : "primary"}
-              onClick={handleRecord}
-            >
-              <RadioButtonCheckedRounded />
+            <CopyToClipboard text={shareLink}>
+              <IconButton color="primary" onClick={handleModalOpen}>
+                <ShareRounded />
+              </IconButton>
+            </CopyToClipboard>
+          </Box>
+        </Tooltip>
+        <Tooltip title={`离开房间`}>
+          <Box>
+            <IconButton color="primary" onClick={leaveRoom}>
+              <ExitToAppRounded />
             </IconButton>
           </Box>
         </Tooltip>

@@ -1,8 +1,18 @@
-import { app, BrowserWindow, ipcMain, dialog, desktopCapturer, BrowserView } from 'electron'
+import { app, BrowserWindow, ipcMain, dialog, desktopCapturer, BrowserView, shell } from 'electron'
 import fs from 'fs'
 import path from 'path'
 import robot from "robotjs";
 import {autoUpdater} from "electron-updater"
+
+const PROTOCOL = 'insm'
+// 注册insm协议，用于网页唤醒app
+if (!app.isDefaultProtocolClient(PROTOCOL)) {
+  app.setAsDefaultProtocolClient(PROTOCOL)
+}
+// mac网页进行应用的调起后，会触发该事件
+app.on('open-url', (event, urlStr) => {
+  win && win.webContents.send('awakeApp',urlStr)
+});
 
 process.env.DIST_ELECTRON = path.join(__dirname, './')
 process.env.DIST = path.join(process.env.DIST_ELECTRON, '../dist')
@@ -36,7 +46,7 @@ const childHtml = path.join(process.env.DIST, './src/canvas_page/index.html')
 
 async function createWindow() {
   win = new BrowserWindow({
-    title: 'Main window',
+    title: 'instant-meeting',
     icon: path.join(process.env.PUBLIC, 'favicon.ico'),
     width: 600,
     height: 720,
@@ -60,7 +70,7 @@ async function createWindow() {
     win.webContents.openDevTools()
   } else {
     win.loadFile(indexHtml)
-    win.webContents.openDevTools()
+    // win.webContents.openDevTools()
   }
 
   // Test actively push message to the Electron-Renderer
@@ -77,6 +87,10 @@ async function createWindow() {
 
   win.once('ready-to-show', () => {
     win.show()
+    // 通过web唤醒时argv的长度大于1
+    if (process.argv.length > 1) {
+      app.emit("second-instance", null, process.argv); // 将参数传递给该窗口
+    }
   })
 
   win.on('close', () => {
@@ -165,17 +179,20 @@ async function createChildWindow(user) {
 }
 
 app.whenReady().then(createWindow)
-
 app.on('window-all-closed', () => {
   win = null
   if (process.platform !== 'darwin') app.quit()
 })
 
-app.on('second-instance', () => {
+app.on('second-instance', (e, arg) => {
   if (win) {
     // Focus on the main window if the user tried to open another
     if (win.isMinimized()) win.restore()
     win.focus()
+  }
+  // windows
+  if (process.platform === 'win32') {
+    win && win.webContents.send('awakeApp',arg[arg.length-1])
   }
 })
 
@@ -277,6 +294,10 @@ const handleKeyboard = ({ key, detail, modified }) => {
   } catch (e) { }
 }
 
+ipcMain.on('openExternalUrl',(e,url)=>{
+  shell.openExternal(url)
+})
+
 ipcMain.on('robot', (e, data) => {
   const { type } = data;
   if (type === 'mouse') {
@@ -340,36 +361,56 @@ ipcMain.handle('pickColor',()=>{
 ipcMain.handle('getWorletJs',()=>!process.env.VITE_DEV_SERVER_URL ? path.join(process.env.DIST, './worklet.js') : '/worklet.js')
 
 // 自动更新
-
-
-
 function sendStatusToWindow(text) {
   win &&　win.webContents.send('updateMessage', text);
 }
+
+autoUpdater.autoDownload = false;
+
+ipcMain.on('startUpdate',()=>{
+  autoUpdater.downloadUpdate();
+})
 
 autoUpdater.on('checking-for-update', () => {
   sendStatusToWindow('Checking for update...');
 })
 
 autoUpdater.on('update-available', (info) => {
-  sendStatusToWindow('Update available.');
+  sendStatusToWindow({type:'update-available',info});
 })
 
 autoUpdater.on('update-not-available', (info) => {
-  sendStatusToWindow('Update not available.');
+  sendStatusToWindow({type:'update-not-available',info});
 })
 
 autoUpdater.on('error', (err) => {
-  sendStatusToWindow('Error in auto-updater. ' + err);
+  sendStatusToWindow({type:'error',info});
 })
 
 autoUpdater.on('download-progress', (progressObj) => {
-  let log_message = "Download speed: " + progressObj.bytesPerSecond;
-  log_message = log_message + ' - Downloaded ' + progressObj.percent + '%';
-  log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')';
-  sendStatusToWindow(log_message);
+  let info = `正在下载 ${progressObj.percent.toFixed(1)}%  ${formatSize(progressObj.bytesPerSecond)}/s`
+  sendStatusToWindow({type:'download-progress',info});
 })
 
 autoUpdater.on('update-downloaded', (info) => {
-  sendStatusToWindow('Update downloaded');
+  sendStatusToWindow({type:'update-downloaded',info});
+  autoUpdater.quitAndInstall();
 });
+
+function parseNum(num, decimal) {
+  if (!decimal) decimal = 1;
+  return Math.round(num * 10 ** decimal) / (10 ** decimal)
+}
+
+function formatSize(size) {
+  if (size < 1024)
+    return ~~(size) + 'B'
+  else if (size < 1024 * 1024)
+    return ~~(size / 1024) + 'KB'
+  else if (size < 1024 * 1024 * 1024)
+    return parseNum(size / 1024 / 1024, 1) + 'M'
+  else if (size < 1024 ** 4)
+    return parseNum(size / 1024 / 1024 / 1024, 2) + 'G'
+  else if (size < 1024 ** 5)
+    return parseNum(size / 1024 / 1024 / 1024 / 1024, 2) + 'T'
+}

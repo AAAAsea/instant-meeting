@@ -1,7 +1,7 @@
 {
   "name": "instant-meeting",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.3",
   "homepage": "https://meet.asea.fun",
   "author": "Asea",
   "description": "Instant Meeting",
@@ -14,22 +14,38 @@
     "serve": "nodemon ./backend/server.js",
     "lint": "eslint **/*.jsx",
     "electron:serve": "electron .",
-    "electron:build": "electron-builder",
-    "electron:rebuild": "npx electron-rebuild"
+    "electron:build": "cross-env TARGET=Setup ARCH=x64 electron-builder",
+    "electron:rebuild": "npx electron-rebuild",
+    "pack:win": "npm run pack:win:setup:x64 && npm run pack:win:setup:x86 && npm run pack:win:setup:arm64 && npm run pack:win:setup:x86_64",
+    "pack:win:setup:x86_64": "cross-env TARGET=Setup ARCH=x86_64 electron-builder -w=nsis --x64 --ia32 -p never",
+    "pack:win:setup:x64": "cross-env TARGET=Setup ARCH=x64 electron-builder -w=nsis --x64 -p never",
+    "pack:win:setup:x86": "cross-env TARGET=Setup ARCH=x86 electron-builder -w=nsis --ia32 -p never",
+    "pack:win:setup:arm64": "cross-env TARGET=Setup ARCH=arm64 electron-builder -w=nsis --arm64 -p never",
+    "pack:linux": "npm run pack:linux:deb && npm run pack:linux:appImage && npm run pack:linux:rpm && npm run pack:linux:pacman",
+"pack:linux:appImage": "cross-env ARCH=x64 electron-builder -l=AppImage -p never",
+    "pack:linux:deb": "npm run pack:linux:deb:x64 && npm run pack:linux:deb:arm64 && npm run pack:linux:deb:armv7l",
+    "pack:linux:deb:x64": "cross-env ARCH=x64 electron-builder -l=deb --x64 -p never",
+    "pack:linux:deb:arm64": "cross-env ARCH=arm64 electron-builder -l=deb --arm64 -p never",
+    "pack:linux:deb:armv7l": "cross-env ARCH=armv7l electron-builder -l=deb --armv7l -p never",
+    "pack:linux:rpm": "cross-env ARCH=x64 electron-builder -l=rpm --x64 -p never",
+    "pack:linux:pacman": "cross-env ARCH=x64 electron-builder -l=pacman --x64 -p never",
+    "pack:mac": "npm run pack:mac:dmg && npm run pack:mac:dmg:arm64",
+    "pack:mac:dmg": "cross-env ARCH=x64 electron-builder -m=dmg -p never",
+    "pack:mac:dmg:arm64": "cross-env ARCH=arm64 electron-builder -m=dmg --arm64 -p never"
   },
   "build": {
     "appId": "fun.asea.meet",
-    "asar": false,
+    "asar": true,
     "icon": "public/favicon.ico",
-    "directories": {
-      "output": "release"
-    },
     "files": [
       "dist-electron",
       "dist"
     ],
+    "directories": {
+      "output": "release"
+    },
     "mac": {
-      "artifactName": "${productName}_${version}.${ext}",
+      "artifactName": "${productName}-v${version}-${env.ARCH}.${ext}",
       "target": [
         "dmg"
       ]
@@ -43,21 +59,23 @@
           ]
         }
       ],
-      "artifactName": "${productName}_${version}.${ext}"
+      "artifactName": "${productName}-v${version}-${env.ARCH}-${env.TARGET}.${ext}"
+    },
+    "linux": {
+      "artifactName": "${productName}-v${version}-${env.ARCH}.${ext}"
     },
     "nsis": {
       "oneClick": false,
       "perMachine": false,
       "allowToChangeInstallationDirectory": true,
-      "deleteAppDataOnUninstall": false
+      "deleteAppDataOnUninstall": false,
+      "include": "installer.nsh"      
     },
     "publish": [
       {
         "provider": "github",
-        "owner": "AAAAsea",
+        "owner": "Yuasea",
         "repo": "instant-meeting",
-        "private": true,
-        "token": "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",
         "releaseType": "release"
       }
     ]
@@ -83,6 +101,7 @@
     "@vitejs/plugin-react": "^2.2.0",
     "animate.css": "^4.1.1",
     "color": "^4.2.3",
+    "cross-env": "^7.0.3",
     "electron": "^23.1.3",
     "electron-builder": "^23.6.0",
     "electron-is-dev": "^2.0.0",

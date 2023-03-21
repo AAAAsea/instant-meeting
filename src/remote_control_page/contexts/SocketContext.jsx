@@ -113,7 +113,7 @@ const SocketContextProvider = ({ children }) => {
     });
 
     peer.on("close", () => {
-      console.log("close");
+      // console.log("close");
       message.error("远程控制已断开");
       window.electron.ipcRenderer.send("remoteControlClosed");
     });

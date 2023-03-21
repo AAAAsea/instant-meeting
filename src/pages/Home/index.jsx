@@ -15,7 +15,6 @@ import TopNavBar from "../../components/TopNavBar";
 const Home = () => {
   const navigate = useNavigate();
   const { getPublicRooms, publicRooms } = useContext(SocketContext);
-
   useEffect(() => {
     getPublicRooms();
     document.title = "Instant Meeting";

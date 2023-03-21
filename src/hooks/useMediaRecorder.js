@@ -4,6 +4,7 @@ import { useContext } from 'react';
 import { useRef } from 'react';
 import { formatDate, formatSize, recorderQualities } from '../utils';
 import { SettingsContext } from '../contexts/SettingsContext';
+import isElectron from 'is-electron';
 
 export default function useMediaRecorder() {
   const [isRecording, setIsRecording] = useState(false);
@@ -31,7 +32,6 @@ export default function useMediaRecorder() {
     downloadAnchor.click();
     setRecordedChunks([]);
     setRecordInfo({ ...recordInfo, time: 0, size: 0 });
-
   };
 
   const handleDataAvailable = (e) => {
@@ -39,12 +39,11 @@ export default function useMediaRecorder() {
       recordedChunks.push(e.data); // 添加数据，event.data是一个BLOB对象
       fileSize.current += e.data.size;
       setRecordInfo({ ...recordInfo, time: ~~((new Date() - start.current) / 1000), size: fileSize.current });
-    } else {
     }
   };
 
   const handlePaused = () => {
-    console.log("paused")
+    // console.log("paused")
   }
 
   const handleRecord = async () => {
@@ -100,12 +99,27 @@ export default function useMediaRecorder() {
   async function startCapture() {
     let captureStream = null;
     try {
-      captureStream = await navigator.mediaDevices.getDisplayMedia({
-        video: {
-          width: { ideal: 1920 },
-          height: { ideal: 1080 }
-        }, audio: true
-      });
+      if(isElectron()){
+        captureStream = await navigator.mediaDevices.getUserMedia({
+          audio:{
+            mandatory: {
+              chromeMediaSource: "desktop",
+            },
+          },
+          video: {
+            mandatory: {
+              chromeMediaSource: "desktop",
+            },
+          },
+        })
+      }else{
+        captureStream = await navigator.mediaDevices.getDisplayMedia({
+          video: {
+            width: { ideal: 1920 },
+            height: { ideal: 1080 }
+          }, audio: true
+        });
+      }
     } catch (err) {
       console.error("Error: " + err);
     }

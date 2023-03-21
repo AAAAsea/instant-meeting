@@ -5,6 +5,7 @@
 
   .shape-container {
     text-align: center;
+    display: flex;
     .shape-content {
       display: inline-flex;
       flex-wrap: wrap;

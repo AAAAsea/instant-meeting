@@ -81,7 +81,7 @@ export function notify(name, msg) {
   const options = { icon: '/video.svg', body: `“${msg}”` };
   if (!("Notification" in window)) {
     // Check if the browser supports notifications
-    console.log("This browser does not support desktop notification");
+    // console.log("This browser does not support desktop notification");
   } else if (Notification.permission === "granted") {
     // Check whether notification permissions have already been granted;
     // if so, create a notification
@@ -148,4 +148,29 @@ export const keyMap = {
   AudioVolumeDown: 'audio_vol_down',
   AudioVolumeUp: 'audio_vol_up',
   '': 'space',
+}
+
+export function openApp(PROTOCOL, uri) {
+  return new Promise((resolve, reject) => {
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.src = `${PROTOCOL}://${uri}'`
+
+    const timeout = setTimeout(() => {
+      document.body.removeChild(iframe);
+    }, 3000);
+
+    const handleSuccess = () => {
+      resolve(true);
+    };
+
+    const handleError = () => {
+      reject(new Error('Failed to open app'));
+    };
+
+    iframe.onload = handleSuccess;
+    iframe.onerror = handleError;
+
+    document.body.appendChild(iframe);
+  });
 }

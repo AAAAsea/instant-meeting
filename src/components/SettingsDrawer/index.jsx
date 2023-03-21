@@ -7,6 +7,7 @@ import {
   Avatar,
   Box,
   Button,
+  Checkbox,
   Collapse,
   Divider,
   Drawer,
@@ -46,6 +47,8 @@ export const SettingsDrawer = () => {
     setRecorderMode,
     recorderQuality,
     setRecorderQuality,
+    ignoreRemoteControl,
+    setIgnoreRemoteControl,
   } = useContext(SettingsContext);
   const { name, roomInfo, modifyInfo, me, roomJoinned } =
     useContext(SocketContext);
@@ -461,27 +464,23 @@ export const SettingsDrawer = () => {
             </MenuItem>
           </Select>
         </Box>
-        {/* <Box
+        <Box
           sx={{
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
+            mt: 1,
           }}
         >
-          <SubHeading></SubHeading>
-            <FormControlLabel
-              control={
-                <Switch
-                  disabled={isDisabled}
-                  checked={newIsLive}
-                  onChange={() => {
-                    setNewIsLive(!newIsLive);
-                  }}
-                />
-              }
-              label=""
-            />
-        </Box> */}
+          <SubHeading>屏蔽远程控制邀请adf</SubHeading>
+          <Checkbox 
+          checked={ignoreRemoteControl}
+          onChange={(e) => {
+            localStorage.setItem("ignoreRemoteControl", e.target.checked);
+            setIgnoreRemoteControl(e.target.checked)
+          }}
+          />
+        </Box>
       </Box>
     </Drawer>
   );

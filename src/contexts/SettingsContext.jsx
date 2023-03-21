@@ -6,8 +6,9 @@ const SettingsContext = createContext();
 const SettingsContextProvider = ({ children }) => {
   const [theme, setTheme] = useState("dark");
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [recorderMode, setRecorderMode] = useState(0); // 0 主视频   1 屏幕分享
+  const [recorderMode, setRecorderMode] = useState(1); // 0 主视频   1 屏幕分享
   const [recorderQuality, setRecorderQuality] = useState(2); // 3 高 2 中 1 低
+  const [ignoreRemoteControl, setIgnoreRemoteControl] = useState(false); // 3 高 2 中 1 低
 
   React.useEffect(() => {
     let initialTheme = "system";
@@ -47,6 +48,16 @@ const SettingsContextProvider = ({ children }) => {
       initialRecorderQuality = 2;
     }
     setRecorderQuality(initialRecorderQuality);
+
+    let initialIgnoreRemoteControl = false;
+    try {
+      initialIgnoreRemoteControl =
+        Boolean(localStorage.getItem("ignoreRemoteControl"));
+      if(initialIgnoreRemoteControl === null) initialIgnoreRemoteControl = false;
+    } catch (error) {
+      // do nothing
+    }
+    setIgnoreRemoteControl(initialIgnoreRemoteControl)
   }, []);
 
   return (
@@ -60,6 +71,8 @@ const SettingsContextProvider = ({ children }) => {
         setRecorderMode,
         recorderQuality,
         setRecorderQuality,
+        ignoreRemoteControl,
+        setIgnoreRemoteControl
       }}
     >
       {children}

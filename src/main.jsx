@@ -5,10 +5,13 @@ import "animate.css";
 import { MessageContextProvider } from "@/contexts/MessageContext";
 import { SocketContextProvider } from "@/contexts/SocketContext";
 import { SettingsContextProvider } from "@/contexts/SettingsContext";
+import isElectron from "is-electron";
+import { openApp } from "./utils";
 
-window.electron.onUpdateMessage((_event, data) => {
-  console.log(data)
-});
+// if(!isElectron()){
+//   openApp('insm', location.pathname)
+// }
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   // <React.StrictMode>
   <SettingsContextProvider>

@@ -1,6 +1,6 @@
 import React from "react";
 import Message from "./components/Message/Message";
-import { RouterProvider } from "react-router-dom";
+import { RouterProvider, useNavigate } from "react-router-dom";
 import { router } from "./routes";
 import "./App.css";
 import { useContext } from "react";
@@ -11,6 +11,9 @@ import { SettingsDrawer } from "./components/SettingsDrawer";
 import { AlertDialog } from "@/components/MUI";
 import { SocketContext } from "./contexts/SocketContext";
 import { MessageContext } from "./contexts/MessageContext";
+import UpdateModel from "./components/UpdateModel";
+import { useEffect } from "react";
+import isElectron from "is-electron";
 
 const themes = {
   light: createTheme({
@@ -73,14 +76,30 @@ const App = () => {
     initMyVideo,
     remoteControlling,
     remoteController,
+    roomJoinned,
   } = useContext(SocketContext);
   const { message } = useContext(MessageContext);
+
+  useEffect(()=>{
+    if(isElectron())
+    {
+      window.electron.onAwakenByWeb((_event, data) => {
+        const roomId = data.match(/room\/(\d{9})/)
+        if(roomId && roomId[1]){
+          if(!roomJoinned){
+            location.hash = `#/room/${roomId[1]}`
+          }
+        }
+      })
+    }
+  },[roomJoinned])
 
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
   if (theme === "system") {
     theme = prefersDarkMode ? "dark" : "light";
   }
   document.documentElement.setAttribute("theme", theme);
+  
   return (
     <>
       <ThemeProvider theme={themes[theme]}>
@@ -123,6 +142,7 @@ const App = () => {
               });
             }}
           />
+          <UpdateModel />
         </Box>
       </ThemeProvider>
     </>

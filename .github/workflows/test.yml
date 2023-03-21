@@ -2,8 +2,11 @@ name: Test Build
 
 on:
   push:
-    branches:
-      'master'
+    tags: 
+      - 'v*.*.*-beta'
+      
+permissions:
+  contents: write
 
 jobs:
   test-build:
@@ -18,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest]
+        os: [windows-latest, macos-latest]
         
     
     steps:
@@ -33,7 +36,7 @@ jobs:
       # step3: npm install
       - name: npm install
         run: |
-          npm install --force
+          npm install
 
       # step4: rebuild
       - name: rebuild
@@ -59,10 +62,6 @@ jobs:
           npm run electron:build --mac
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
-      # - name: clean
-      #   run: |
-      #     npx rimraf "release/!(*.exe)"
 
       # step8: upload artifacts
       - name: upload artifacts
@@ -70,9 +69,6 @@ jobs:
         with:
           name: ${{ matrix.os }}
           path: |
-            release/*.exe
-            release/*.dmg
-            release/*.blockmap
             release/*latest*.yml
 
       # step9: create release

@@ -231,6 +231,7 @@ const SocketContextProvider = ({ children }) => {
     });
 
     socket.on("requestRemoteControl", ({ id, name }) => {
+      if(Boolean(localStorage.getItem("ignoreRemoteControl"))) return; // 忽略远程控制请求
       setRemoteControlDialog({ ...remoteControlDialog, name, id, open: true });
     });
 
@@ -316,7 +317,7 @@ const SocketContextProvider = ({ children }) => {
           });
       } else {
         if (stream.current) peer.addStream(stream.current);
-        console.log("connected");
+        // console.log("connected");
         const user = usersRef.current.find((user) => user.id === userId);
         user && (user.peerConnected = true);
         setUsers([...usersRef.current]);
@@ -367,7 +368,7 @@ const SocketContextProvider = ({ children }) => {
       if (type === "remoteControl") {
         const str = new TextDecoder("utf-8").decode(data);
         const events = JSON.parse(str);
-        console.log(events);
+        // console.log(events);
         window.electron.ipcRenderer.send("robot", events);
         return;
       }
@@ -795,7 +796,7 @@ const SocketContextProvider = ({ children }) => {
   };
 
   const modifyInfo = (data) => {
-    console.log(data);
+    // console.log(data);
     socket.emit("updateInfo", { ...data, room });
   };
 

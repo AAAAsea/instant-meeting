@@ -12,11 +12,13 @@ import { GroupRounded } from "@mui/icons-material";
 const Room = () => { 
   const [search, setSearch] = useSearchParams();
   const type = search.get("type");
-  const { setUsers } = useContext(SocketContext);
+  const { setUsers, setRoomCreated, setRoomJoinned } = useContext(SocketContext);
 
   const [value, setValue] = useState(type === "create" ? 0 : 1);
   useEffect(() => {
     setUsers([]);
+    setRoomCreated(false);
+    setRoomJoinned(false);
   }, []);
 
   return (
