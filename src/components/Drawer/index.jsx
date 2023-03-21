@@ -42,6 +42,7 @@ import { SocketContext } from "../../contexts/SocketContext";
 import { stringToColor, formatDate, formatSize } from "@/utils";
 import "./index.scss";
 import { Laptop } from "@mui/icons-material";
+import { MessageContext } from "../../contexts/MessageContext";
 
 function Drawer(props) {
   const {
@@ -75,6 +76,9 @@ function Drawer(props) {
     requestRemoteControl,
     isElectron,
   } = useContext(SocketContext);
+
+  const { message } = useContext(MessageContext);
+
 
   const handleChangeTab = (e, value) => {
     setTabValue(value);
@@ -355,6 +359,7 @@ function Drawer(props) {
                         <IconButton
                           onClick={() => {
                             requestRemoteControl({ id: user.id });
+                            message.success("远程控制请求已发送")
                           }}
                           sx={{
                             position: "absolute",
