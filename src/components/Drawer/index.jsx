@@ -96,6 +96,7 @@ function Drawer(props) {
       return;
     }
     sendMessage(file, "file");
+    e.target.value = ""; // clear the FileList
   };
 
   const handleOpenBtnClick = () => {
@@ -390,6 +391,7 @@ function Drawer(props) {
                     <Paper
                       className="message-content file-message"
                       onClick={() => {
+                        if(me.current === e.id) return;
                         downloadFile({ file: e.file, userId: e.id });
                       }}
                     >
