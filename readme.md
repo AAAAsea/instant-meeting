@@ -1,7 +1,8 @@
-# 会议室
+# Instant Meeting（即时会议）
 ### 前端 React + MUI + simple-peer
 ```bash
 pnpm i
+pnpm electron:rebuild
 pnpm dev
 # robotjs的安装比较麻烦，安装以后执行以下npx electron-rebuild
 ```
@@ -10,7 +11,7 @@ pnpm dev
 ```bash
 pnpm serve
 ```
-### 进度
+### 已实现
 - [x] 创建和加入房间
 - [x] 多人视频
 - [x] 视频连接与挂断
@@ -37,17 +38,17 @@ pnpm serve
 - [x] 广场界面
 - [x] 广场房间人数显示
 - [x] 文件上传
-- [ ] 宫格模式排列
-- [ ] 屏幕录制
-- [ ] 虚拟背景
-- [ ] 远程控制
-- [ ] 画板
+- [x] 屏幕录制
+- [x] 远程控制
+- [x] 画板
+- [x] 房间信息修改
+- [x] 个人信息修改
+- [x] 主题切换
+- [x] 音量实时检测
+- [x] Web唤起本地App
+- [x] App自动更新
+- [x] 多平台打包及其发布
 
-### Bugs
-- [x] 头像混乱
-- [x] 视频无法展示
-- [x] 共享屏幕关闭
-- [x] 关闭视频后黑屏
-- [x] 单独音频
-- [x] 发不出去消息
-`npx electron-rebuild -t dev`
+### 待加入
+
+- [ ] 虚拟背景
