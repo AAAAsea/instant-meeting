@@ -8,9 +8,9 @@ import { SettingsContextProvider } from "@/contexts/SettingsContext";
 import isElectron from "is-electron";
 import { openApp } from "./utils";
 
-// if(!isElectron()){
-//   openApp('insm', location.pathname)
-// }
+if(!isElectron()){
+  openApp('insm', location.pathname)
+}
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   // <React.StrictMode>

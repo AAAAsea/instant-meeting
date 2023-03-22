@@ -472,7 +472,7 @@ export const SettingsDrawer = () => {
             mt: 1,
           }}
         >
-          <SubHeading>屏蔽远程控制邀请adf</SubHeading>
+          <SubHeading>屏蔽远程控制邀请</SubHeading>
           <Checkbox 
           checked={ignoreRemoteControl}
           onChange={(e) => {
