@@ -1,8 +1,14 @@
-import { app, BrowserWindow, ipcMain, dialog, desktopCapturer, BrowserView, shell } from 'electron'
+import { app, BrowserWindow, ipcMain, dialog, desktopCapturer, BrowserView, shell, systemPreferences } from 'electron'
 import fs from 'fs'
 import path from 'path'
 import robot from "robotjs";
 import {autoUpdater} from "electron-updater"
+
+const askForMediaAccess = ()=>{ 
+  systemPreferences.askForMediaAccess('microphone');
+  systemPreferences.askForMediaAccess('camera');
+}
+if(process.platform === 'darwin') askForMediaAccess();
 
 const PROTOCOL = 'insm'
 // 注册insm协议，用于网页唤醒app

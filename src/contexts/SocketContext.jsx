@@ -575,7 +575,7 @@ const SocketContextProvider = ({ children }) => {
           })
           .then(handlePromise)
           .catch(() => {
-            message.error("当前设备或浏览器不支持摄像头");
+            message.error("调用摄像头权限失败");
           });
       } else {
         message.error("当前设备或浏览器不支持摄像头");
@@ -592,7 +592,7 @@ const SocketContextProvider = ({ children }) => {
             .catch((err) => {
               console.log(err);
               initMyVideo({ type, open: false });
-              message.error("当前设备或浏览器未支持屏幕共享");
+              message.error("调用摄像头权限失败");
             });
         } else if (isElectron) {
           navigator.mediaDevices
@@ -617,7 +617,7 @@ const SocketContextProvider = ({ children }) => {
             .catch((err) => {
               console.log(err);
               initMyVideo({ type, open: false });
-              message.error("当前设备或浏览器未支持屏幕共享");
+              message.error("调用摄像头权限失败");
             });
         }
       } else {
