@@ -102,7 +102,7 @@ const activeColorTypeCls = "active-color-type";
 
 const ColorPanel: React.FC<ColorPanelProps> = (props) => {
     const {className} = props;
-    const [pickerColor, setPickerColor] = useState("#000000FF");
+    const [pickerColor, setPickerColor] = useState("red");
     const colorContext = useContext(ColorContext);
     const activeColorType = colorContext.activeColor;
 

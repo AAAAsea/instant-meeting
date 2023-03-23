@@ -82,7 +82,7 @@ export default class Tool {
     /**
      * 主色
      */
-    public static mainColor = "black";
+    public static mainColor = "red";
     /**
      * 副色
      */

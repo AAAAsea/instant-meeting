@@ -13,7 +13,7 @@ function App(): JSX.Element {
     const [shapeOutlineType, setShapeOutlineType] = useState<ShapeOutlineType>(ShapeOutlineType.SOLID);
     const [lineWidthType, setLineWidthType] = useState<LineWidthType>(LineWidthType.THIN);
     const [activeColorType, setActiveColorType] = useState<ColorType>(ColorType.MAIN);
-    const [mainColor, setMainColor] = useState<string>("black");
+    const [mainColor, setMainColor] = useState<string>("red");
     const [subColor, setSubColor] = useState<string>("white");
     const [eraserColor, setEraserColor] = useState<ColorType>(ColorType.ERASER);
     const [dispatcher] = useState(new Dispatcher());

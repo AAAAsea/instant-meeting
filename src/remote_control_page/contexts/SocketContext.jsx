@@ -75,7 +75,7 @@ const SocketContextProvider = ({ children }) => {
       config: {
         iceServers: [
           {
-            urls: "turn:124.221.154.52:3478",
+            urls: "turn:asea.fun:3478",
             credential: "password",
             username: "username",
           },

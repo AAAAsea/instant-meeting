@@ -23,6 +23,7 @@ const Toolbar = (): JSX.Element => {
   useEffect(()=>{
     toolbar.current.addEventListener('mouseenter', () => {
       window.electron.ipcRenderer.send('mouseenter');
+      setFold(false);
       clearTimeout(timeoutRef.current);
     })
     toolbar.current.addEventListener('mouseleave', () => {
@@ -30,6 +31,7 @@ const Toolbar = (): JSX.Element => {
       timeoutRef.current = setTimeout(()=>{setFold(true)}, 2000);
       window.electron.ipcRenderer.send('mouseleave')
     })
+    timeoutRef.current = setTimeout(()=>{setFold(true)}, 2000);
   },[])
   return (
       <div className="toolbar" ref={toolbar} style={{top: fold ? '-150px' : 0}}>
