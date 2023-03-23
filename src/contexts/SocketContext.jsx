@@ -287,13 +287,13 @@ const SocketContextProvider = ({ children }) => {
       setUsers([...usersRef.current]);
     });
 
-    peer.on("connect", () => {
+    peer.on("connect", async () => {
       if (type === "remoteControl") {
         remoteControlPeerRef.current = peer;
         peers[userId] = peer;
         setRemoteController(userName);
         setRemoteControlling(true);
-        // console.log("获取屏幕", peer);
+        const {width, height } = await window.electron.ipcRenderer.invoke('getScreenSize');
         navigator.mediaDevices
           .getUserMedia({
             audio: {
@@ -304,11 +304,12 @@ const SocketContextProvider = ({ children }) => {
             video: {
               mandatory: {
                 chromeMediaSource: "desktop",
+                maxWidth: width,
+                maxHeight: height
               },
             },
           })
           .then((stream) => {
-            // console.log(stream);
             peer.addStream(stream);
           })
           .catch((err) => {
@@ -592,7 +593,7 @@ const SocketContextProvider = ({ children }) => {
             .catch((err) => {
               console.log(err);
               initMyVideo({ type, open: false });
-              message.error("调用摄像头权限失败");
+              message.error("调用屏幕录制权限失败");
             });
         } else if (isElectron) {
           navigator.mediaDevices
@@ -617,7 +618,7 @@ const SocketContextProvider = ({ children }) => {
             .catch((err) => {
               console.log(err);
               initMyVideo({ type, open: false });
-              message.error("调用摄像头权限失败");
+              message.error("调用屏幕录制权限失败");
             });
         }
       } else {

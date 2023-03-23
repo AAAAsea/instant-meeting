@@ -4,6 +4,7 @@
     .operator-content {
         display: flex;
         justify-content: space-between;
+        flex-wrap: wrap;
         .operator-item {
             cursor: pointer;
             border: 1px solid transparent;

@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, dialog, desktopCapturer, BrowserView, shell, systemPreferences } from 'electron'
+import { app, BrowserWindow, ipcMain, dialog, desktopCapturer, BrowserView, shell, systemPreferences, screen } from 'electron'
 import fs from 'fs'
 import path from 'path'
 import robot from "robotjs";
@@ -211,6 +211,13 @@ app.on('activate', () => {
   }
 })
 
+ipcMain.handle('getScreenSize',()=>{
+  const primaryDisplay = screen.getPrimaryDisplay()
+  const { scaleFactor, workAreaSize } = primaryDisplay
+  const { width, height } = workAreaSize
+  return {width: width*scaleFactor, height: height*scaleFactor}
+})
+
 // New window example arg: new windows url
 ipcMain.handle('open-win', (_, arg) => {
   const childWindow = new BrowserWindow({
@@ -366,6 +373,24 @@ ipcMain.handle('pickColor',()=>{
 
 ipcMain.handle('getWorletJs',()=>!process.env.VITE_DEV_SERVER_URL ? path.join(process.env.DIST, './worklet.js') : '/worklet.js')
 
+// DeskTop Capture
+ipcMain.on('desktopCapture',async (e,data)=>{
+
+  const { canceled, filePath } = await dialog.showSaveDialog({ 
+    filters: [{ name: 'PNG Images', extensions: ['png'] }],
+    defaultPath: 'IM_' + formatDate(new Date(),'YY-MM-DD_hh-mm-ss') + '.png'
+  })
+
+  if (canceled) {
+    return
+  } else {
+    const dataUrl = data.replace(/^data:image\/png;base64,/, '');
+    const buffer = Buffer.from(dataUrl, 'base64');
+    fs.writeFileSync(filePath, buffer);
+  }
+
+})
+
 // 自动更新
 function sendStatusToWindow(text) {
   win &&　win.webContents.send('updateMessage', text);
@@ -419,4 +444,27 @@ function formatSize(size) {
     return parseNum(size / 1024 / 1024 / 1024, 2) + 'G'
   else if (size < 1024 ** 5)
     return parseNum(size / 1024 / 1024 / 1024 / 1024, 2) + 'T'
+}
+
+function formatDate(time, format = 'YY-MM-DD hh:mm:ss') {
+  const date = new Date(time);
+
+  const year = date.getFullYear(),
+    month = date.getMonth() + 1,//月份是从0开始的
+    day = date.getDate(),
+    hour = date.getHours(),
+    min = date.getMinutes(),
+    sec = date.getSeconds();
+  const preArr = Array.apply(null, Array(10)).map(function (elem, index) {
+    return '0' + index;
+  });
+
+  const newTime = format.replace(/YY/g, year)
+    .replace(/MM/g, preArr[month] || month)
+    .replace(/DD/g, preArr[day] || day)
+    .replace(/hh/g, preArr[hour] || hour)
+    .replace(/mm/g, preArr[min] || min)
+    .replace(/ss/g, preArr[sec] || sec);
+
+  return newTime;
 }

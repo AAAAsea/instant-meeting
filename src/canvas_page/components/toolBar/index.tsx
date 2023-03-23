@@ -43,9 +43,9 @@ const Toolbar = (): JSX.Element => {
           <Divider className="divider" orientation="vertical" flexItem />
           <ColorPanel className="toolbar-item" />
           <Divider className="divider" orientation="vertical" flexItem />
-          <OtherOperator />
-          <Divider className="divider" orientation="vertical" flexItem />
-          <Control setFold={setFold} />
+          <OtherOperator setFold={setFold} />
+          {/* <Divider className="divider" orientation="vertical" flexItem /> */}
+          {/* <Control setFold={setFold} /> */}
           <Fade in={fold} timeout={500}>
             <div className="toolbar-btn" onClick={()=>{setFold(false)}}>
                 <KeyboardArrowDownRounded/>
