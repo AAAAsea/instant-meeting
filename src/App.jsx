@@ -80,26 +80,25 @@ const App = () => {
   } = useContext(SocketContext);
   const { message } = useContext(MessageContext);
 
-  useEffect(()=>{
-    if(isElectron())
-    {
+  useEffect(() => {
+    if (isElectron()) {
       window.electron.onAwakenByWeb((_event, data) => {
-        const roomId = data.match(/room\/(\d{9})/)
-        if(roomId && roomId[1]){
-          if(!roomJoinned){
-            location.hash = `#/room/${roomId[1]}`
+        const roomId = data.match(/room\/(\d{9})/);
+        if (roomId && roomId[1]) {
+          if (!roomJoinned) {
+            location.hash = `#/room/${roomId[1]}`;
           }
         }
-      })
+      });
     }
-  },[roomJoinned])
+  }, [roomJoinned]);
 
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
   if (theme === "system") {
     theme = prefersDarkMode ? "dark" : "light";
   }
   document.documentElement.setAttribute("theme", theme);
-  
+
   return (
     <>
       <ThemeProvider theme={themes[theme]}>

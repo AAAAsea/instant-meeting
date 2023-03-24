@@ -10,7 +10,6 @@ import eraserIconSvg from '../../../icon/eraser_icon.svg'
 const selectedToolClass = "selected-tool";
 export interface ToolPanelProps {
     className?: string;
-    setFold: (v:boolean)=>{}
 }
 
 const ToolPanel: React.FC<ToolPanelProps> = (props) => {

@@ -15,23 +15,35 @@ import { useState } from "react";
 import { ArrowDropDown } from "@mui/icons-material";
 import { KeyboardArrowDownRounded } from "@mui/icons-material";
 
+declare global {
+  interface Window {
+    electron: any
+  }
+}
 const Toolbar = (): JSX.Element => {
-  const toolbar = useRef<HTMLElement>();
+  const toolbar = useRef<HTMLDivElement | null>(null);;
   const [fold, setFold] = useState(false);
-  const timeoutRef = useRef();
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>();
 
   useEffect(()=>{
-    toolbar.current.addEventListener('mouseenter', () => {
-      window.electron.ipcRenderer.send('mouseenter');
-      setFold(false);
-      clearTimeout(timeoutRef.current);
-    })
-    toolbar.current.addEventListener('mouseleave', () => {
-      clearTimeout(timeoutRef.current);
-      timeoutRef.current = setTimeout(()=>{setFold(true)}, 2000);
-      window.electron.ipcRenderer.send('mouseleave')
-    })
+    if (toolbar.current) {
+      toolbar.current.addEventListener('mouseenter', () => {
+        window.electron && window.electron.ipcRenderer.send('mouseenter');
+        setFold(false);
+        clearTimeout(timeoutRef.current);
+      })
+      toolbar.current.addEventListener('mouseleave', () => {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = setTimeout(()=>{setFold(true)}, 2000);
+        window.electron.ipcRenderer.send('mouseleave')
+      })
+    }
     timeoutRef.current = setTimeout(()=>{setFold(true)}, 2000);
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
   },[])
   return (
       <div className="toolbar" ref={toolbar} style={{top: fold ? '-150px' : 0}}>
@@ -44,8 +56,6 @@ const Toolbar = (): JSX.Element => {
           <ColorPanel className="toolbar-item" />
           <Divider className="divider" orientation="vertical" flexItem />
           <OtherOperator setFold={setFold} />
-          {/* <Divider className="divider" orientation="vertical" flexItem /> */}
-          {/* <Control setFold={setFold} /> */}
           <Fade in={fold} timeout={500}>
             <div className="toolbar-btn" onClick={()=>{setFold(false)}}>
                 <KeyboardArrowDownRounded/>
