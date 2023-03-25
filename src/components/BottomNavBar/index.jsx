@@ -89,6 +89,12 @@ const BottomNavBar = (props) => {
     window.onresize = () => {
       setIsFullScreen(document.fullscreenElement !== null);
     };
+    document.onfullscreenchange = (e, a) => {
+      setIsFullScreen(document.fullscreenElement != null);
+    };
+    mainVideoRef.current.addEventListener("click", (e) => {
+      e.preventDefault();
+    });
   }, []);
 
   // eslint-disable-next-line react/prop-types
@@ -164,26 +170,27 @@ const BottomNavBar = (props) => {
         className="menu-btns animate__animated animate__slideInUp"
         aria-label="outlined primary button group"
       >
-        <Tooltip title={voiceOpen ? "麦克风已打开" : "麦克风已关闭"}>
-          <IconButton
-            style={{
-              visibility: isLive ? "hidden" : "visible",
-              "--height": `${micHeight}px`,
-              "--display": voiceOpen ? "block" : "none",
-            }}
-            color={voiceOpen ? "error" : "primary"}
-            onClick={() => {
-              initMyVoice(!voiceOpen);
-            }}
-            className="mic-button"
-          >
-            {voiceOpen ? (
-              <MicNoneOutlined className="mic-out-lined" />
-            ) : (
-              <MicOffRounded />
-            )}
-          </IconButton>
-        </Tooltip>
+        {!isLive && (
+          <Tooltip title={voiceOpen ? "麦克风已打开" : "麦克风已关闭"}>
+            <IconButton
+              style={{
+                "--height": `${micHeight}px`,
+                "--display": voiceOpen ? "block" : "none",
+              }}
+              color={voiceOpen ? "error" : "primary"}
+              onClick={() => {
+                initMyVoice(!voiceOpen);
+              }}
+              className="mic-button"
+            >
+              {voiceOpen ? (
+                <MicNoneOutlined className="mic-out-lined" />
+              ) : (
+                <MicOffRounded />
+              )}
+            </IconButton>
+          </Tooltip>
+        )}
 
         <Tooltip title={videoOpen && videoType ? "摄像头打开" : "摄像头已关闭"}>
           <IconButton
@@ -275,8 +282,7 @@ const BottomNavBar = (props) => {
             </IconButton>
           </Box>
         </Tooltip>
-        {
-          isElectron && 
+        {isElectron && (
           <Tooltip title={`批注`}>
             <Box>
               <IconButton
@@ -288,8 +294,8 @@ const BottomNavBar = (props) => {
                 <ModeEditRounded />
               </IconButton>
             </Box>
-        </Tooltip>
-        }
+          </Tooltip>
+        )}
         <Tooltip title={`设置`}>
           <Box>
             <IconButton

@@ -201,6 +201,8 @@ const SocketContextProvider = ({ children }) => {
       const user = usersRef.current.find((e) => e.id === id);
       user && (user.name = roomInfo.name);
       setRoomInfo(roomInfo);
+      setIsLive(roomInfo.isLive);
+      console.log(roomInfo);
       setUsers([...usersRef.current]);
     });
 
@@ -231,7 +233,7 @@ const SocketContextProvider = ({ children }) => {
     });
 
     socket.on("requestRemoteControl", ({ id, name }) => {
-      if(Boolean(localStorage.getItem("ignoreRemoteControl"))) return; // 忽略远程控制请求
+      if (Boolean(localStorage.getItem("ignoreRemoteControl"))) return; // 忽略远程控制请求
       setRemoteControlDialog({ ...remoteControlDialog, name, id, open: true });
     });
 
@@ -293,7 +295,9 @@ const SocketContextProvider = ({ children }) => {
         peers[userId] = peer;
         setRemoteController(userName);
         setRemoteControlling(true);
-        const {width, height } = await window.electron.ipcRenderer.invoke('getScreenSize');
+        const { width, height } = await window.electron.ipcRenderer.invoke(
+          "getScreenSize"
+        );
         navigator.mediaDevices
           .getUserMedia({
             audio: {
@@ -305,7 +309,7 @@ const SocketContextProvider = ({ children }) => {
               mandatory: {
                 chromeMediaSource: "desktop",
                 maxWidth: width,
-                maxHeight: height
+                maxHeight: height,
               },
             },
           })

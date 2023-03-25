@@ -79,7 +79,6 @@ function Drawer(props) {
 
   const { message } = useContext(MessageContext);
 
-
   const handleChangeTab = (e, value) => {
     setTabValue(value);
     if (value) setUnReadMsgCount(0);
@@ -163,6 +162,7 @@ function Drawer(props) {
       );
       if (!currentUser || !currentUser.video) {
         setShowMainVideo(false);
+        if (document.fullscreenElement) document.exitFullscreen();
       }
     }
 
@@ -359,7 +359,7 @@ function Drawer(props) {
                         <IconButton
                           onClick={() => {
                             requestRemoteControl({ id: user.id });
-                            message.success("远程控制请求已发送")
+                            message.success("远程控制请求已发送");
                           }}
                           sx={{
                             position: "absolute",
@@ -396,7 +396,7 @@ function Drawer(props) {
                     <Paper
                       className="message-content file-message"
                       onClick={() => {
-                        if(me.current === e.id) return;
+                        if (me.current === e.id) return;
                         downloadFile({ file: e.file, userId: e.id });
                       }}
                     >
