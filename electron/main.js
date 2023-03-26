@@ -155,7 +155,6 @@ async function createChildWindow(user) {
   childWin = new BrowserWindow({
     title: 'Canvas window',
     icon: path.join(process.env.PUBLIC, 'favicon.ico'),
-    fullscreen: true,
     frame: false,
     transparent: true,
     resizable: false,
@@ -172,6 +171,11 @@ async function createChildWindow(user) {
       contextIsolation: true,
     },
   })
+  if (process.platform === 'darwin') {
+    childWin.setSimpleFullScreen(true)
+  } else {
+    childWin.setFullScreen(true)
+  }
   childWin.setAlwaysOnTop(true, 'screen-saver')
   if (process.env.VITE_DEV_SERVER_URL) {
     childWin.loadURL(url + '/src/canvas_page/index.html')
@@ -338,6 +342,7 @@ ipcMain.on('robot', (e, data) => {
 })
 
 ipcMain.on('openCanvas', async () => {
+  childWinPause = false;
   childWin = await createChildWindow();
 })
 
