@@ -600,30 +600,33 @@ const SocketContextProvider = ({ children }) => {
               message.error("调用屏幕录制权限失败");
             });
         } else if (isElectron) {
-          navigator.mediaDevices
-            .getUserMedia({
-              audio: isLive
-                ? {
-                    mandatory: {
-                      chromeMediaSource: "desktop",
-                      chromeMediaSourceId: sourceId,
-                    },
-                  }
-                : false,
-              video: {
-                mandatory: {
-                  chromeMediaSource: "desktop",
-                  chromeMediaSourceId: sourceId,
-                  ...qualities[quality],
+          window.electron.ipcRenderer.invoke("getPlatform").then((platform) => {
+            navigator.mediaDevices
+              .getUserMedia({
+                audio:
+                  isLive && platform !== "darwin" // macos无法获取系统音频
+                    ? {
+                        mandatory: {
+                          chromeMediaSource: "desktop",
+                          chromeMediaSourceId: sourceId,
+                        },
+                      }
+                    : false,
+                video: {
+                  mandatory: {
+                    chromeMediaSource: "desktop",
+                    chromeMediaSourceId: sourceId,
+                    ...qualities[quality],
+                  },
                 },
-              },
-            })
-            .then(handlePromise)
-            .catch((err) => {
-              console.log(err);
-              initMyVideo({ type, open: false });
-              message.error("调用屏幕录制权限失败");
-            });
+              })
+              .then(handlePromise)
+              .catch((err) => {
+                console.log(err);
+                initMyVideo({ type, open: false });
+                message.error("调用屏幕录制权限失败");
+              });
+          });
         }
       } else {
         message.error("当前设备或浏览器未支持屏幕共享");

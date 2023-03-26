@@ -1,3 +1,4 @@
+import isElectron from "is-electron";
 import React, { useState } from "react";
 import { createContext } from "react";
 
@@ -9,6 +10,7 @@ const SettingsContextProvider = ({ children }) => {
   const [recorderMode, setRecorderMode] = useState(1); // 0 主视频   1 屏幕分享
   const [recorderQuality, setRecorderQuality] = useState(2); // 3 高 2 中 1 低
   const [ignoreRemoteControl, setIgnoreRemoteControl] = useState(false); // 3 高 2 中 1 低
+  const [platform, setPlatform] = useState("win32"); // 3 高 2 中 1 低
 
   React.useEffect(() => {
     let initialTheme = "system";
@@ -51,13 +53,21 @@ const SettingsContextProvider = ({ children }) => {
 
     let initialIgnoreRemoteControl = false;
     try {
-      initialIgnoreRemoteControl =
-        Boolean(localStorage.getItem("ignoreRemoteControl"));
-      if(initialIgnoreRemoteControl === null) initialIgnoreRemoteControl = false;
+      initialIgnoreRemoteControl = Boolean(
+        localStorage.getItem("ignoreRemoteControl")
+      );
+      if (initialIgnoreRemoteControl === null)
+        initialIgnoreRemoteControl = false;
     } catch (error) {
       // do nothing
     }
-    setIgnoreRemoteControl(initialIgnoreRemoteControl)
+    setIgnoreRemoteControl(initialIgnoreRemoteControl);
+
+    if (isElectron()) {
+      window.electron.ipcRenderer.invoke("getPlatform").then((platform) => {
+        setPlatform(platform);
+      });
+    }
   }, []);
 
   return (
@@ -72,7 +82,8 @@ const SettingsContextProvider = ({ children }) => {
         recorderQuality,
         setRecorderQuality,
         ignoreRemoteControl,
-        setIgnoreRemoteControl
+        setIgnoreRemoteControl,
+        platform,
       }}
     >
       {children}

@@ -2,13 +2,13 @@ import { app, BrowserWindow, ipcMain, dialog, desktopCapturer, BrowserView, shel
 import fs from 'fs'
 import path from 'path'
 import robot from "robotjs";
-import {autoUpdater} from "electron-updater"
+import { autoUpdater } from "electron-updater"
 
-const askForMediaAccess = ()=>{ 
+const askForMediaAccess = () => {
   systemPreferences.askForMediaAccess('microphone');
   systemPreferences.askForMediaAccess('camera');
 }
-if(process.platform === 'darwin') askForMediaAccess();
+if (process.platform === 'darwin') askForMediaAccess();
 
 const PROTOCOL = 'insm'
 // 注册insm协议，用于网页唤醒app
@@ -17,7 +17,7 @@ if (!app.isDefaultProtocolClient(PROTOCOL)) {
 }
 // mac网页进行应用的调起后，会触发该事件
 app.on('open-url', (event, urlStr) => {
-  win && win.webContents.send('awakeApp',urlStr)
+  win && win.webContents.send('awakeApp', urlStr)
 });
 
 process.env.DIST_ELECTRON = path.join(__dirname, './')
@@ -198,7 +198,7 @@ app.on('second-instance', (e, arg) => {
   }
   // windows
   if (process.platform === 'win32') {
-    win && win.webContents.send('awakeApp',arg[arg.length-1])
+    win && win.webContents.send('awakeApp', arg[arg.length - 1])
   }
 })
 
@@ -211,11 +211,15 @@ app.on('activate', () => {
   }
 })
 
-ipcMain.handle('getScreenSize',()=>{
+ipcMain.handle('getPlatform', () => {
+  return process.platform
+})
+
+ipcMain.handle('getScreenSize', () => {
   const primaryDisplay = screen.getPrimaryDisplay()
   const { scaleFactor, workAreaSize } = primaryDisplay
   const { width, height } = workAreaSize
-  return {width: width*scaleFactor, height: height*scaleFactor}
+  return { width: width * scaleFactor, height: height * scaleFactor }
 })
 
 // New window example arg: new windows url
@@ -307,7 +311,7 @@ const handleKeyboard = ({ key, detail, modified }) => {
   } catch (e) { }
 }
 
-ipcMain.on('openExternalUrl',(e,url)=>{
+ipcMain.on('openExternalUrl', (e, url) => {
   shell.openExternal(url)
 })
 
@@ -356,14 +360,14 @@ ipcMain.on('mouseenter', () => {
 })
 
 ipcMain.on('mouseleave', () => {
-  if(childWinPause)
+  if (childWinPause)
     childWin.setIgnoreMouseEvents(true, { forward: true })
   else
     childWin.setIgnoreMouseEvents(false)
 
 })
 
-ipcMain.handle('pickColor',()=>{
+ipcMain.handle('pickColor', () => {
   // Get mouse position.
   const mouse = robot.getMousePos();
   // Get pixel color in hex format.
@@ -371,14 +375,14 @@ ipcMain.handle('pickColor',()=>{
   return hex;
 })
 
-ipcMain.handle('getWorletJs',()=>!process.env.VITE_DEV_SERVER_URL ? path.join(process.env.DIST, './worklet.js') : '/worklet.js')
+ipcMain.handle('getWorletJs', () => !process.env.VITE_DEV_SERVER_URL ? path.join(process.env.DIST, './worklet.js') : '/worklet.js')
 
 // DeskTop Capture
-ipcMain.on('desktopCapture',async (e,data)=>{
+ipcMain.on('desktopCapture', async (e, data) => {
 
-  const { canceled, filePath } = await dialog.showSaveDialog({ 
+  const { canceled, filePath } = await dialog.showSaveDialog({
     filters: [{ name: 'PNG Images', extensions: ['png'] }],
-    defaultPath: 'IM_' + formatDate(new Date(),'YY-MM-DD_hh-mm-ss') + '.png'
+    defaultPath: 'IM_' + formatDate(new Date(), 'YY-MM-DD_hh-mm-ss') + '.png'
   })
 
   if (canceled) {
@@ -393,12 +397,12 @@ ipcMain.on('desktopCapture',async (e,data)=>{
 
 // 自动更新
 function sendStatusToWindow(text) {
-  win &&　win.webContents.send('updateMessage', text);
+  win && win.webContents.send('updateMessage', text);
 }
 
 autoUpdater.autoDownload = false;
 
-ipcMain.on('startUpdate',()=>{
+ipcMain.on('startUpdate', () => {
   autoUpdater.downloadUpdate();
 })
 
@@ -407,24 +411,24 @@ autoUpdater.on('checking-for-update', () => {
 })
 
 autoUpdater.on('update-available', (info) => {
-  sendStatusToWindow({type:'update-available',info});
+  sendStatusToWindow({ type: 'update-available', info });
 })
 
 autoUpdater.on('update-not-available', (info) => {
-  sendStatusToWindow({type:'update-not-available',info});
+  sendStatusToWindow({ type: 'update-not-available', info });
 })
 
 autoUpdater.on('error', (err) => {
-  sendStatusToWindow({type:'error',info});
+  sendStatusToWindow({ type: 'error', info });
 })
 
 autoUpdater.on('download-progress', (progressObj) => {
   let info = `正在下载 ${progressObj.percent.toFixed(1)}%  ${formatSize(progressObj.bytesPerSecond)}/s`
-  sendStatusToWindow({type:'download-progress',info});
+  sendStatusToWindow({ type: 'download-progress', info });
 })
 
 autoUpdater.on('update-downloaded', (info) => {
-  sendStatusToWindow({type:'update-downloaded',info});
+  sendStatusToWindow({ type: 'update-downloaded', info });
   autoUpdater.quitAndInstall();
 });
 
