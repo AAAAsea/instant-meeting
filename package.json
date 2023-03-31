@@ -1,7 +1,7 @@
 {
   "name": "instant-meeting",
   "private": true,
-  "version": "0.0.3",
+  "version": "0.0.1",
   "homepage": "https://meet.asea.fun",
   "author": "Asea",
   "description": "Instant Meeting",
@@ -80,7 +80,7 @@
     "publish": [
       {
         "provider": "github",
-        "owner": "Yuasea",
+        "owner": "AAAAsea",
         "repo": "instant-meeting",
         "releaseType": "release"
       }

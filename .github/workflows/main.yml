@@ -2,15 +2,14 @@ name: create-release
 
 on:
   push:
-    tags: 
-      - 'v*.*.*'
-      
+    tags:
+      - "v*.*.*"
+
 permissions:
   contents: write
 
 jobs:
   test-build:
-
     # job's name
     name: create-release
 
@@ -21,8 +20,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest]
-        
+        os: [windows-latest, macos-latest]git
+
     steps:
       # step1: check out repository
       - name: Check out git repository
@@ -41,7 +40,7 @@ jobs:
       - name: rebuild
         run: |
           npm run electron:rebuild
-      
+
       # step5: npm run build
       - name: build
         run: |
@@ -54,7 +53,7 @@ jobs:
           npm run pack:win
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
+
       - name: build mac app
         if: matrix.os == 'macos-latest'
         run: |
