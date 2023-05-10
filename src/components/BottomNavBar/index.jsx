@@ -216,7 +216,7 @@ const BottomNavBar = (props) => {
           <IconButton
             color={videoOpen && !videoType ? "error" : "primary"}
             onClick={() => {
-              if (!canScreenShare && !videoOpen) {
+              if (roomInfo.isLive && !canScreenShare && !videoOpen) {
                 message.warning("当前房间类型（观影房）最多允许一人分享屏幕");
                 return;
               }

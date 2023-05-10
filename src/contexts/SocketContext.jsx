@@ -504,7 +504,7 @@ const SocketContextProvider = ({ children }) => {
       const oldVideoTrack = stream.current.getVideoTracks()[0];
       oldVideoTrack && oldVideoTrack.stop();
       // 如果关闭的是屏幕共享，则暂停声音
-      if (!type) {
+      if (!type && isLive) {
         const oldAudioTrack = stream.current.getAudioTracks()[0];
         oldAudioTrack && oldAudioTrack.stop();
       }
@@ -540,6 +540,7 @@ const SocketContextProvider = ({ children }) => {
       const newAudioTrack = currentStream.getAudioTracks()[0];
       const oldAudioTrack = stream.current.getAudioTracks()[0];
       if (newAudioTrack && isLive) {
+        console.log("移除音频轨道");
         oldAudioTrack && stream.current.removeTrack(oldAudioTrack);
         stream.current.addTrack(newAudioTrack);
       }
