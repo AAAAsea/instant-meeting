@@ -563,7 +563,7 @@ const SocketContextProvider = ({ children }) => {
           }
 
           // 视频轨道的替换或新增
-          if (oldAudioTrack) {
+          if (oldAudioTrack && newAudioTrack) {
             oldAudioTrack.stop();
             peers[peer].replaceTrack(oldAudioTrack, newAudioTrack, myVideo);
           } else if (newAudioTrack) {
